@@ -136,7 +136,8 @@ mod local {
     #[test]
     #[ignore]
     fn reads_brain() {
-        let s = super::init_script("app.brain.desktop", "http://127.0.0.1:8765/").expect("no script");
+        let s =
+            super::init_script("app.brain.desktop", "http://127.0.0.1:8765/").expect("no script");
         println!("{}", &s[..s.len().min(700)]);
     }
 }

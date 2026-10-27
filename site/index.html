@@ -1,0 +1,450 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>AI WorkStudio — tus IAs locales en un solo estudio</title>
+<meta name="description" content="AI WorkStudio junta brain, OpenCue, Lumina y las apps que vengan en un solo lugar: estado, avisos, actualizaciones, servidores MCP compartidos y hasta seis terminales a la vez. macOS, Windows y Linux.">
+<meta property="og:title" content="AI WorkStudio">
+<meta property="og:description" content="Tus IAs locales en un solo estudio: apps, MCP compartido, avisos, actualizaciones y seis terminales.">
+<link rel="icon" href="assets/logo.svg" type="image/svg+xml">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,400..700;1,9..144,400..600&family=JetBrains+Mono:wght@400;600&family=Manrope:wght@400..800&display=swap" rel="stylesheet">
+<style>
+:root {
+  --paper: #FAF7F2; --paper-2: #F2EDE4; --card: #FFFDF9; --ink: #1C1917; --ink-2: #4A4440; --ink-3: #807870; --line: #E8E1D6;
+  --clay: #C2410C; --clay-deep: #9A3412; --clay-soft: #FBE8DC; --olive: #3F6212; --olive-soft: #E8EFDA; --mustard: #CA8A04; --mustard-soft: #FAF0D2;
+  --serif: "Fraunces", Georgia, serif; --sans: "Manrope", system-ui, sans-serif; --mono: "JetBrains Mono", ui-monospace, Menlo, monospace;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) { --paper: #171513; --paper-2: #1F1C19; --card: #221F1B; --ink: #F3EEE6; --ink-2: #CDC5BA; --ink-3: #9A9187; --line: #332E29; --clay: #E2652E; --clay-deep: #F07C47; --clay-soft: #3A2117; --olive: #86A956; --olive-soft: #232C18; --mustard: #E3A92F; --mustard-soft: #33280F; }
+}
+* { box-sizing: border-box; margin: 0; padding: 0; }
+html { scroll-behavior: smooth; }
+body { font-family: var(--sans); background: var(--paper); color: var(--ink); line-height: 1.55; -webkit-font-smoothing: antialiased; overflow-x: hidden; }
+a { color: inherit; }
+.wrap { max-width: 1180px; margin: 0 auto; padding: 0 24px; }
+.serif { font-family: var(--serif); font-optical-sizing: auto; letter-spacing: -0.025em; }
+em { font-style: italic; color: var(--clay); }
+
+nav.top { position: sticky; top: 0; z-index: 50; backdrop-filter: blur(14px); background: color-mix(in srgb, var(--paper) 82%, transparent); border-bottom: 1px solid var(--line); }
+nav.top .wrap { display: flex; align-items: center; gap: 28px; height: 64px; }
+.brand { display: flex; align-items: center; gap: 10px; text-decoration: none; font-family: var(--serif); font-weight: 600; font-size: 19px; letter-spacing: -0.02em; }
+.brand img { width: 30px; height: 30px; }
+.links { display: flex; gap: 22px; margin-left: auto; font-size: 14px; font-weight: 600; color: var(--ink-2); }
+.links a { text-decoration: none; }
+.links a:hover { color: var(--clay); }
+.btn { display: inline-flex; align-items: center; gap: 8px; height: 42px; padding: 0 18px; border-radius: 11px; font-weight: 700; font-size: 14px; text-decoration: none; border: 1px solid var(--line); background: var(--card); color: var(--ink); cursor: pointer; transition: transform .12s, background .12s; }
+.btn:hover { transform: translateY(-1px); }
+.btn.primary { background: var(--clay); color: #fff; border-color: var(--clay); box-shadow: 0 8px 20px -10px rgba(194,65,12,.7); }
+.btn.primary:hover { background: var(--clay-deep); }
+.btn.sm { height: 36px; padding: 0 14px; font-size: 13px; }
+
+header.hero { padding: 84px 0 40px; position: relative; }
+.hero-grid { display: grid; grid-template-columns: 1fr 1.08fr; gap: 56px; align-items: center; }
+.hero-grid > *, .split > * { min-width: 0; }
+.eyebrow { display: inline-flex; align-items: center; gap: 8px; font-size: 12.5px; font-weight: 750; letter-spacing: .08em; text-transform: uppercase; color: var(--ink-3); }
+.eyebrow i { width: 8px; height: 8px; border-radius: 50%; background: var(--olive); box-shadow: 0 0 0 4px var(--olive-soft); }
+h1 { font-family: var(--serif); font-weight: 480; font-size: clamp(44px, 6.2vw, 78px); line-height: .98; letter-spacing: -0.045em; margin: 18px 0 22px; }
+.lede { font-size: 18.5px; color: var(--ink-2); max-width: 520px; }
+.install { margin-top: 30px; background: var(--card); border: 1px solid var(--line); border-radius: 16px; padding: 8px; box-shadow: 0 20px 50px -30px rgba(28,25,23,.35); max-width: 560px; }
+.tabs { display: flex; gap: 2px; padding: 2px 2px 8px; }
+.tabs button { border: 0; background: transparent; font: inherit; font-weight: 700; font-size: 13px; color: var(--ink-3); padding: 7px 12px; border-radius: 8px; cursor: pointer; }
+.tabs button.on { background: var(--paper-2); color: var(--ink); }
+.tabs label { margin-left: auto; display: flex; align-items: center; gap: 7px; font-size: 12.5px; font-weight: 650; color: var(--ink-2); padding-right: 6px; cursor: pointer; }
+.cmd { display: flex; align-items: center; gap: 10px; background: #1C1917; color: #EFE7DA; border-radius: 11px; padding: 14px 12px 14px 16px; font-family: var(--mono); font-size: 13.5px; }
+.cmd code { flex: 1; overflow-x: auto; white-space: nowrap; scrollbar-width: none; }
+.cmd code::-webkit-scrollbar { display: none; }
+.cmd .p { color: var(--clay-deep); user-select: none; }
+.cmd button { border: 0; background: rgba(255,255,255,.08); color: #EFE7DA; border-radius: 8px; height: 30px; padding: 0 11px; font: 600 12px var(--sans); cursor: pointer; }
+.cmd button:hover { background: rgba(255,255,255,.16); }
+.install small { display: block; padding: 10px 8px 4px; color: var(--ink-3); font-size: 12.5px; }
+.hero-cta { display: flex; gap: 10px; margin-top: 18px; flex-wrap: wrap; align-items: center; }
+.hero-cta .note { font-size: 13px; color: var(--ink-3); }
+
+/* app mock */
+.mock { border-radius: 18px; background: var(--card); border: 1px solid var(--line); box-shadow: 0 50px 90px -40px rgba(28,25,23,.45), 0 10px 30px -18px rgba(28,25,23,.25); overflow: hidden; display: grid; grid-template-columns: 150px 1fr; height: 470px; transform: perspective(1600px) rotateY(-6deg) rotateX(2deg); transform-origin: left center; }
+.mock .side { background: var(--paper-2); border-right: 1px solid var(--line); padding: 14px 10px; font-size: 11.5px; font-weight: 650; color: var(--ink-2); display: flex; flex-direction: column; gap: 3px; }
+.mock .lights { display: flex; gap: 6px; margin-bottom: 14px; }
+.mock .lights span { width: 10px; height: 10px; border-radius: 50%; background: #E5DDD0; }
+.mock .lights span:nth-child(1) { background: #EC6A5E; } .mock .lights span:nth-child(2) { background: #F4BF4F; } .mock .lights span:nth-child(3) { background: #61C554; }
+.mock .it { padding: 6px 8px; border-radius: 6px; display: flex; align-items: center; gap: 7px; }
+.mock .it.on { background: var(--card); box-shadow: 0 1px 2px rgba(0,0,0,.06); color: var(--ink); }
+.mock .it b { width: 14px; height: 14px; border-radius: 4px; display: inline-block; }
+.mock .sec { font-size: 9px; letter-spacing: .1em; text-transform: uppercase; color: var(--ink-3); margin: 12px 8px 4px; }
+.mock .dot { width: 6px; height: 6px; border-radius: 50%; background: var(--olive); margin-left: auto; }
+.mock .body { padding: 20px 22px; display: flex; flex-direction: column; gap: 14px; overflow: hidden; }
+.mock .hi { font-family: var(--serif); font-size: 27px; letter-spacing: -0.03em; line-height: 1; }
+.mock .cards { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 10px; }
+.mock .c { border: 1px solid var(--line); border-radius: 11px; padding: 11px; position: relative; overflow: hidden; background: var(--card); }
+.mock .c::before { content: ""; position: absolute; left: 0; right: 0; top: 0; height: 3px; }
+.mock .c.b::before { background: var(--clay); } .mock .c.o::before { background: var(--olive); } .mock .c.l::before { background: var(--mustard); }
+.mock .c .g { width: 24px; height: 24px; border-radius: 7px; margin-bottom: 8px; }
+.mock .c h4 { font-family: var(--serif); font-size: 15px; font-weight: 600; }
+.mock .c p { font-size: 9.5px; color: var(--ink-3); line-height: 1.3; margin: 2px 0 8px; }
+.mock .c .bar { height: 20px; border-radius: 6px; background: var(--clay); }
+.mock .terms { display: grid; grid-template-columns: repeat(3, 1fr); grid-template-rows: repeat(2, 1fr); gap: 7px; flex: 1; min-height: 0; }
+.mock .t { background: #1C1917; border-radius: 9px; padding: 8px 9px; font-family: var(--mono); font-size: 8.5px; color: #D8CFC2; line-height: 1.6; overflow: hidden; }
+.mock .t .h { color: #8D8378; display: flex; justify-content: space-between; margin-bottom: 4px; }
+.mock .t .m { color: #B5D189; }
+.mock .t .c1 { color: #F08657; } .mock .t .c2 { color: #F0C868; }
+.caret { display: inline-block; width: 5px; height: 9px; background: #E2652E; vertical-align: -1px; animation: blink 1s steps(1) infinite; }
+@keyframes blink { 50% { opacity: 0; } }
+
+section { padding: 96px 0; }
+.kicker { font-size: 12.5px; font-weight: 800; letter-spacing: .1em; text-transform: uppercase; color: var(--clay); }
+h2 { font-family: var(--serif); font-weight: 480; font-size: clamp(34px, 4.4vw, 54px); line-height: 1.02; letter-spacing: -0.04em; margin: 12px 0 16px; }
+.sub { color: var(--ink-2); font-size: 17.5px; max-width: 640px; }
+
+.family { display: grid; grid-template-columns: repeat(3, 1fr); gap: 18px; margin-top: 44px; }
+.app { background: var(--card); border: 1px solid var(--line); border-radius: 20px; padding: 26px; position: relative; overflow: hidden; }
+.app::before { content: ""; position: absolute; left: 0; right: 0; top: 0; height: 4px; }
+.app.brain::before { background: var(--clay); } .app.cue::before { background: var(--olive); } .app.lum::before { background: var(--mustard); }
+.app .g { width: 52px; height: 52px; border-radius: 15px; display: grid; place-items: center; margin-bottom: 18px; }
+.app.brain .g { background: var(--clay-soft); color: var(--clay); } .app.cue .g { background: var(--olive-soft); color: var(--olive); } .app.lum .g { background: var(--mustard-soft); color: var(--mustard); }
+.app h3 { font-family: var(--serif); font-weight: 560; font-size: 28px; letter-spacing: -0.03em; }
+.app .tag { color: var(--ink-3); font-weight: 600; margin: 4px 0 14px; }
+.app p { color: var(--ink-2); font-size: 15px; }
+.chips { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 18px; }
+.chip { font-size: 12px; font-weight: 650; padding: 4px 9px; border-radius: 20px; background: var(--paper-2); color: var(--ink-2); }
+.app a.more { display: inline-block; margin-top: 18px; font-weight: 700; font-size: 14px; color: var(--clay); text-decoration: none; }
+.next { margin-top: 18px; border: 1.5px dashed var(--line); border-radius: 20px; padding: 22px 26px; display: flex; align-items: center; gap: 16px; color: var(--ink-2); }
+.next b { color: var(--ink); }
+
+.feat { display: grid; grid-template-columns: repeat(3, 1fr); gap: 1px; background: var(--line); border: 1px solid var(--line); border-radius: 22px; overflow: hidden; margin-top: 44px; }
+.feat > div { background: var(--card); padding: 28px; }
+.feat .n { font-family: var(--mono); font-size: 12px; color: var(--clay); font-weight: 600; }
+.feat h4 { font-family: var(--serif); font-size: 22px; font-weight: 560; letter-spacing: -0.02em; margin: 10px 0 8px; }
+.feat p { color: var(--ink-2); font-size: 14.5px; }
+
+.split { display: grid; grid-template-columns: 1fr 1.1fr; gap: 56px; align-items: center; }
+.terms6 { display: grid; grid-template-columns: repeat(3, 1fr); grid-template-rows: repeat(2, 150px); gap: 10px; padding: 12px; background: var(--paper-2); border-radius: 20px; border: 1px solid var(--line); }
+.terms6 .t { background: #1C1917; border-radius: 12px; padding: 10px 12px; font-family: var(--mono); font-size: 10.5px; color: #D8CFC2; line-height: 1.6; overflow: hidden; border: 1px solid #2C2723; }
+.terms6 .t .h { display: flex; gap: 6px; align-items: center; color: #CFC5B8; font-family: var(--sans); font-weight: 700; font-size: 11px; margin-bottom: 6px; }
+.terms6 .t .h span { margin-left: auto; font-size: 9.5px; background: rgba(134,169,86,.18); color: #B5D189; padding: 1px 6px; border-radius: 8px; }
+.terms6 .ok { color: #B5D189; } .terms6 .w { color: #F0C868; } .terms6 .c { color: #F08657; }
+ul.ticks { list-style: none; margin-top: 22px; display: flex; flex-direction: column; gap: 12px; }
+ul.ticks li { display: flex; gap: 12px; color: var(--ink-2); }
+ul.ticks li::before { content: ""; flex-shrink: 0; width: 20px; height: 20px; border-radius: 6px; margin-top: 2px; background: var(--olive-soft) url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%233F6212' stroke-width='3' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M5 12l5 5L20 7'/%3E%3C/svg%3E") center/12px no-repeat; }
+ul.ticks b { color: var(--ink); }
+
+.mesh { background: var(--card); border: 1px solid var(--line); border-radius: 22px; padding: 34px; display: grid; grid-template-columns: 1fr auto 1fr; gap: 26px; align-items: center; }
+.mesh .col { display: flex; flex-direction: column; gap: 10px; }
+.node { display: flex; align-items: center; gap: 10px; padding: 11px 14px; border: 1px solid var(--line); border-radius: 12px; background: var(--paper); font-weight: 700; font-size: 14px; }
+.node i { width: 26px; height: 26px; border-radius: 8px; display: inline-block; }
+.node small { margin-left: auto; color: var(--ink-3); font-weight: 600; font-family: var(--mono); font-size: 11px; }
+.hub { width: 150px; height: 150px; border-radius: 34px; background: var(--clay); display: grid; place-items: center; box-shadow: 0 30px 60px -25px rgba(194,65,12,.8); position: relative; }
+.hub img { width: 92px; height: 92px; filter: drop-shadow(0 2px 0 rgba(0,0,0,.08)); }
+.hub::before, .hub::after { content: ""; position: absolute; top: 50%; width: 26px; height: 2px; background: repeating-linear-gradient(90deg, var(--olive) 0 5px, transparent 5px 9px); }
+.hub::before { right: 100%; } .hub::after { left: 100%; }
+
+.faq { max-width: 820px; margin-top: 30px; }
+details { border-bottom: 1px solid var(--line); padding: 18px 0; }
+summary { cursor: pointer; font-weight: 700; font-size: 16.5px; list-style: none; display: flex; justify-content: space-between; gap: 20px; }
+summary::after { content: "+"; font-family: var(--serif); font-size: 24px; color: var(--clay); line-height: 1; }
+details[open] summary::after { content: "–"; }
+details p { color: var(--ink-2); margin-top: 10px; }
+code.i { font-family: var(--mono); font-size: 13px; background: var(--paper-2); padding: 1px 6px; border-radius: 5px; }
+
+.cta { background: var(--ink); color: var(--paper); border-radius: 28px; padding: 64px; position: relative; overflow: hidden; }
+.cta h2 { color: var(--paper); }
+.cta em { color: #F6A27A; }
+.cta .sub { color: #CDC5BA; }
+.cta .install { background: #26221E; border-color: #3B3631; box-shadow: none; margin-top: 28px; }
+.cta .tabs button { color: #9A9187; } .cta .tabs button.on { background: #34302B; color: #F3EEE6; } .cta .tabs label { color: #CDC5BA; }
+.cta .install small { color: #9A9187; }
+.cta .tiles { position: absolute; right: 54px; top: 54px; display: grid; grid-template-columns: repeat(2, 64px); gap: 12px; opacity: .95; }
+.cta .tiles span { width: 64px; height: 64px; border-radius: 17px; }
+
+footer { padding: 40px 0 60px; color: var(--ink-3); font-size: 13.5px; }
+footer .wrap { display: flex; gap: 22px; align-items: center; flex-wrap: wrap; }
+footer a { text-decoration: none; font-weight: 600; }
+footer a:hover { color: var(--clay); }
+
+.reveal { opacity: 0; transform: translateY(14px); transition: opacity .7s ease, transform .7s cubic-bezier(.2,1,.3,1); }
+.reveal.in { opacity: 1; transform: none; }
+@media (prefers-reduced-motion: reduce) { .reveal { opacity: 1; transform: none; transition: none; } .caret { animation: none; } }
+
+@media (max-width: 960px) {
+  .hero-grid, .split { grid-template-columns: 1fr; }
+  .mock { transform: none; height: 400px; }
+  .family, .feat { grid-template-columns: 1fr; }
+  .mesh { grid-template-columns: 1fr; justify-items: center; }
+  .hub::before, .hub::after { display: none; }
+  .links a:not(.btn) { display: none; }
+  .cta { padding: 36px 22px; } .cta .tiles { display: none; }
+  section { padding: 64px 0; }
+}
+@media (max-width: 560px) {
+  .wrap { padding: 0 16px; }
+  .mock .cards { display: none; }
+  .mock { grid-template-columns: 1fr; } .mock .side { display: none; }
+  .mock .terms { grid-template-columns: repeat(2, 1fr); }
+  .terms6 { grid-template-columns: repeat(2, 1fr); grid-template-rows: repeat(3, 120px); }
+  .tabs label { display: none; }
+}
+</style>
+</head>
+<body>
+
+<nav class="top">
+  <div class="wrap">
+    <a class="brand" href="#"><img src="assets/logo.svg" alt="">AI WorkStudio</a>
+    <div class="links">
+      <a href="#apps">Apps</a>
+      <a href="#terminales">Terminales</a>
+      <a href="#mcp">MCP</a>
+      <a href="#faq">Preguntas</a>
+      <a href="https://github.com/Lautaro005/workstudio">GitHub</a>
+      <a class="btn sm primary" href="#instalar">Instalar</a>
+    </div>
+  </div>
+</nav>
+
+<header class="hero">
+  <div class="wrap hero-grid">
+    <div>
+      <span class="eyebrow"><i></i> Local · macOS · Windows · Linux</span>
+      <h1>Tus IAs locales, <em>en un solo estudio.</em></h1>
+      <p class="lede">brain recuerda, Lumina escucha, OpenCue trabaja. AI WorkStudio las junta como un workspace: abrís cada una sin salir, ves su estado, recibís sus avisos, las actualizás y comparten herramientas por MCP con tus agentes. Con lugar para las apps que vengan.</p>
+      <div class="install" data-install>
+        <div class="tabs">
+          <button data-os="unix" class="on">macOS / Linux</button>
+          <button data-os="win">Windows</button>
+          <label><input type="checkbox" data-all> con las 3 apps</label>
+        </div>
+        <div class="cmd"><span class="p">$</span><code data-cmd></code><button data-copy>Copiar</button></div>
+        <small data-note>Instala la app en /Applications y el comando <code class="i">workstudio</code>.</small>
+      </div>
+      <div class="hero-cta">
+        <a class="btn" href="https://github.com/Lautaro005/workstudio/releases/latest" data-download>Descargar instalador</a>
+        <span class="note" data-version>Código abierto · Apache-2.0 + Commons Clause</span>
+      </div>
+    </div>
+
+    <div class="mock reveal" aria-hidden="true">
+      <div class="side">
+        <div class="lights"><span></span><span></span><span></span></div>
+        <div class="it on"><b style="background:var(--clay)"></b>Inicio</div>
+        <div class="it"><b style="background:var(--line)"></b>Apps</div>
+        <div class="it"><b style="background:var(--line)"></b>Terminales</div>
+        <div class="it"><b style="background:var(--line)"></b>MCP</div>
+        <div class="sec">Tus apps</div>
+        <div class="it"><b style="background:var(--clay-soft)"></b>brain<span class="dot"></span></div>
+        <div class="it"><b style="background:var(--olive-soft)"></b>OpenCue<span class="dot" style="background:var(--ink-3)"></span></div>
+        <div class="it"><b style="background:var(--mustard-soft)"></b>Lumina<span class="dot"></span></div>
+        <div class="sec">Sistema</div>
+        <div class="it"><b style="background:var(--line)"></b>Actividad</div>
+        <div class="it"><b style="background:var(--line)"></b>Actualizaciones</div>
+      </div>
+      <div class="body">
+        <div class="hi">Buenas tardes, <em>Lautaro</em>.</div>
+        <div class="cards">
+          <div class="c b"><div class="g" style="background:var(--clay-soft)"></div><h4>brain</h4><p>Una sola memoria para todas tus IAs</p><div class="bar"></div></div>
+          <div class="c o"><div class="g" style="background:var(--olive-soft)"></div><h4>OpenCue</h4><p>Agentes con cara y computadora</p><div class="bar"></div></div>
+          <div class="c l"><div class="g" style="background:var(--mustard-soft)"></div><h4>Lumina</h4><p>Notas que se escriben solas</p><div class="bar"></div></div>
+        </div>
+        <div class="terms">
+          <div class="t"><div class="h">Claude Code <span class="m">MCP 3</span></div><span class="c1">❯</span> busca en brain lo de la reunión<br><span class="m">● brain.search_knowledge</span><br><span class="m">● lumina.get_meeting</span></div>
+          <div class="t"><div class="h">Codex <span class="m">MCP 3</span></div><span class="c1">❯</span> codex<br>mcp: brain, lumina, opencue<br><span class="caret"></span></div>
+          <div class="t"><div class="h">Gemini <span class="m">MCP 3</span></div><span class="c1">❯</span> gemini<br><span class="c2">3 MCP servers</span></div>
+          <div class="t"><div class="h">brain</div><span class="c1">❯</span> brain update<br><span class="m">✓ v0.03.3.4</span></div>
+          <div class="t"><div class="h">lumina</div><span class="c1">❯</span> lumina doctor<br><span class="m">✓ mic · parakeet</span></div>
+          <div class="t"><div class="h">zsh</div><span class="c1">❯</span> <span class="caret"></span></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</header>
+
+<section id="apps">
+  <div class="wrap">
+    <div class="kicker reveal">La familia</div>
+    <h2 class="reveal">Tres apps que se hablan.<br><em>Una casa para todas.</em></h2>
+    <p class="sub reveal">Cada una sigue siendo independiente y se instala sola. WorkStudio las encuentra, las arranca, las muestra adentro y las conecta.</p>
+    <div class="family">
+      <article class="app brain reveal">
+        <div class="g"><svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M12 5a3 3 0 1 0-5.997.125 4 4 0 0 0-2.526 5.77 4 4 0 0 0 .556 6.588A4 4 0 1 0 12 18Z"/><path d="M12 5a3 3 0 1 1 5.997.125 4 4 0 0 1 2.526 5.77 4 4 0 0 1-.556 6.588A4 4 0 1 1 12 18Z"/><path d="M15 13a4.5 4.5 0 0 1-3-4 4.5 4.5 0 0 1-3 4"/></svg></div>
+        <h3>brain</h3>
+        <div class="tag">Una sola memoria para todas tus IAs</div>
+        <p>Servidor MCP local con tu perfil, memorias, notas de proyectos, skills y páginas guardadas. Búsqueda híbrida, grafo editable, Fact check con evidencia y acceso remoto.</p>
+        <div class="chips"><span class="chip">MCP</span><span class="chip">Vault Markdown</span><span class="chip">Grafo</span><span class="chip">Fact check</span></div>
+        <a class="more" href="https://lautaro005.github.io/brain/">Conocer brain →</a>
+      </article>
+      <article class="app cue reveal">
+        <div class="g"><svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M12 8V4H8"/><rect width="16" height="12" x="4" y="8" rx="2"/><path d="M2 14h2M20 14h2M15 13v2M9 13v2"/></svg></div>
+        <h3>OpenCue</h3>
+        <div class="tag">Agentes con cara, memoria y computadora</div>
+        <p>Agentes personales con instrucciones, memoria que se arma sola, email, computadora propia, automatizaciones, skills, grupos que trabajan en paralelo y voz local.</p>
+        <div class="chips"><span class="chip">Agentes</span><span class="chip">Grupos</span><span class="chip">Docker · Podman</span><span class="chip">Artefactos</span></div>
+        <a class="more" href="https://lautaro005.github.io/opencue/">Conocer OpenCue →</a>
+      </article>
+      <article class="app lum reveal">
+        <div class="g"><svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M13.4 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-7.4"/><path d="M2 6h4M2 10h4M2 14h4M2 18h4"/><path d="M21.378 5.626a1 1 0 1 0-3.004-3.004l-5.01 5.012a2 2 0 0 0-.506.854l-.837 2.87a.5.5 0 0 0 .62.62l2.87-.837a2 2 0 0 0 .854-.506z"/></svg></div>
+        <h3>Lumina</h3>
+        <div class="tag">Notas de reuniones que se escriben solas</div>
+        <p>Escucha reuniones y clases, transcribe en tu compu, convierte tus apuntes en notas completas, escribe el resumen y responde preguntas en vivo con tus fuentes.</p>
+        <div class="chips"><span class="chip">Transcripción local</span><span class="chip">Notas Cornell</span><span class="chip">MCP</span></div>
+        <a class="more" href="https://lautaro005.github.io/lumina/">Conocer Lumina →</a>
+      </article>
+    </div>
+    <div class="next reveal"><span style="font-family:var(--serif);font-size:28px;color:var(--clay)">+</span><div><b>Y las que vengan.</b> Cualquier app local con interfaz web, un comando o un servidor MCP se suma con un manifiesto JSON en <code class="i">~/.workstudio/apps.json</code> — sin esperar una versión nueva de WorkStudio.</div></div>
+  </div>
+</section>
+
+<section style="padding-top:0">
+  <div class="wrap">
+    <div class="kicker reveal">Qué hace</div>
+    <h2 class="reveal">Un escritorio para tu <em>stack de IA</em>.</h2>
+    <div class="feat reveal">
+      <div><span class="n">01</span><h4>Todo en una ventana</h4><p>brain y Lumina se abren dentro de WorkStudio; OpenCue en la suya. Barra lateral con el estado de cada una y un lanzador de apps al estilo Google.</p></div>
+      <div><span class="n">02</span><h4>Seis terminales</h4><p>Grilla de hasta seis terminales reales, con perfiles para Claude Code, Codex, Gemini, Cursor, brain, lumina y opencue.</p></div>
+      <div><span class="n">03</span><h4>MCP compartido</h4><p>Las herramientas de tus apps en una lista. Llegan solas a las terminales y se conectan a Claude Desktop, Cursor o Codex con un clic.</p></div>
+      <div><span class="n">04</span><h4>Avisos que importan</h4><p>Cambios en el vault de brain, reuniones de Lumina, apps que se detienen y versiones nuevas: en el centro de notificaciones y en el sistema.</p></div>
+      <div><span class="n">05</span><h4>Siempre al día</h4><p>Revisa GitHub y npm cada pocas horas. Actualiza cada app y cada CLI con un clic, y WorkStudio se actualiza solo con paquetes firmados.</p></div>
+      <div><span class="n">06</span><h4>⌘K para todo</h4><p>Abrí una app, iniciá o detené otra, lanzá un agente o buscá actualizaciones sin tocar el mouse.</p></div>
+    </div>
+  </div>
+</section>
+
+<section id="terminales" style="background:var(--paper-2);border-top:1px solid var(--line);border-bottom:1px solid var(--line)">
+  <div class="wrap split">
+    <div>
+      <div class="kicker reveal">Terminales</div>
+      <h2 class="reveal">Seis agentes,<br><em>una pantalla.</em></h2>
+      <p class="sub reveal">Cada terminal es una sesión real de tu shell. Los agentes arrancan con tus servidores MCP ya cargados, sin tocar un archivo de config.</p>
+      <ul class="ticks reveal">
+        <li><span><b>Claude Code</b> recibe <code class="i">--mcp-config</code> con brain, Lumina y OpenCue.</span></li>
+        <li><span><b>Codex</b> los recibe con <code class="i">-c mcp_servers…</code>, sin tocar tu config.toml.</span></li>
+        <li><span><b>Gemini y Cursor</b> los leen del workspace de WorkStudio.</span></li>
+        <li><span><b>CLIs al día</b>: instalá o actualizá cada uno desde el panel.</span></li>
+      </ul>
+    </div>
+    <div class="terms6 reveal" aria-hidden="true">
+      <div class="t"><div class="h">Claude Code<span>MCP 3</span></div><span class="c">❯</span> ¿qué decidimos ayer?<br><span class="ok">● lumina · get_meeting</span><br>Se acordó lanzar el viernes…</div>
+      <div class="t"><div class="h">Codex<span>MCP 3</span></div><span class="c">❯</span> guardá esto en brain<br><span class="ok">● brain · add_memory</span><br>Listo, quedó en memory/.</div>
+      <div class="t"><div class="h">Gemini<span>MCP 3</span></div><span class="c">❯</span> /mcp<br><span class="w">brain · lumina · opencue</span></div>
+      <div class="t"><div class="h">Cursor Agent<span>MCP 3</span></div><span class="c">❯</span> <span class="caret"></span></div>
+      <div class="t"><div class="h">brain</div><span class="c">❯</span> brain update<br><span class="ok">✓ actualizado</span></div>
+      <div class="t"><div class="h">zsh</div><span class="c">❯</span> npm i -g @openai/codex<br><span class="ok">added 1 package</span></div>
+    </div>
+  </div>
+</section>
+
+<section id="mcp">
+  <div class="wrap">
+    <div class="kicker reveal">MCP</div>
+    <h2 class="reveal">Las herramientas de tus apps,<br><em>en todos tus agentes.</em></h2>
+    <p class="sub reveal" style="margin-bottom:40px">WorkStudio junta las herramientas de cada app instalada en un solo servidor MCP, <code class="i">workstudio</code>, y escribe la config que entiende cada cliente. Siempre con copia de seguridad.</p>
+    <div class="mesh reveal">
+      <div class="col">
+        <div class="node"><i style="background:var(--clay-soft)"></i>brain<small>uv run server.py</small></div>
+        <div class="node"><i style="background:var(--mustard-soft)"></i>Lumina<small>lumina mcp</small></div>
+        <div class="node"><i style="background:var(--olive-soft)"></i>OpenCue<small>opencue mcp-serve</small></div>
+        <div class="node"><i style="background:var(--paper-2)"></i>Tus servidores<small>stdio · http</small></div>
+      </div>
+      <div class="hub"><img src="assets/logo.svg" alt="AI WorkStudio"></div>
+      <div class="col">
+        <div class="node">Claude Code<small>~/.claude.json</small></div>
+        <div class="node">Claude Desktop<small>config.json</small></div>
+        <div class="node">Codex<small>config.toml</small></div>
+        <div class="node">Cursor · Gemini · Windsurf<small>mcp.json</small></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section id="faq" style="padding-top:0">
+  <div class="wrap">
+    <div class="kicker">Preguntas</div>
+    <h2>Lo que conviene saber.</h2>
+    <div class="faq">
+      <details><summary>¿Necesito tener instaladas brain, Lumina y OpenCue?</summary><p>No. WorkStudio funciona solo y te muestra cuáles faltan, con un botón para instalar cada una. Si querés todo de una, usá la opción «con las 3 apps» del comando.</p></details>
+      <details><summary>¿Mis datos salen de la compu?</summary><p>No. WorkStudio solo habla con tus apps en 127.0.0.1, con GitHub para ver versiones nuevas y con npm para las versiones de los CLIs. Sus archivos viven en <code class="i">~/.workstudio</code>.</p></details>
+      <details><summary>¿Qué toca cuando conecto un cliente MCP?</summary><p>Agrega el servidor <code class="i">workstudio</code> (con las herramientas de todas tus apps) a la config de ese cliente (por ejemplo <code class="i">~/.claude.json</code> o <code class="i">~/.codex/config.toml</code>) y guarda una copia <code class="i">.bak-workstudio</code> la primera vez. Si ya tenías brain, Lumina u OpenCue sueltos, los saca para que nada aparezca dos veces. Desconectar quita solo lo que puso WorkStudio.</p></details>
+      <details><summary>¿Cómo sumo una app nueva?</summary><p>Agregándola a <code class="i">~/.workstudio/apps.json</code>, con el mismo formato que <a href="catalog/apps.json">catalog/apps.json</a>. Podés indicar su dirección web, cómo iniciarla, instalarla, actualizarla y su servidor MCP.</p></details>
+      <details><summary>¿Cómo lo actualizo o lo desinstalo?</summary><p>WorkStudio se actualiza solo desde Actualizaciones. También: <code class="i">workstudio update</code>. Para sacarlo: <code class="i">workstudio uninstall</code> (tus ajustes quedan en ~/.workstudio).</p></details>
+      <details><summary>macOS dice que la app no se puede abrir</summary><p>Los instaladores todavía no están firmados con un certificado de Apple. El comando de instalación ya quita la marca de cuarentena; si bajaste el .dmg a mano, hacé clic derecho → Abrir la primera vez.</p></details>
+    </div>
+  </div>
+</section>
+
+<section id="instalar" style="padding-top:20px">
+  <div class="wrap">
+    <div class="cta">
+      <div class="tiles" aria-hidden="true"><span style="background:#FAF7F2"></span><span style="background:var(--mustard)"></span><span style="background:var(--olive)"></span><span style="background:#FAF7F2;border-radius:50%"></span></div>
+      <div class="kicker" style="color:#F6A27A">Instalar</div>
+      <h2>Un comando.<br><em>Todo tu estudio.</em></h2>
+      <p class="sub">En macOS queda en Aplicaciones, en Linux en el menú de apps y en Windows en el menú Inicio. Sin sudo.</p>
+      <div class="install" data-install style="max-width:680px">
+        <div class="tabs">
+          <button data-os="unix" class="on">macOS / Linux</button>
+          <button data-os="win">Windows</button>
+          <label><input type="checkbox" data-all checked> con las 3 apps</label>
+        </div>
+        <div class="cmd"><span class="p">$</span><code data-cmd></code><button data-copy>Copiar</button></div>
+        <small data-note></small>
+      </div>
+    </div>
+  </div>
+</section>
+
+<footer>
+  <div class="wrap">
+    <a class="brand" href="#"><img src="assets/logo.svg" alt="" style="width:24px;height:24px">AI WorkStudio</a>
+    <a href="https://github.com/Lautaro005/workstudio">GitHub</a>
+    <a href="https://github.com/Lautaro005/workstudio/releases">Versiones</a>
+    <a href="https://lautaro005.github.io/brain/">brain</a>
+    <a href="https://lautaro005.github.io/opencue/">OpenCue</a>
+    <a href="https://lautaro005.github.io/lumina/">Lumina</a>
+    <span style="margin-left:auto">© 2026 Lautaro Silva · Apache-2.0 + Commons Clause</span>
+  </div>
+</footer>
+
+<script>
+(() => {
+  const RAW = "https://raw.githubusercontent.com/Lautaro005/workstudio/main";
+  const isWin = /Windows/i.test(navigator.userAgent);
+  const cmds = {
+    unix: (all) => `curl -fsSL ${RAW}/install.sh | sh${all ? " -s -- --all" : ""}`,
+    win: (all) => `${all ? '$env:WORKSTUDIO_WITH="brain,lumina,opencue"; ' : ""}irm ${RAW}/install.ps1 | iex`,
+  };
+  const notes = {
+    unix: (all) => `Instala la app (en macOS, en /Applications) y el comando workstudio${all ? ", más brain, Lumina y OpenCue" : ""}.`,
+    win: (all) => `En PowerShell. Instala la app para tu usuario y el comando workstudio${all ? ", más brain, Lumina y OpenCue" : ""}.`,
+  };
+  document.querySelectorAll("[data-install]").forEach((box) => {
+    let os = isWin ? "win" : "unix";
+    const all = box.querySelector("[data-all]");
+    const render = () => {
+      box.querySelectorAll("[data-os]").forEach((b) => b.classList.toggle("on", b.dataset.os === os));
+      box.querySelector("[data-cmd]").textContent = cmds[os](all.checked);
+      box.querySelector("[data-note]").textContent = notes[os](all.checked);
+      box.querySelector(".p").textContent = os === "win" ? ">" : "$";
+    };
+    box.querySelectorAll("[data-os]").forEach((b) => b.addEventListener("click", () => { os = b.dataset.os; render(); }));
+    all.addEventListener("change", render);
+    box.querySelector("[data-copy]").addEventListener("click", async (e) => {
+      try { await navigator.clipboard.writeText(cmds[os](all.checked)); e.target.textContent = "¡Copiado!"; setTimeout(() => (e.target.textContent = "Copiar"), 1500); } catch {}
+    });
+    render();
+  });
+
+  // Point the download button at the right file of the latest release.
+  fetch("https://api.github.com/repos/Lautaro005/workstudio/releases/latest").then((r) => (r.ok ? r.json() : null)).then((rel) => {
+    if (!rel) return;
+    const ua = navigator.userAgent;
+    const pick = (re) => rel.assets.find((a) => re.test(a.name));
+    const a = /Windows/i.test(ua) ? pick(/x64-setup\.exe$/) : /Mac/i.test(ua) ? pick(/universal\.dmg$/) || pick(/\.dmg$/) : pick(/amd64\.AppImage$/);
+    const btn = document.querySelector("[data-download]");
+    if (a) { btn.href = a.browser_download_url; btn.textContent = `Descargar ${a.name.split(".").pop().toUpperCase()} · ${rel.tag_name}`; }
+    document.querySelector("[data-version]").textContent = `Última versión: ${rel.tag_name}`;
+  }).catch(() => {});
+
+  const io = new IntersectionObserver((es) => es.forEach((e) => e.isIntersecting && (e.target.classList.add("in"), io.unobserve(e.target))), { threshold: 0.12 });
+  document.querySelectorAll(".reveal").forEach((el) => io.observe(el));
+})();
+</script>
+</body>
+</html>

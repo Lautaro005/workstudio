@@ -1,0 +1,20 @@
+{
+  "$schema": "../gen/schemas/desktop-schema.json",
+  "identifier": "main",
+  "description": "The WorkStudio UI only (webview 'main'). Embedded apps (brain, Lumina\u2026) are child webviews with remote URLs and get no commands.",
+  "webviews": [
+    "main"
+  ],
+  "permissions": [
+    "core:default",
+    "core:window:allow-start-dragging",
+    "notification:default",
+    "opener:default",
+    "opener:allow-open-url",
+    "opener:allow-reveal-item-in-dir",
+    "opener:allow-open-path",
+    "dialog:default",
+    "updater:default",
+    "process:default"
+  ]
+}

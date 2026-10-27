@@ -1,0 +1,290 @@
+{
+  "version": 1,
+  "apps": [
+    {
+      "id": "brain",
+      "name": "brain",
+      "tagline": "Una sola memoria para todas tus IAs",
+      "description": "Servidor MCP local que le da a Claude, ChatGPT, Cursor y cualquier agente la misma base de conocimiento: perfil, memorias, notas de proyectos, skills y páginas guardadas, con búsqueda híbrida, grafo, Fact check y chat propio.",
+      "color": "clay",
+      "icon": "brain",
+      "repo": "Lautaro005/brain",
+      "site": "https://lautaro005.github.io/brain/",
+      "kind": "web",
+      "url": "http://127.0.0.1:8765/",
+      "health": {
+        "url": "http://127.0.0.1:8765/api/version",
+        "contains": "current"
+      },
+      "home": "~/.brain",
+      "cli": "brain",
+      "mac_app": "brain.app",
+      "process": "brain-app",
+      "version": {
+        "file": "~/.brain/VERSION"
+      },
+      "start": {
+        "unix": "brain --no-browser",
+        "windows": "brain --no-browser"
+      },
+      "stop": {
+        "url": "http://127.0.0.1:8765/api/quit",
+        "header": "X-Brain",
+        "value": "1"
+      },
+      "install": {
+        "unix": "curl -fsSL https://raw.githubusercontent.com/Lautaro005/brain/main/install.sh | bash",
+        "windows": "irm https://raw.githubusercontent.com/Lautaro005/brain/main/install.ps1 | iex"
+      },
+      "update": {
+        "unix": "brain update",
+        "windows": "brain update"
+      },
+      "mcp": {
+        "name": "brain",
+        "command": "{uv}",
+        "args": [
+          "run",
+          "--directory",
+          "{home}",
+          "python",
+          "server.py"
+        ],
+        "description": "Vault, memoria, búsqueda híbrida, skills, grafo, Fact check y web_search",
+        "description_en": "Vault, memory, hybrid search, skills, graph, Fact check and web_search"
+      },
+      "activity": "brain",
+      "features": [
+        "MCP",
+        "Vault Markdown",
+        "Búsqueda híbrida",
+        "Grafo",
+        "Fact check",
+        "Acceso remoto"
+      ],
+      "tagline_en": "One memory for all your AIs",
+      "description_en": "Local MCP server that gives Claude, ChatGPT, Cursor and any agent the same knowledge base: profile, memories, project notes, skills and saved pages, with hybrid search, a graph, Fact check and its own chat.",
+      "webstore": "app.brain.desktop"
+    },
+    {
+      "id": "opencue",
+      "name": "OpenCue",
+      "tagline": "Agentes con cara, memoria y computadora propia",
+      "description": "Agentes de IA personales al estilo Cue: instrucciones, memoria que se arma sola, email, computadora propia (Docker, Podman, SPACE, VMPal), automatizaciones, skills, grupos de agentes, voz local y artefactos.",
+      "color": "olive",
+      "icon": "bot",
+      "repo": "Lautaro005/opencue",
+      "site": "https://lautaro005.github.io/opencue/",
+      "kind": "native",
+      "url": "",
+      "cli": "opencue",
+      "mac_app": "OpenCue.app",
+      "process": "opencue",
+      "version": {
+        "cmd": "opencue --version"
+      },
+      "start": {
+        "unix": "opencue",
+        "windows": "opencue"
+      },
+      "install": {
+        "unix": "curl -fsSL https://lautaro005.github.io/opencue/install.sh | sh",
+        "windows": "irm https://lautaro005.github.io/opencue/install.ps1 | iex"
+      },
+      "update": {
+        "unix": "curl -fsSL https://lautaro005.github.io/opencue/install.sh | sh",
+        "windows": "irm https://lautaro005.github.io/opencue/install.ps1 | iex"
+      },
+      "mcp": {
+        "name": "opencue",
+        "command": "{cli}",
+        "args": [
+          "mcp-serve",
+          "--agent",
+          "{opencue_agent}"
+        ],
+        "needs": "opencue_agent",
+        "description": "Memoria, archivos, computadora y automatizaciones de un agente de OpenCue",
+        "description_en": "Memory, files, computer and automations of an OpenCue agent"
+      },
+      "features": [
+        "Agentes",
+        "Grupos",
+        "Computadora propia",
+        "Automatizaciones",
+        "Voz local",
+        "Artefactos"
+      ],
+      "tagline_en": "Agents with a face, memory and their own computer",
+      "description_en": "Personal AI agents in the style of Cue: instructions, memory that builds itself, email, their own computer (Docker, Podman, SPACE, VMPal), automations, skills, agent groups, local voice and artifacts."
+    },
+    {
+      "id": "lumina",
+      "name": "Lumina",
+      "tagline": "Notas de reuniones que se escriben solas",
+      "description": "Escucha reuniones y clases, transcribe en la compu (Parakeet, Canary, Whisper), convierte tus apuntes en notas completas, escribe el resumen, responde preguntas en vivo con tus fuentes y deja chatear sobre todo.",
+      "color": "mustard",
+      "icon": "notebook",
+      "repo": "Lautaro005/lumina",
+      "site": "https://lautaro005.github.io/lumina/",
+      "kind": "web",
+      "url": "http://127.0.0.1:47770/",
+      "health": {
+        "url": "http://127.0.0.1:47770/api/status",
+        "contains": "stt_engine"
+      },
+      "home": "~/.lumina",
+      "cli": "lumina",
+      "mac_app": "Lumina.app",
+      "process": "lumina-app",
+      "version": {
+        "json_url": "http://127.0.0.1:47770/api/status",
+        "field": "version",
+        "cmd": "lumina version"
+      },
+      "start": {
+        "unix": "lumina serve --port 47770",
+        "windows": "lumina serve --port 47770"
+      },
+      "stop": {
+        "url": "http://127.0.0.1:47770/api/quit",
+        "header": "X-Lumina",
+        "value": "1"
+      },
+      "install": {
+        "unix": "curl -fsSL https://lautaro005.github.io/lumina/install.sh | sh",
+        "windows": "irm https://lautaro005.github.io/lumina/install.ps1 | iex"
+      },
+      "update": {
+        "unix": "lumina update",
+        "windows": "lumina update"
+      },
+      "mcp": {
+        "name": "lumina",
+        "command": "{cli}",
+        "args": [
+          "mcp"
+        ],
+        "description": "Reuniones, transcripciones, notas y fuentes indexadas",
+        "description_en": "Meetings, transcripts, notes and indexed sources"
+      },
+      "activity": "lumina",
+      "features": [
+        "Transcripción local",
+        "Notas Cornell",
+        "Resúmenes",
+        "Asistencia en vivo",
+        "MCP",
+        "Chat con fuentes"
+      ],
+      "webstore": "app.lumina.desktop",
+      "tagline_en": "Meeting notes that write themselves",
+      "description_en": "Listens to meetings and classes, transcribes on your computer (Parakeet, Canary, Whisper), turns your notes into complete notes, writes the summary, answers live questions with your sources and lets you chat about everything."
+    }
+  ],
+  "clis": [
+    {
+      "id": "claude",
+      "name": "Claude Code",
+      "bin": "claude",
+      "version": "claude --version",
+      "install": {
+        "unix": "curl -fsSL https://claude.ai/install.sh | bash",
+        "windows": "irm https://claude.ai/install.ps1 | iex"
+      },
+      "update": {
+        "unix": "claude update",
+        "windows": "claude update"
+      },
+      "mcp": "claude",
+      "npm": "@anthropic-ai/claude-code"
+    },
+    {
+      "id": "codex",
+      "name": "Codex CLI",
+      "bin": "codex",
+      "version": "codex --version",
+      "install": {
+        "unix": "npm install -g @openai/codex@latest",
+        "windows": "npm install -g @openai/codex@latest"
+      },
+      "update": {
+        "unix": "npm install -g @openai/codex@latest",
+        "windows": "npm install -g @openai/codex@latest"
+      },
+      "mcp": "codex",
+      "npm": "@openai/codex"
+    },
+    {
+      "id": "gemini",
+      "name": "Gemini CLI",
+      "bin": "gemini",
+      "version": "gemini --version",
+      "install": {
+        "unix": "npm install -g @google/gemini-cli@latest",
+        "windows": "npm install -g @google/gemini-cli@latest"
+      },
+      "update": {
+        "unix": "npm install -g @google/gemini-cli@latest",
+        "windows": "npm install -g @google/gemini-cli@latest"
+      },
+      "mcp": "workspace",
+      "npm": "@google/gemini-cli"
+    },
+    {
+      "id": "cursor-agent",
+      "name": "Cursor Agent",
+      "bin": "cursor-agent",
+      "version": "cursor-agent --version",
+      "install": {
+        "unix": "curl https://cursor.com/install -fsS | bash",
+        "windows": ""
+      },
+      "update": {
+        "unix": "cursor-agent update",
+        "windows": ""
+      },
+      "mcp": "workspace",
+      "npm": ""
+    },
+    {
+      "id": "brain-cli",
+      "name": "brain",
+      "bin": "brain",
+      "version": "cat ~/.brain/VERSION",
+      "app": "brain",
+      "update": {
+        "unix": "brain update",
+        "windows": "brain update"
+      },
+      "mcp": "none",
+      "npm": ""
+    },
+    {
+      "id": "lumina-cli",
+      "name": "lumina",
+      "bin": "lumina",
+      "version": "lumina version",
+      "app": "lumina",
+      "update": {
+        "unix": "lumina update",
+        "windows": "lumina update"
+      },
+      "mcp": "none",
+      "npm": ""
+    },
+    {
+      "id": "opencue-cli",
+      "name": "opencue",
+      "bin": "opencue",
+      "version": "opencue --version",
+      "app": "opencue",
+      "update": {
+        "unix": "curl -fsSL https://lautaro005.github.io/opencue/install.sh | sh",
+        "windows": "irm https://lautaro005.github.io/opencue/install.ps1 | iex"
+      },
+      "mcp": "none",
+      "npm": ""
+    }
+  ]
+}

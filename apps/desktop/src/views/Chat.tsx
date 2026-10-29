@@ -16,11 +16,11 @@ const PILLS: Pill[] = [
 ];
 
 const GROUP_LOOK: Record<string, [string, string]> = {
-  "Claude Code": ["sparkles", "clay"],
-  Codex: ["cpu", "ink"],
-  Gemini: ["gem", "mustard"],
-  Ollama: ["box", "ink"],
-  OpenCue: ["bot", "olive"],
+  "Claude Code": ["anthropic", "clay"],
+  Codex: ["openai", "ink"],
+  Gemini: ["gemini", "mustard"],
+  Ollama: ["ollama", "ink"],
+  OpenCue: ["opencue", "olive"],
 };
 
 function ModelPicker({ models, value, onChange, loading }: { models: ChatModel[]; value: string; onChange: (id: string) => void; loading: boolean }) {

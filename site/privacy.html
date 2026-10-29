@@ -1,0 +1,99 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Privacidad — AI WorkStudio</title>
+<meta name="title-es" content="Privacidad — AI WorkStudio">
+<meta name="title-en" content="Privacy policy — AI WorkStudio">
+<meta name="description" content="Qué guarda AI WorkStudio, con quién se conecta y qué no hace con tus datos.">
+<link rel="icon" href="assets/logo.svg" type="image/svg+xml">
+<link rel="alternate" type="text/plain" href="llms.txt" title="llms.txt">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,400..700;1,9..144,400..600&family=JetBrains+Mono:wght@400;600&family=Manrope:wght@400..800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="assets/site.css">
+</head>
+<body>
+
+<nav class="top">
+  <div class="wrap">
+    <a class="brand" href="./"><img src="assets/logo.svg" alt="">AI WorkStudio</a>
+    <div class="links">
+      <a href="./#apps">Apps</a>
+      <a href="./#mcp">MCP</a>
+      <a href="docs.html">Docs</a>
+      <a href="https://github.com/Lautaro005/workstudio">GitHub</a>
+      <span class="lang" role="group" aria-label="Idioma / Language"><button data-set-lang="es">ES</button><button data-set-lang="en">EN</button></span>
+      <a class="btn sm primary" href="./#instalar"><span data-l="es">Instalar</span><span data-l="en">Install</span></a>
+    </div>
+  </div>
+</nav>
+
+<div class="wrap narrow page-head">
+  <div class="kicker"><span data-l="es">Privacidad</span><span data-l="en">Privacy</span></div>
+  <h1><span data-l="es">Política de privacidad</span><span data-l="en">Privacy policy</span></h1>
+  <p class="sub"><span data-l="es">Última actualización: 29 de octubre de 2026</span><span data-l="en">Last updated: October 29, 2026</span></p>
+</div>
+<div class="wrap narrow" style="padding-bottom:96px">
+<article class="prose">
+<div data-l="es">
+<p><b>Corto:</b> AI WorkStudio no tiene cuentas, no tiene servidores propios y no junta datos sobre vos. Todo lo que guarda queda en tu compu.</p>
+<h2>Qué guarda y dónde</h2>
+<p>Tus ajustes, tus apps propias, los servidores MCP que agregás, los avisos, las conversaciones del chat y los registros se guardan en <code>~/.workstudio</code> en tu compu. No se mandan a ningún lado. Podés borrarlos cuando quieras borrando esa carpeta.</p>
+<h2>Con quién se conecta</h2>
+<div class="table-scroll"><table>
+<tr><th>Destino</th><th>Para qué</th><th>Qué se manda</th></tr>
+<tr><td>Tus apps en <code>127.0.0.1</code></td><td>Ver su estado, abrirlas y usar sus herramientas.</td><td>Queda en tu compu.</td></tr>
+<tr><td>GitHub (<code>api.github.com</code>, <code>github.com</code>)</td><td>Ver versiones nuevas y bajar actualizaciones.</td><td>Pedidos sin datos tuyos; GitHub ve tu IP como en cualquier descarga.</td></tr>
+<tr><td>npm (<code>registry.npmjs.org</code>)</td><td>Ver versiones nuevas de los CLIs de agentes.</td><td>Igual que arriba.</td></tr>
+<tr><td>DuckDuckGo, Wikipedia y las páginas que leas</td><td>Solo si activás la pastilla Web en el chat.</td><td>Lo que el modelo busca o la página que pide leer.</td></tr>
+</table></div>
+<h2>Los modelos que usás</h2>
+<p>Cuando chateás con Claude Code, Codex, Gemini o un agente de OpenCue, WorkStudio usa esos programas con tu sesión. Lo que escribís y lo que devuelven las herramientas va al proveedor de ese modelo, bajo sus propias condiciones. Con Ollama todo queda en tu compu.</p>
+<h2>Clientes MCP</h2>
+<p>Cuando conectás un cliente MCP, WorkStudio edita su archivo de configuración en tu compu y guarda una copia <code>.bak-workstudio</code> antes. No manda nada afuera.</p>
+<h2>Este sitio</h2>
+<p>Este sitio está en GitHub Pages. No usa cookies ni analítica. Guarda tu idioma elegido en el almacenamiento de tu navegador. Carga las fuentes desde Google Fonts y consulta la última versión en la API de GitHub; esos servicios ven tu IP.</p>
+<h2>Cambios y contacto</h2>
+<p>Si esta política cambia, se actualiza esta página y la fecha de arriba. Para cualquier duda, abrí un <a href="https://github.com/Lautaro005/workstudio/issues">issue en GitHub</a>.</p>
+</div>
+<div data-l="en">
+<p><b>Short version:</b> AI WorkStudio has no accounts, no servers of its own and collects no data about you. Everything it keeps stays on your computer.</p>
+<h2>What it keeps and where</h2>
+<p>Your settings, your own apps, the MCP servers you add, notifications, chat conversations and logs are stored in <code>~/.workstudio</code> on your computer. They aren't sent anywhere. You can delete them anytime by deleting that folder.</p>
+<h2>What it connects to</h2>
+<div class="table-scroll"><table>
+<tr><th>Destination</th><th>Why</th><th>What is sent</th></tr>
+<tr><td>Your apps on <code>127.0.0.1</code></td><td>Check their status, open them and use their tools.</td><td>Stays on your computer.</td></tr>
+<tr><td>GitHub (<code>api.github.com</code>, <code>github.com</code>)</td><td>Check for new versions and download updates.</td><td>Requests with no personal data; GitHub sees your IP like any download.</td></tr>
+<tr><td>npm (<code>registry.npmjs.org</code>)</td><td>Check for new versions of agent CLIs.</td><td>Same as above.</td></tr>
+<tr><td>DuckDuckGo, Wikipedia and pages you read</td><td>Only if you turn on the Web pill in the chat.</td><td>What the model searches for or the page it asks to read.</td></tr>
+</table></div>
+<h2>The models you use</h2>
+<p>When you chat with Claude Code, Codex, Gemini or an OpenCue agent, WorkStudio runs those programs with your login. What you write and what the tools return goes to that model's provider, under its own terms. With Ollama everything stays on your computer.</p>
+<h2>MCP clients</h2>
+<p>When you connect an MCP client, WorkStudio edits its config file on your computer and keeps a <code>.bak-workstudio</code> copy first. Nothing is sent out.</p>
+<h2>This website</h2>
+<p>This site is hosted on GitHub Pages. It uses no cookies or analytics. It stores your chosen language in your browser's storage. It loads fonts from Google Fonts and checks the latest version on GitHub's API; those services see your IP.</p>
+<h2>Changes and contact</h2>
+<p>If this policy changes, this page and the date above are updated. For any question, open an <a href="https://github.com/Lautaro005/workstudio/issues">issue on GitHub</a>.</p>
+</div>
+</article>
+</div>
+
+<footer>
+  <div class="wrap">
+    <div class="grid">
+      <div><a class="brand" href="./"><img src="assets/logo.svg" alt="">AI WorkStudio</a><p style="margin-top:12px;max-width:260px"><span data-l="es">Tus IAs locales en un solo estudio.</span><span data-l="en">Your local AI apps in one studio.</span></p></div>
+      <div><h5><span data-l="es">Producto</span><span data-l="en">Product</span></h5><ul><li><a href="docs.html">Docs</a></li><li><a href="changelog.html">Changelog</a></li><li><a href="https://github.com/Lautaro005/workstudio/releases"><span data-l="es">Descargas</span><span data-l="en">Downloads</span></a></li><li><a href="llms.txt">llms.txt</a></li></ul></div>
+      <div><h5><span data-l="es">La familia</span><span data-l="en">The family</span></h5><ul><li><a href="https://lautaro005.github.io/brain/">brain</a></li><li><a href="https://lautaro005.github.io/opencue/">OpenCue</a></li><li><a href="https://lautaro005.github.io/lumina/">Lumina</a></li></ul></div>
+      <div><h5><span data-l="es">Proyecto</span><span data-l="en">Project</span></h5><ul><li><a href="https://github.com/Lautaro005/workstudio">GitHub</a></li><li><a href="privacy.html"><span data-l="es">Privacidad</span><span data-l="en">Privacy policy</span></a></li><li><a href="https://github.com/Lautaro005/workstudio/blob/main/LICENSE"><span data-l="es">Licencia</span><span data-l="en">License</span></a></li></ul></div>
+    </div>
+    <div class="legal"><span>© 2026 Lautaro Silva · Apache-2.0 + Commons Clause</span><span class="lang" role="group" aria-label="Idioma / Language"><button data-set-lang="es">Español</button><button data-set-lang="en">English</button></span></div>
+  </div>
+</footer>
+
+<script src="assets/site.js"></script>
+</body>
+</html>

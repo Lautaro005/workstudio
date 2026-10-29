@@ -136,10 +136,8 @@ export const mock = {
         ];
       case "chat_models":
         return [
-          { id: "claude:sonnet", name: "Claude Sonnet", group: "Claude Code", tools: true },
-          { id: "claude:opus", name: "Claude Opus", group: "Claude Code", tools: true },
-          { id: "claude:haiku", name: "Claude Haiku", group: "Claude Code", tools: true },
-          { id: "codex:", name: "Codex", group: "Codex", tools: true },
+          ...[["opus", "Opus · latest"], ["sonnet", "Sonnet · latest"], ["haiku", "Haiku · latest"], ["claude-opus-5-5", "Claude Opus 5.5"], ["claude-sonnet-5-5", "Claude Sonnet 5.5"], ["claude-haiku-5-5", "Claude Haiku 5.5"], ["claude-fable-5-1", "Claude Fable 5.1"], ["claude-opus-4-8", "Claude Opus 4.8"]].map(([id, name]) => ({ id: `claude:${id}`, name, group: "Claude Code", tools: true })),
+          ...[["", "Codex · default"], ["latest:gpt-6-luna", "GPT Luna · latest"], ["latest:gpt-5.6-terra", "GPT Terra · latest"], ["latest:gpt-6.1-sol", "GPT Sol · latest"], ["gpt-6.1-sol", "GPT-6.1-Sol"], ["gpt-6-luna", "GPT-6-Luna"], ["gpt-5.6-terra", "GPT-5.6-Terra"], ["gpt-5.3-codex", "GPT-5.3-Codex"]].map(([id, name]) => ({ id: `codex:${id}`, name, group: "Codex", tools: true })),
           { id: "ollama:qwen3:8b", name: "qwen3:8b", group: "Ollama", tools: true },
           { id: "opencue:pacman", name: "pacman", group: "OpenCue", tools: false },
         ];
@@ -218,7 +216,7 @@ export const mock = {
         settings = a.value;
         return null;
       case "app_info":
-        return { version: "0.1.0", os: "macos", arch: "aarch64", data_dir: "~/.workstudio", workspace: "~/.workstudio/workspace", shell: "/bin/zsh" };
+        return { version: "0.1.1", os: "macos", arch: "aarch64", data_dir: "~/.workstudio", workspace: "~/.workstudio/workspace", shell: "/bin/zsh" };
       default:
         return null;
     }

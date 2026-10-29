@@ -3,7 +3,7 @@ name: Pages
 on:
   push:
     branches: [main]
-    paths: ["site/**", "install.sh", "install.ps1", "catalog/**", ".github/workflows/pages.yml"]
+    paths: ["site/**", "install.sh", "install.ps1", "catalog/**", "CHANGELOG.md", ".github/workflows/pages.yml"]
   workflow_dispatch:
 
 permissions:
@@ -25,7 +25,7 @@ jobs:
       - uses: actions/checkout@v4
       - name: Assemble site
         run: |
-          cp install.sh install.ps1 site/
+          cp install.sh install.ps1 CHANGELOG.md site/
           mkdir -p site/catalog && cp catalog/apps.json site/catalog/apps.json
       - uses: actions/configure-pages@v5
       - uses: actions/upload-pages-artifact@v3

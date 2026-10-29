@@ -1,0 +1,84 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Changelog — AI WorkStudio</title>
+<meta name="title-es" content="Changelog — AI WorkStudio">
+<meta name="title-en" content="Changelog — AI WorkStudio">
+<meta name="description" content="Todas las versiones de AI WorkStudio y qué trae cada una.">
+<link rel="icon" href="assets/logo.svg" type="image/svg+xml">
+<link rel="alternate" type="text/plain" href="llms.txt" title="llms.txt">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,400..700;1,9..144,400..600&family=JetBrains+Mono:wght@400;600&family=Manrope:wght@400..800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="assets/site.css">
+</head>
+<body>
+
+<nav class="top">
+  <div class="wrap">
+    <a class="brand" href="./"><img src="assets/logo.svg" alt="">AI WorkStudio</a>
+    <div class="links">
+      <a href="./#apps">Apps</a>
+      <a href="./#mcp">MCP</a>
+      <a href="docs.html">Docs</a>
+      <a href="https://github.com/Lautaro005/workstudio">GitHub</a>
+      <span class="lang" role="group" aria-label="Idioma / Language"><button data-set-lang="es">ES</button><button data-set-lang="en">EN</button></span>
+      <a class="btn sm primary" href="./#instalar"><span data-l="es">Instalar</span><span data-l="en">Install</span></a>
+    </div>
+  </div>
+</nav>
+
+<div class="wrap narrow page-head">
+  <div class="kicker">Changelog</div>
+  <h1><span data-l="es">Qué hay de nuevo</span><span data-l="en">What's new</span></h1>
+  <p class="sub"><span data-l="es">Cada versión de AI WorkStudio. Los instaladores están en <a href="https://github.com/Lautaro005/workstudio/releases">GitHub Releases</a>.</span><span data-l="en">Every AI WorkStudio release. Installers are on <a href="https://github.com/Lautaro005/workstudio/releases">GitHub Releases</a>.</span></p>
+</div>
+<div class="wrap narrow" style="padding-bottom:96px">
+<article class="prose" id="changelog"><p class="muted"><span data-l="es">Cargando…</span><span data-l="en">Loading…</span></p></article>
+</div>
+<script>
+// Renders CHANGELOG.md (copied next to this page on deploy, or read from GitHub).
+(() => {
+  const esc = (s) => s.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
+  const inline = (s) => esc(s).replace(/`([^`]+)`/g, "<code>$1</code>").replace(/\*\*([^*]+)\*\*/g, "<b>$1</b>").replace(/\[([^\]]+)\]\(([^)]+)\)/g, '<a href="$2">$1</a>');
+  const render = (md) => {
+    let html = "", list = false;
+    for (const line of md.split("\n")) {
+      if (/^# /.test(line)) continue;
+      const li = line.match(/^\s*[-*] (.*)/);
+      if (li) { if (!list) { html += "<ul>"; list = true; } html += `<li>${inline(li[1])}</li>`; continue; }
+      if (list && line.trim() === "") { html += "</ul>"; list = false; continue; }
+      if (list && /^\s{2,}\S/.test(line)) { html = html.replace(/<\/li>$/, " " + inline(line.trim()) + "</li>"); continue; }
+      if (list) { html += "</ul>"; list = false; }
+      const h = line.match(/^(#{2,4}) (.*)/);
+      if (h) { html += `<h${h[1].length}>${inline(h[2])}</h${h[1].length}>`; continue; }
+      if (line.trim()) html += `<p>${inline(line)}</p>`;
+    }
+    if (list) html += "</ul>";
+    return html;
+  };
+  const el = document.getElementById("changelog");
+  fetch("CHANGELOG.md").then((r) => (r.ok ? r.text() : Promise.reject()))
+    .catch(() => fetch("https://raw.githubusercontent.com/Lautaro005/workstudio/main/CHANGELOG.md").then((r) => r.text()))
+    .then((md) => (el.innerHTML = render(md)))
+    .catch(() => (el.innerHTML = '<p><a href="https://github.com/Lautaro005/workstudio/blob/main/CHANGELOG.md">CHANGELOG.md</a></p>'));
+})();
+</script>
+
+<footer>
+  <div class="wrap">
+    <div class="grid">
+      <div><a class="brand" href="./"><img src="assets/logo.svg" alt="">AI WorkStudio</a><p style="margin-top:12px;max-width:260px"><span data-l="es">Tus IAs locales en un solo estudio.</span><span data-l="en">Your local AI apps in one studio.</span></p></div>
+      <div><h5><span data-l="es">Producto</span><span data-l="en">Product</span></h5><ul><li><a href="docs.html">Docs</a></li><li><a href="changelog.html">Changelog</a></li><li><a href="https://github.com/Lautaro005/workstudio/releases"><span data-l="es">Descargas</span><span data-l="en">Downloads</span></a></li><li><a href="llms.txt">llms.txt</a></li></ul></div>
+      <div><h5><span data-l="es">La familia</span><span data-l="en">The family</span></h5><ul><li><a href="https://lautaro005.github.io/brain/">brain</a></li><li><a href="https://lautaro005.github.io/opencue/">OpenCue</a></li><li><a href="https://lautaro005.github.io/lumina/">Lumina</a></li></ul></div>
+      <div><h5><span data-l="es">Proyecto</span><span data-l="en">Project</span></h5><ul><li><a href="https://github.com/Lautaro005/workstudio">GitHub</a></li><li><a href="privacy.html"><span data-l="es">Privacidad</span><span data-l="en">Privacy policy</span></a></li><li><a href="https://github.com/Lautaro005/workstudio/blob/main/LICENSE"><span data-l="es">Licencia</span><span data-l="en">License</span></a></li></ul></div>
+    </div>
+    <div class="legal"><span>© 2026 Lautaro Silva · Apache-2.0 + Commons Clause</span><span class="lang" role="group" aria-label="Idioma / Language"><button data-set-lang="es">Español</button><button data-set-lang="en">English</button></span></div>
+  </div>
+</footer>
+
+<script src="assets/site.js"></script>
+</body>
+</html>

@@ -18,7 +18,29 @@ const ICONS: Record<string, typeof Box> = {
   box: Box,
 };
 
+/** Logos in public/brands. "mono" ones are black and get inverted in dark mode; "tile" ones are full app icons. */
+export const BRANDS: Record<string, { src: string; kind: "mono" | "tile" }> = {
+  anthropic: { src: "brands/anthropic.png", kind: "mono" },
+  openai: { src: "brands/openai.png", kind: "mono" },
+  gemini: { src: "brands/gemini.png", kind: "mono" },
+  ollama: { src: "brands/ollama.png", kind: "mono" },
+  grok: { src: "brands/grok.png", kind: "mono" },
+  lmstudio: { src: "brands/lmstudio.png", kind: "mono" },
+  openrouter: { src: "brands/openrouter.svg", kind: "mono" },
+  muse: { src: "brands/muse.png", kind: "mono" },
+  cheaperinference: { src: "brands/cheaperinference.png", kind: "mono" },
+  lumina: { src: "brands/lumina.svg", kind: "tile" },
+  opencue: { src: "brands/opencue.svg", kind: "tile" },
+};
+
+export function BrandImg({ name, className = "" }: { name: string; className?: string }) {
+  const b = BRANDS[name];
+  if (!b) return null;
+  return <img className={`brand-img ${b.kind} ${className}`} src={b.src} alt="" draggable={false} />;
+}
+
 export function AppIcon({ name, size }: { name: string; size?: number }) {
+  if (BRANDS[name]) return <BrandImg name={name} />;
   const I = ICONS[name] ?? Box;
   return <I size={size} strokeWidth={1.9} />;
 }
@@ -28,7 +50,7 @@ export const tone = (c: string) => (COLORS.includes(c) ? c : "ink");
 
 export function Glyph({ icon, color, className = "", style }: { icon: string; color: string; className?: string; style?: React.CSSProperties }) {
   return (
-    <span className={`glyph ${tone(color)} ${className}`} style={style}>
+    <span className={`glyph ${tone(color)} ${BRANDS[icon] ? `has-brand ${BRANDS[icon].kind}` : ""} ${className}`} style={style}>
       <AppIcon name={icon} />
     </span>
   );
@@ -159,13 +181,13 @@ export function NoteIcon({ kind, app }: { kind: string; app: string }) {
 
 export const termLook = (profile: string): { icon: string; color: string } => {
   const map: Record<string, [string, string]> = {
-    claude: ["sparkles", "clay"],
-    codex: ["cpu", "ink"],
-    gemini: ["gem", "mustard"],
+    claude: ["anthropic", "clay"],
+    codex: ["openai", "ink"],
+    gemini: ["gemini", "mustard"],
     "cursor-agent": ["cursor", "ink"],
     brain: ["brain", "clay"],
-    lumina: ["notebook", "mustard"],
-    opencue: ["bot", "olive"],
+    lumina: ["lumina", "mustard"],
+    opencue: ["opencue", "olive"],
     shell: ["terminal", "ink"],
   };
   const [icon, color] = map[profile] ?? ["terminal", "ink"];

@@ -140,7 +140,7 @@ export const useStore = create<State>((set, get) => ({
       call<AppInfo>("app_info"),
     ]);
     set({
-      apps: cat.apps,
+      apps: withBrands(cat.apps),
       clis: cat.clis,
       statuses: Object.fromEntries(sts.map((s) => [s.id, s])),
       notes,
@@ -193,7 +193,7 @@ export const useStore = create<State>((set, get) => ({
 
   async reloadCatalog() {
     const cat = await call<{ apps: AppDef[]; clis: CliDef[] }>("get_catalog");
-    set({ apps: cat.apps, clis: cat.clis });
+    set({ apps: withBrands(cat.apps), clis: cat.clis });
     await get().refresh(true);
   },
 
@@ -320,5 +320,9 @@ export const useStore = create<State>((set, get) => ({
     set({ focusPane: id });
   },
 }));
+
+/** Lumina and OpenCue show their own logos. */
+const BRAND_APPS = ["lumina", "opencue"];
+const withBrands = (apps: AppDef[]) => apps.map((a) => (BRAND_APPS.includes(a.id) ? { ...a, icon: a.id } : a));
 
 export const appName = (apps: AppDef[], id: string) => apps.find((a) => a.id === id)?.name ?? (id || "WorkStudio");

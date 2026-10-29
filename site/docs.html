@@ -1,0 +1,518 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Docs — AI WorkStudio</title>
+<meta name="title-es" content="Docs — AI WorkStudio">
+<meta name="title-en" content="Docs — AI WorkStudio">
+<meta name="description" content="Todo lo que hay que saber de AI WorkStudio: instalación, apps, chat, terminales, servidor MCP, actualizaciones, archivos y solución de problemas.">
+<link rel="icon" href="assets/logo.svg" type="image/svg+xml">
+<link rel="alternate" type="text/plain" href="llms.txt" title="llms.txt">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,400..700;1,9..144,400..600&family=JetBrains+Mono:wght@400;600&family=Manrope:wght@400..800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="assets/site.css">
+</head>
+<body>
+
+<nav class="top">
+  <div class="wrap">
+    <a class="brand" href="./"><img src="assets/logo.svg" alt="">AI WorkStudio</a>
+    <div class="links">
+      <a href="./#apps">Apps</a>
+      <a href="./#mcp">MCP</a>
+      <a href="docs.html">Docs</a>
+      <a href="https://github.com/Lautaro005/workstudio">GitHub</a>
+      <span class="lang" role="group" aria-label="Idioma / Language"><button data-set-lang="es">ES</button><button data-set-lang="en">EN</button></span>
+      <a class="btn sm primary" href="./#instalar"><span data-l="es">Instalar</span><span data-l="en">Install</span></a>
+    </div>
+  </div>
+</nav>
+
+<div class="wrap page-head">
+  <div class="kicker">Docs</div>
+  <h1><span data-l="es">Todo lo que hay que saber.</span><span data-l="en">Everything you need to know.</span></h1>
+  <p class="sub"><span data-l="es">Cómo se instala, qué hace cada parte, dónde guarda las cosas y qué hacer si algo falla.</span><span data-l="en">How to install it, what each part does, where it keeps things and what to do if something fails.</span></p>
+</div>
+
+<div class="wrap docs">
+  <aside class="toc">
+    <a href="#que-es"><span data-l="es">Qué es</span><span data-l="en">What it is</span></a>
+    <a href="#instalar"><span data-l="es">Instalar</span><span data-l="en">Install</span></a>
+    <a href="#primeros-pasos"><span data-l="es">Primeros pasos</span><span data-l="en">First steps</span></a>
+    <a href="#apps">Apps</a>
+    <a href="#sumar-apps"><span data-l="es">Sumar apps</span><span data-l="en">Adding apps</span></a>
+    <a href="#chat">Chat</a>
+    <a href="#terminales"><span data-l="es">Terminales</span><span data-l="en">Terminals</span></a>
+    <a href="#mcp"><span data-l="es">Servidor MCP</span><span data-l="en">MCP server</span></a>
+    <a href="#avisos"><span data-l="es">Avisos</span><span data-l="en">Notifications</span></a>
+    <a href="#actualizaciones"><span data-l="es">Actualizaciones</span><span data-l="en">Updates</span></a>
+    <a href="#ajustes"><span data-l="es">Ajustes</span><span data-l="en">Settings</span></a>
+    <a href="#archivos"><span data-l="es">Archivos</span><span data-l="en">Files</span></a>
+    <a href="#comandos"><span data-l="es">Comandos</span><span data-l="en">Commands</span></a>
+    <a href="#problemas"><span data-l="es">Problemas</span><span data-l="en">Troubleshooting</span></a>
+    <a href="#desinstalar"><span data-l="es">Desinstalar</span><span data-l="en">Uninstall</span></a>
+  </aside>
+
+  <article class="prose">
+
+<section id="que-es">
+<div data-l="es">
+<h2>Qué es</h2>
+<p>AI WorkStudio es una app de escritorio para macOS, Windows y Linux que junta tus apps de IA locales — <a href="https://lautaro005.github.io/brain/">brain</a>, <a href="https://lautaro005.github.io/lumina/">Lumina</a>, <a href="https://lautaro005.github.io/opencue/">OpenCue</a> y las que sumes — en un solo lugar. Muestra su estado, sus avisos y sus versiones, las arranca y las detiene, junta sus herramientas en un solo servidor MCP y suma un chat y hasta seis terminales.</p>
+<p>Cada app sigue siendo independiente: WorkStudio no las reemplaza, las encuentra y las conecta. Todo corre en tu compu.</p>
+</div>
+<div data-l="en">
+<h2>What it is</h2>
+<p>AI WorkStudio is a desktop app for macOS, Windows and Linux that brings your local AI apps — <a href="https://lautaro005.github.io/brain/">brain</a>, <a href="https://lautaro005.github.io/lumina/">Lumina</a>, <a href="https://lautaro005.github.io/opencue/">OpenCue</a> and any you add — into one place. It shows their status, notifications and versions, starts and stops them, merges their tools into a single MCP server and adds a chat and up to six terminals.</p>
+<p>Each app stays independent: WorkStudio doesn't replace them, it finds and connects them. Everything runs on your computer.</p>
+</div>
+</section>
+
+<section id="instalar">
+<div data-l="es">
+<h2>Instalar</h2>
+<h3>macOS y Linux</h3>
+<pre>curl -fsSL https://raw.githubusercontent.com/Lautaro005/workstudio/main/install.sh | sh</pre>
+<p>Opciones (después de <code>sh -s --</code>):</p>
+<div class="table-scroll"><table>
+<tr><th>Opción</th><th>Qué hace</th></tr>
+<tr><td><code>--all</code></td><td>Instala también brain, Lumina y OpenCue.</td></tr>
+<tr><td><code>--with brain,lumina</code></td><td>Instala solo esas apps además de WorkStudio.</td></tr>
+<tr><td><code>--user</code></td><td>macOS: instala en <code>~/Applications</code> en vez de <code>/Applications</code>.</td></tr>
+<tr><td><code>--build</code></td><td>Compila desde el código en vez de bajar una versión (necesita git, Node y Rust).</td></tr>
+<tr><td><code>--uninstall</code></td><td>Quita WorkStudio; tus datos en <code>~/.workstudio</code> quedan.</td></tr>
+</table></div>
+<p>En macOS la app queda en <code>/Applications/AI WorkStudio.app</code>; en Linux en <code>~/.local/opt/workstudio</code> con una entrada en el menú de apps. En los dos casos se agrega el comando <code>workstudio</code> en <code>~/.local/bin</code>. No hace falta sudo.</p>
+<h3>Windows</h3>
+<p>En PowerShell:</p>
+<pre>irm https://raw.githubusercontent.com/Lautaro005/workstudio/main/install.ps1 | iex</pre>
+<p>Con las tres apps:</p>
+<pre>$env:WORKSTUDIO_WITH = "brain,lumina,opencue"; irm https://raw.githubusercontent.com/Lautaro005/workstudio/main/install.ps1 | iex</pre>
+<p>Se instala para tu usuario, con acceso en el menú Inicio y el comando <code>workstudio</code>.</p>
+<h3>Instaladores</h3>
+<p>También podés bajar el instalador de <a href="https://github.com/Lautaro005/workstudio/releases/latest">la última versión</a>: <code>.dmg</code> universal para macOS, <code>.exe</code> o <code>.msi</code> para Windows y <code>.AppImage</code>, <code>.deb</code> o <code>.rpm</code> para Linux.</p>
+</div>
+<div data-l="en">
+<h2>Install</h2>
+<h3>macOS and Linux</h3>
+<pre>curl -fsSL https://raw.githubusercontent.com/Lautaro005/workstudio/main/install.sh | sh</pre>
+<p>Options (after <code>sh -s --</code>):</p>
+<div class="table-scroll"><table>
+<tr><th>Option</th><th>What it does</th></tr>
+<tr><td><code>--all</code></td><td>Also installs brain, Lumina and OpenCue.</td></tr>
+<tr><td><code>--with brain,lumina</code></td><td>Installs only those apps besides WorkStudio.</td></tr>
+<tr><td><code>--user</code></td><td>macOS: installs into <code>~/Applications</code> instead of <code>/Applications</code>.</td></tr>
+<tr><td><code>--build</code></td><td>Builds from source instead of downloading a release (needs git, Node and Rust).</td></tr>
+<tr><td><code>--uninstall</code></td><td>Removes WorkStudio; your data in <code>~/.workstudio</code> stays.</td></tr>
+</table></div>
+<p>On macOS the app goes to <code>/Applications/AI WorkStudio.app</code>; on Linux to <code>~/.local/opt/workstudio</code> with an app menu entry. Both add the <code>workstudio</code> command in <code>~/.local/bin</code>. No sudo needed.</p>
+<h3>Windows</h3>
+<p>In PowerShell:</p>
+<pre>irm https://raw.githubusercontent.com/Lautaro005/workstudio/main/install.ps1 | iex</pre>
+<p>With the three apps:</p>
+<pre>$env:WORKSTUDIO_WITH = "brain,lumina,opencue"; irm https://raw.githubusercontent.com/Lautaro005/workstudio/main/install.ps1 | iex</pre>
+<p>It installs for your user, with a Start menu entry and the <code>workstudio</code> command.</p>
+<h3>Installers</h3>
+<p>You can also download the installer from <a href="https://github.com/Lautaro005/workstudio/releases/latest">the latest release</a>: a universal <code>.dmg</code> for macOS, <code>.exe</code> or <code>.msi</code> for Windows and <code>.AppImage</code>, <code>.deb</code> or <code>.rpm</code> for Linux.</p>
+</div>
+</section>
+
+<section id="primeros-pasos">
+<div data-l="es">
+<h2>Primeros pasos</h2>
+<ol>
+<li><b>Abrí WorkStudio.</b> En Inicio ves cada app con su estado (corriendo, detenida o no instalada) y su versión.</li>
+<li><b>Instalá lo que falte.</b> Las apps que no tenés muestran un botón Instalar, que corre su instalador en una terminal para que veas cada paso.</li>
+<li><b>Abrí una app.</b> Abrir la inicia si hace falta. brain y Lumina se pueden usar dentro de WorkStudio; OpenCue abre su propia ventana.</li>
+<li><b>Conectá tus agentes.</b> En MCP → Clientes, conectá Claude Code, Claude Desktop, Codex, Cursor, Gemini o Windsurf con un clic.</li>
+<li><b>Probá el chat o una terminal.</b> Los dos ya traen las herramientas de tus apps.</li>
+</ol>
+<p>Atajo útil: <code>⌘K</code> (o <code>Ctrl K</code>) abre una paleta para abrir apps, iniciarlas o detenerlas, abrir terminales y buscar actualizaciones.</p>
+</div>
+<div data-l="en">
+<h2>First steps</h2>
+<ol>
+<li><b>Open WorkStudio.</b> Home shows each app with its status (running, stopped or not installed) and version.</li>
+<li><b>Install what's missing.</b> Apps you don't have show an Install button, which runs their installer in a terminal so you see every step.</li>
+<li><b>Open an app.</b> Open starts it if needed. brain and Lumina can be used inside WorkStudio; OpenCue opens its own window.</li>
+<li><b>Connect your agents.</b> In MCP → Clients, connect Claude Code, Claude Desktop, Codex, Cursor, Gemini or Windsurf in one click.</li>
+<li><b>Try the chat or a terminal.</b> Both already come with your apps' tools.</li>
+</ol>
+<p>Handy shortcut: <code>⌘K</code> (or <code>Ctrl K</code>) opens a palette to open, start or stop apps, open terminals and check for updates.</p>
+</div>
+</section>
+
+<section id="apps">
+<div data-l="es">
+<h2>Apps</h2>
+<div class="table-scroll"><table>
+<tr><th>App</th><th>Qué es</th><th>Dónde corre</th><th>Herramientas MCP</th></tr>
+<tr><td><b>brain</b></td><td>Memoria compartida para tus IAs: perfil, memorias, notas, skills, búsqueda híbrida, grafo y Fact check.</td><td><code>http://127.0.0.1:8765</code>, dentro de WorkStudio</td><td><code>brain__*</code></td></tr>
+<tr><td><b>Lumina</b></td><td>Notas de reuniones y clases: transcribe en tu compu y escribe notas con resumen.</td><td><code>http://127.0.0.1:47770</code>, dentro de WorkStudio</td><td><code>lumina__*</code></td></tr>
+<tr><td><b>OpenCue</b></td><td>Agentes personales con memoria, email, computadora propia y automatizaciones.</td><td>Su propia ventana</td><td><code>opencue__*</code> (elegís el agente en MCP)</td></tr>
+</table></div>
+<p>Cada app tiene una página de detalles con su estado, versión, comandos para iniciarla o actualizarla y su servidor MCP. Para brain y Lumina podés marcar que se abran directamente dentro de WorkStudio; usan las mismas preferencias que su propia ventana.</p>
+<p>El lanzador de apps (el ícono de grilla arriba a la derecha) abre cualquier app con un clic.</p>
+</div>
+<div data-l="en">
+<h2>Apps</h2>
+<div class="table-scroll"><table>
+<tr><th>App</th><th>What it is</th><th>Where it runs</th><th>MCP tools</th></tr>
+<tr><td><b>brain</b></td><td>Shared memory for your AIs: profile, memories, notes, skills, hybrid search, graph and Fact check.</td><td><code>http://127.0.0.1:8765</code>, inside WorkStudio</td><td><code>brain__*</code></td></tr>
+<tr><td><b>Lumina</b></td><td>Meeting and class notes: transcribes on your computer and writes notes with a summary.</td><td><code>http://127.0.0.1:47770</code>, inside WorkStudio</td><td><code>lumina__*</code></td></tr>
+<tr><td><b>OpenCue</b></td><td>Personal agents with memory, email, their own computer and automations.</td><td>Its own window</td><td><code>opencue__*</code> (pick the agent in MCP)</td></tr>
+</table></div>
+<p>Each app has a details page with its status, version, commands to start or update it and its MCP server. brain and Lumina can be set to open straight inside WorkStudio; they use the same preferences as their own window.</p>
+<p>The app launcher (the grid icon at the top right) opens any app in one click.</p>
+</div>
+</section>
+
+<section id="sumar-apps">
+<div data-l="es">
+<h2>Sumar apps</h2>
+<p>Cualquier app local con interfaz web, un comando o un servidor MCP se suma agregándola a la lista <code>apps</code> de <code>~/.workstudio/apps.json</code>. Si usa el mismo <code>id</code> que una app del catálogo, la tuya gana.</p>
+<pre>{
+  "apps": [
+    {
+      "id": "mi-app",
+      "name": "Mi App",
+      "tagline": "Qué hace",
+      "kind": "web",
+      "url": "http://127.0.0.1:9000/",
+      "health": { "url": "http://127.0.0.1:9000/api/health", "contains": "ok" },
+      "cli": "mi-app",
+      "repo": "yo/mi-app",
+      "start":   { "unix": "mi-app serve",  "windows": "mi-app serve" },
+      "install": { "unix": "curl -fsSL https://example.com/install.sh | sh", "windows": "irm https://example.com/install.ps1 | iex" },
+      "update":  { "unix": "mi-app update", "windows": "mi-app update" },
+      "mcp": { "command": "{cli}", "args": ["mcp"] }
+    }
+  ]
+}</pre>
+<div class="table-scroll"><table>
+<tr><th>Campo</th><th>Para qué sirve</th></tr>
+<tr><td><code>kind</code></td><td><code>web</code> (se abre dentro) o <code>native</code> (abre su propia ventana).</td></tr>
+<tr><td><code>url</code>, <code>health</code></td><td>Dónde está la app y cómo saber si está corriendo (la respuesta debe contener <code>contains</code>).</td></tr>
+<tr><td><code>cli</code></td><td>El comando de la app; sirve para detectar si está instalada.</td></tr>
+<tr><td><code>repo</code></td><td>Repositorio de GitHub para ver versiones nuevas.</td></tr>
+<tr><td><code>start</code>, <code>install</code>, <code>update</code></td><td>Comandos por sistema (<code>unix</code> y <code>windows</code>).</td></tr>
+<tr><td><code>mcp</code></td><td>Su servidor MCP. Valores que se reemplazan: <code>{cli}</code> (ruta completa del comando), <code>{home}</code> (su carpeta), <code>{uv}</code> y <code>{ws}</code> (<code>~/.workstudio</code>).</td></tr>
+</table></div>
+<p>El catálogo de la familia está en <a href="catalog/apps.json">catalog/apps.json</a> y sirve de ejemplo completo.</p>
+</div>
+<div data-l="en">
+<h2>Adding apps</h2>
+<p>Any local app with a web interface, a command or an MCP server joins by adding it to the <code>apps</code> list in <code>~/.workstudio/apps.json</code>. If it uses the same <code>id</code> as a catalog app, yours wins.</p>
+<pre>{
+  "apps": [
+    {
+      "id": "my-app",
+      "name": "My App",
+      "tagline": "What it does",
+      "kind": "web",
+      "url": "http://127.0.0.1:9000/",
+      "health": { "url": "http://127.0.0.1:9000/api/health", "contains": "ok" },
+      "cli": "my-app",
+      "repo": "me/my-app",
+      "start":   { "unix": "my-app serve",  "windows": "my-app serve" },
+      "install": { "unix": "curl -fsSL https://example.com/install.sh | sh", "windows": "irm https://example.com/install.ps1 | iex" },
+      "update":  { "unix": "my-app update", "windows": "my-app update" },
+      "mcp": { "command": "{cli}", "args": ["mcp"] }
+    }
+  ]
+}</pre>
+<div class="table-scroll"><table>
+<tr><th>Field</th><th>What it's for</th></tr>
+<tr><td><code>kind</code></td><td><code>web</code> (opens inside) or <code>native</code> (opens its own window).</td></tr>
+<tr><td><code>url</code>, <code>health</code></td><td>Where the app lives and how to tell it's running (the response must contain <code>contains</code>).</td></tr>
+<tr><td><code>cli</code></td><td>The app's command; used to detect whether it's installed.</td></tr>
+<tr><td><code>repo</code></td><td>GitHub repository used to check for new versions.</td></tr>
+<tr><td><code>start</code>, <code>install</code>, <code>update</code></td><td>Commands per system (<code>unix</code> and <code>windows</code>).</td></tr>
+<tr><td><code>mcp</code></td><td>Its MCP server. Placeholders: <code>{cli}</code> (full path of the command), <code>{home}</code> (its folder), <code>{uv}</code> and <code>{ws}</code> (<code>~/.workstudio</code>).</td></tr>
+</table></div>
+<p>The family catalog lives in <a href="catalog/apps.json">catalog/apps.json</a> and works as a full example.</p>
+</div>
+</section>
+
+<section id="chat">
+<div data-l="es">
+<h2>Chat</h2>
+<p>Un chat sobre los modelos que ya tenés. Elegís el modelo arriba y, con las pastillas, qué herramientas puede usar: <b>brain</b>, <b>Lumina</b> y <b>Web</b> (búsqueda y lectura de páginas propias de WorkStudio).</p>
+<div class="table-scroll"><table>
+<tr><th>Modelo</th><th>Cuáles aparecen</th><th>Cómo corre</th></tr>
+<tr><td>Claude Code</td><td>Opus, Sonnet y Haiku <i>latest</i>, y las versiones: Opus 5.5, Sonnet 5.5, Haiku 5.5, Fable 5.1, Opus 5, Sonnet 5, Opus 4.8 a 4.5, Sonnet 4.6 y 4.5, Haiku 4.5.</td><td><code>claude -p</code> con tu sesión, solo el servidor <code>workstudio</code> y sin herramientas propias.</td></tr>
+<tr><td>Codex</td><td>El predeterminado, un <i>latest</i> por familia (Luna, Sol, Terra…) y cada versión: los que lista tu cuenta en <code>~/.codex/models_cache.json</code> primero y después los demás que conoce Codex.</td><td><code>codex exec --json</code> en modo solo lectura, con <code>workstudio</code> pasado con <code>-c</code>.</td></tr>
+<tr><td>Gemini</td><td>El de Gemini CLI.</td><td><code>gemini -p</code> en una carpeta con solo <code>workstudio</code>.</td></tr>
+<tr><td>Ollama</td><td>Cada modelo instalado (sin los de embeddings).</td><td><code>/api/chat</code>; WorkStudio ejecuta las herramientas.</td></tr>
+<tr><td>Agentes de OpenCue</td><td>Cada agente.</td><td>Responde el agente con sus propias herramientas (las pastillas no aplican).</td></tr>
+</table></div>
+<p>Solo aparecen los modelos cuyo CLI está instalado. Las conversaciones se guardan en <code>~/.workstudio/chats</code>.</p>
+</div>
+<div data-l="en">
+<h2>Chat</h2>
+<p>A chat over the models you already have. Pick the model at the top and, with the pills, which tools it can use: <b>brain</b>, <b>Lumina</b> and <b>Web</b> (WorkStudio's own search and page reader).</p>
+<div class="table-scroll"><table>
+<tr><th>Model</th><th>What shows up</th><th>How it runs</th></tr>
+<tr><td>Claude Code</td><td>Opus, Sonnet and Haiku <i>latest</i>, plus the versions: Opus 5.5, Sonnet 5.5, Haiku 5.5, Fable 5.1, Opus 5, Sonnet 5, Opus 4.8 to 4.5, Sonnet 4.6 and 4.5, Haiku 4.5.</td><td><code>claude -p</code> with your login, only the <code>workstudio</code> server and no built-in tools.</td></tr>
+<tr><td>Codex</td><td>The default, one <i>latest</i> per family (Luna, Sol, Terra…) and every version: the ones your account lists in <code>~/.codex/models_cache.json</code> first, then the rest Codex knows.</td><td><code>codex exec --json</code> read-only, with <code>workstudio</code> passed with <code>-c</code>.</td></tr>
+<tr><td>Gemini</td><td>Gemini CLI's model.</td><td><code>gemini -p</code> in a folder with only <code>workstudio</code>.</td></tr>
+<tr><td>Ollama</td><td>Every installed model (except embedding ones).</td><td><code>/api/chat</code>; WorkStudio runs the tools.</td></tr>
+<tr><td>OpenCue agents</td><td>Every agent.</td><td>The agent answers with its own tools (pills don't apply).</td></tr>
+</table></div>
+<p>Only models whose CLI is installed show up. Conversations are stored in <code>~/.workstudio/chats</code>.</p>
+</div>
+</section>
+
+<section id="terminales">
+<div data-l="es">
+<h2>Terminales</h2>
+<p>Hasta seis terminales reales a la vez, en grilla. Cada una es una sesión de tu shell. Los perfiles:</p>
+<div class="table-scroll"><table>
+<tr><th>Perfil</th><th>Cómo recibe las herramientas</th></tr>
+<tr><td>Claude Code</td><td><code>claude --mcp-config ~/.workstudio/mcp/claude.json</code></td></tr>
+<tr><td>Codex</td><td><code>codex -c mcp_servers.workstudio…</code> (tu <code>config.toml</code> no se toca)</td></tr>
+<tr><td>Gemini CLI</td><td><code>.gemini/settings.json</code> del workspace</td></tr>
+<tr><td>Cursor Agent</td><td><code>.cursor/mcp.json</code> del workspace</td></tr>
+<tr><td>brain, lumina, opencue</td><td>Abren en la carpeta de cada app, con su comando a mano.</td></tr>
+<tr><td>Terminal</td><td>Tu shell de siempre.</td></tr>
+</table></div>
+<p>Los agentes arrancan en <code>~/.workstudio/workspace</code> (se cambia en Ajustes) o en la carpeta que elijas con «En carpeta…». Desde el panel de CLIs instalás o actualizás Claude Code, Codex, Gemini CLI y Cursor Agent.</p>
+</div>
+<div data-l="en">
+<h2>Terminals</h2>
+<p>Up to six real terminals at once, in a grid. Each is a session of your shell. Profiles:</p>
+<div class="table-scroll"><table>
+<tr><th>Profile</th><th>How it gets the tools</th></tr>
+<tr><td>Claude Code</td><td><code>claude --mcp-config ~/.workstudio/mcp/claude.json</code></td></tr>
+<tr><td>Codex</td><td><code>codex -c mcp_servers.workstudio…</code> (your <code>config.toml</code> is untouched)</td></tr>
+<tr><td>Gemini CLI</td><td>The workspace's <code>.gemini/settings.json</code></td></tr>
+<tr><td>Cursor Agent</td><td>The workspace's <code>.cursor/mcp.json</code></td></tr>
+<tr><td>brain, lumina, opencue</td><td>Open in each app's folder, with its command at hand.</td></tr>
+<tr><td>Terminal</td><td>Your usual shell.</td></tr>
+</table></div>
+<p>Agents start in <code>~/.workstudio/workspace</code> (changeable in Settings) or in a folder you pick with "In folder…". The CLIs panel installs or updates Claude Code, Codex, Gemini CLI and Cursor Agent.</p>
+</div>
+</section>
+
+<section id="mcp">
+<div data-l="es">
+<h2>Servidor MCP</h2>
+<p><code>workstudio mcp</code> es un servidor MCP que arranca los servidores de tus apps, junta sus herramientas y reparte cada llamada. Las herramientas se llaman <code>&lt;app&gt;__&lt;herramienta&gt;</code>, por ejemplo <code>brain__search_knowledge</code>. Tus agentes ven un solo servidor en vez de una lista larga.</p>
+<ul>
+<li><code>workstudio mcp --only brain,lumina,web</code> lo limita a esas apps; <code>web</code> suma <code>web__search</code> y <code>web__fetch</code> de WorkStudio.</li>
+<li>Los servidores MCP que agregues en la pestaña Servidores (stdio o http) viajan con él.</li>
+<li>OpenCue expone las herramientas de un agente: elegilo en MCP → Servidores.</li>
+</ul>
+<h3>Conectar clientes</h3>
+<p>En MCP → Clientes conectás cada cliente con un clic:</p>
+<div class="table-scroll"><table>
+<tr><th>Cliente</th><th>Archivo</th></tr>
+<tr><td>Claude Code</td><td><code>~/.claude.json</code></td></tr>
+<tr><td>Claude Desktop</td><td><code>claude_desktop_config.json</code></td></tr>
+<tr><td>Codex</td><td><code>~/.codex/config.toml</code></td></tr>
+<tr><td>Cursor, Gemini, Windsurf</td><td>Su <code>mcp.json</code> o <code>settings.json</code></td></tr>
+</table></div>
+<p>La primera vez guarda una copia <code>.bak-workstudio</code> del archivo. Si ya tenías brain, Lumina u OpenCue sueltos, los saca para que nada aparezca dos veces. Desconectar quita solo lo que puso WorkStudio. La pestaña Config generada muestra el JSON listo para copiar.</p>
+</div>
+<div data-l="en">
+<h2>MCP server</h2>
+<p><code>workstudio mcp</code> is an MCP server that starts your apps' servers, merges their tools and routes each call. Tools are named <code>&lt;app&gt;__&lt;tool&gt;</code>, for example <code>brain__search_knowledge</code>. Your agents see one server instead of a long list.</p>
+<ul>
+<li><code>workstudio mcp --only brain,lumina,web</code> limits it to those apps; <code>web</code> adds WorkStudio's <code>web__search</code> and <code>web__fetch</code>.</li>
+<li>MCP servers you add in the Servers tab (stdio or http) travel with it.</li>
+<li>OpenCue exposes one agent's tools: pick it in MCP → Servers.</li>
+</ul>
+<h3>Connecting clients</h3>
+<p>In MCP → Clients you connect each client in one click:</p>
+<div class="table-scroll"><table>
+<tr><th>Client</th><th>File</th></tr>
+<tr><td>Claude Code</td><td><code>~/.claude.json</code></td></tr>
+<tr><td>Claude Desktop</td><td><code>claude_desktop_config.json</code></td></tr>
+<tr><td>Codex</td><td><code>~/.codex/config.toml</code></td></tr>
+<tr><td>Cursor, Gemini, Windsurf</td><td>Their <code>mcp.json</code> or <code>settings.json</code></td></tr>
+</table></div>
+<p>The first time it keeps a <code>.bak-workstudio</code> copy of the file. If you already had brain, Lumina or OpenCue on their own, it removes them so nothing shows up twice. Disconnecting removes only what WorkStudio added. The Generated config tab shows the JSON ready to copy.</p>
+</div>
+</section>
+
+<section id="avisos">
+<div data-l="es">
+<h2>Avisos</h2>
+<p>El centro de avisos (la campana) y Actividad juntan lo que pasa en tus apps: cambios en el vault de brain, reuniones de Lumina, apps que se inician o se detienen, clientes MCP conectados y versiones nuevas. Si lo activás en Ajustes, también llegan como avisos del sistema.</p>
+</div>
+<div data-l="en">
+<h2>Notifications</h2>
+<p>The notification center (the bell) and Activity collect what happens in your apps: brain vault changes, Lumina meetings, apps that start or stop, connected MCP clients and new versions. If you turn it on in Settings, they also arrive as system notifications.</p>
+</div>
+</section>
+
+<section id="actualizaciones">
+<div data-l="es">
+<h2>Actualizaciones</h2>
+<p>WorkStudio revisa GitHub y npm cada pocas horas (el intervalo se cambia en Ajustes) y te avisa. En Actualizaciones:</p>
+<ul>
+<li><b>WorkStudio</b> se actualiza solo con paquetes firmados; al terminar se reinicia.</li>
+<li><b>Cada app</b> se actualiza con su comando, en una terminal para que veas cada paso.</li>
+<li><b>Los CLIs de agentes</b> (Claude Code, Codex, Gemini CLI, Cursor Agent) se actualizan igual.</li>
+</ul>
+<p>Desde la terminal: <code>workstudio update</code>.</p>
+</div>
+<div data-l="en">
+<h2>Updates</h2>
+<p>WorkStudio checks GitHub and npm every few hours (the interval is in Settings) and tells you. In Updates:</p>
+<ul>
+<li><b>WorkStudio</b> updates itself with signed bundles and restarts when done.</li>
+<li><b>Each app</b> updates with its own command, in a terminal so you see every step.</li>
+<li><b>Agent CLIs</b> (Claude Code, Codex, Gemini CLI, Cursor Agent) update the same way.</li>
+</ul>
+<p>From the terminal: <code>workstudio update</code>.</p>
+</div>
+</section>
+
+<section id="ajustes">
+<div data-l="es">
+<h2>Ajustes</h2>
+<div class="table-scroll"><table>
+<tr><th>Sección</th><th>Qué tiene</th></tr>
+<tr><td>General</td><td>Tu nombre (para el saludo), idioma (español, inglés o el del sistema), tema (claro, oscuro o el del sistema) y cerrar a la bandeja.</td></tr>
+<tr><td>Avisos</td><td>Avisos del sistema y un botón para probarlos.</td></tr>
+<tr><td>Apps</td><td>Qué apps se abren dentro de WorkStudio.</td></tr>
+<tr><td>Terminal</td><td>Tamaño de letra, shell y workspace de los agentes.</td></tr>
+<tr><td>Actualizaciones</td><td>Buscar solo y cada cuánto.</td></tr>
+<tr><td>Acerca de</td><td>Versión, carpeta de datos y código.</td></tr>
+</table></div>
+</div>
+<div data-l="en">
+<h2>Settings</h2>
+<div class="table-scroll"><table>
+<tr><th>Section</th><th>What's in it</th></tr>
+<tr><td>General</td><td>Your name (for the greeting), language (Spanish, English or the system's), theme (light, dark or the system's) and close to the tray.</td></tr>
+<tr><td>Notifications</td><td>System notifications and a button to test them.</td></tr>
+<tr><td>Apps</td><td>Which apps open inside WorkStudio.</td></tr>
+<tr><td>Terminal</td><td>Font size, shell and the agents' workspace.</td></tr>
+<tr><td>Updates</td><td>Check automatically and how often.</td></tr>
+<tr><td>About</td><td>Version, data folder and source code.</td></tr>
+</table></div>
+</div>
+</section>
+
+<section id="archivos">
+<div data-l="es">
+<h2>Archivos</h2>
+<p>Todo lo que guarda WorkStudio vive en <code>~/.workstudio</code> (la variable <code>WORKSTUDIO_HOME</code> lo cambia):</p>
+<div class="table-scroll"><table>
+<tr><th>Archivo</th><th>Qué guarda</th></tr>
+<tr><td><code>settings.json</code></td><td>Tus ajustes.</td></tr>
+<tr><td><code>apps.json</code></td><td>Tus apps propias.</td></tr>
+<tr><td><code>mcp.json</code></td><td>Los servidores MCP que agregaste.</td></tr>
+<tr><td><code>notifications.json</code></td><td>El centro de avisos.</td></tr>
+<tr><td><code>chats/</code></td><td>Las conversaciones del chat.</td></tr>
+<tr><td><code>mcp/</code></td><td>Las configs generadas para los agentes.</td></tr>
+<tr><td><code>workspace/</code></td><td>Donde arrancan los agentes de las terminales.</td></tr>
+<tr><td><code>logs/</code></td><td>Registros para diagnosticar problemas.</td></tr>
+</table></div>
+</div>
+<div data-l="en">
+<h2>Files</h2>
+<p>Everything WorkStudio keeps lives in <code>~/.workstudio</code> (the <code>WORKSTUDIO_HOME</code> variable changes it):</p>
+<div class="table-scroll"><table>
+<tr><th>File</th><th>What it holds</th></tr>
+<tr><td><code>settings.json</code></td><td>Your settings.</td></tr>
+<tr><td><code>apps.json</code></td><td>Your own apps.</td></tr>
+<tr><td><code>mcp.json</code></td><td>MCP servers you added.</td></tr>
+<tr><td><code>notifications.json</code></td><td>The notification center.</td></tr>
+<tr><td><code>chats/</code></td><td>Chat conversations.</td></tr>
+<tr><td><code>mcp/</code></td><td>Configs generated for agents.</td></tr>
+<tr><td><code>workspace/</code></td><td>Where terminal agents start.</td></tr>
+<tr><td><code>logs/</code></td><td>Logs to diagnose problems.</td></tr>
+</table></div>
+</div>
+</section>
+
+<section id="comandos">
+<div data-l="es">
+<h2>Comandos</h2>
+<div class="table-scroll"><table>
+<tr><th>Comando</th><th>Qué hace</th></tr>
+<tr><td><code>workstudio</code></td><td>Abre la app.</td></tr>
+<tr><td><code>workstudio update</code></td><td>Instala la última versión.</td></tr>
+<tr><td><code>workstudio uninstall</code></td><td>Quita WorkStudio (tus datos quedan).</td></tr>
+<tr><td><code>workstudio mcp</code></td><td>Corre el servidor MCP (lo usan los clientes conectados).</td></tr>
+<tr><td><code>workstudio mcp --only brain,web</code></td><td>El servidor MCP con solo esas apps.</td></tr>
+</table></div>
+</div>
+<div data-l="en">
+<h2>Commands</h2>
+<div class="table-scroll"><table>
+<tr><th>Command</th><th>What it does</th></tr>
+<tr><td><code>workstudio</code></td><td>Opens the app.</td></tr>
+<tr><td><code>workstudio update</code></td><td>Installs the latest version.</td></tr>
+<tr><td><code>workstudio uninstall</code></td><td>Removes WorkStudio (your data stays).</td></tr>
+<tr><td><code>workstudio mcp</code></td><td>Runs the MCP server (connected clients use it).</td></tr>
+<tr><td><code>workstudio mcp --only brain,web</code></td><td>The MCP server with only those apps.</td></tr>
+</table></div>
+</div>
+</section>
+
+<section id="problemas">
+<div data-l="es">
+<h2>Problemas frecuentes</h2>
+<h3>macOS dice que la app no se puede abrir</h3>
+<p>Los instaladores todavía no están firmados por Apple. El comando de instalación quita la marca de cuarentena. Si bajaste el <code>.dmg</code> a mano, hacé clic derecho → Abrir la primera vez, o corré <code>xattr -dr com.apple.quarantine "/Applications/AI WorkStudio.app"</code>.</p>
+<h3>Una app figura como detenida pero está abierta</h3>
+<p>WorkStudio la da por corriendo cuando responde su dirección de salud (por ejemplo <code>http://127.0.0.1:8765/api/version</code> para brain). Revisá que use el puerto de siempre.</p>
+<h3>No aparece un modelo en el chat</h3>
+<p>Solo se listan los modelos cuyo CLI está instalado y en el PATH. Instalalo desde Terminales → CLIs y volvé a abrir el chat. Si un modelo de Codex devuelve error, puede que tu cuenta no lo tenga: elegí uno de los que figuran primero.</p>
+<h3>Un cliente MCP no ve las herramientas</h3>
+<p>Reinicialo después de conectarlo. Si sigue igual, desconectalo y conectalo de nuevo desde MCP → Clientes; la copia <code>.bak-workstudio</code> queda al lado del archivo original.</p>
+<h3>Dónde están los registros</h3>
+<p>En <code>~/.workstudio/logs</code>. Si abrís un <a href="https://github.com/Lautaro005/workstudio/issues">issue</a>, sumá lo que diga ahí.</p>
+</div>
+<div data-l="en">
+<h2>Troubleshooting</h2>
+<h3>macOS says the app can't be opened</h3>
+<p>The installers aren't signed by Apple yet. The install command removes the quarantine flag. If you downloaded the <code>.dmg</code> yourself, right-click → Open the first time, or run <code>xattr -dr com.apple.quarantine "/Applications/AI WorkStudio.app"</code>.</p>
+<h3>An app shows as stopped but it's open</h3>
+<p>WorkStudio considers it running when its health address answers (for example <code>http://127.0.0.1:8765/api/version</code> for brain). Check it uses its usual port.</p>
+<h3>A model doesn't show up in the chat</h3>
+<p>Only models whose CLI is installed and on the PATH are listed. Install it from Terminals → CLIs and reopen the chat. If a Codex model returns an error, your account may not have it: pick one of those listed first.</p>
+<h3>An MCP client doesn't see the tools</h3>
+<p>Restart it after connecting. If nothing changes, disconnect and connect it again from MCP → Clients; the <code>.bak-workstudio</code> copy sits next to the original file.</p>
+<h3>Where the logs are</h3>
+<p>In <code>~/.workstudio/logs</code>. If you open an <a href="https://github.com/Lautaro005/workstudio/issues">issue</a>, include what's there.</p>
+</div>
+</section>
+
+<section id="desinstalar">
+<div data-l="es">
+<h2>Desinstalar</h2>
+<pre>workstudio uninstall</pre>
+<p>En Windows también podés quitarla desde Configuración → Aplicaciones. Tus datos en <code>~/.workstudio</code> quedan; borrá esa carpeta si no los querés. Si conectaste clientes MCP, desconectalos antes desde MCP → Clientes.</p>
+</div>
+<div data-l="en">
+<h2>Uninstall</h2>
+<pre>workstudio uninstall</pre>
+<p>On Windows you can also remove it from Settings → Apps. Your data in <code>~/.workstudio</code> stays; delete that folder if you don't want it. If you connected MCP clients, disconnect them first from MCP → Clients.</p>
+</div>
+</section>
+
+  </article>
+</div>
+
+<footer>
+  <div class="wrap">
+    <div class="grid">
+      <div><a class="brand" href="./"><img src="assets/logo.svg" alt="">AI WorkStudio</a><p style="margin-top:12px;max-width:260px"><span data-l="es">Tus IAs locales en un solo estudio.</span><span data-l="en">Your local AI apps in one studio.</span></p></div>
+      <div><h5><span data-l="es">Producto</span><span data-l="en">Product</span></h5><ul><li><a href="docs.html">Docs</a></li><li><a href="changelog.html">Changelog</a></li><li><a href="https://github.com/Lautaro005/workstudio/releases"><span data-l="es">Descargas</span><span data-l="en">Downloads</span></a></li><li><a href="llms.txt">llms.txt</a></li></ul></div>
+      <div><h5><span data-l="es">La familia</span><span data-l="en">The family</span></h5><ul><li><a href="https://lautaro005.github.io/brain/">brain</a></li><li><a href="https://lautaro005.github.io/opencue/">OpenCue</a></li><li><a href="https://lautaro005.github.io/lumina/">Lumina</a></li></ul></div>
+      <div><h5><span data-l="es">Proyecto</span><span data-l="en">Project</span></h5><ul><li><a href="https://github.com/Lautaro005/workstudio">GitHub</a></li><li><a href="privacy.html"><span data-l="es">Privacidad</span><span data-l="en">Privacy policy</span></a></li><li><a href="https://github.com/Lautaro005/workstudio/blob/main/LICENSE"><span data-l="es">Licencia</span><span data-l="en">License</span></a></li></ul></div>
+    </div>
+    <div class="legal"><span>© 2026 Lautaro Silva · Apache-2.0 + Commons Clause</span><span class="lang" role="group" aria-label="Idioma / Language"><button data-set-lang="es">Español</button><button data-set-lang="en">English</button></span></div>
+  </div>
+</footer>
+
+<script src="assets/site.js"></script>
+</body>
+</html>

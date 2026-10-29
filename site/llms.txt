@@ -1,0 +1,33 @@
+# AI WorkStudio
+
+> AI WorkStudio is a free, open-source desktop app (macOS, Windows, Linux) that brings local AI apps — brain, Lumina, OpenCue and any app you add — into one place: their status, notifications and updates, one shared MCP server for your agents, a chat over the models you already have and up to six terminals. Everything runs locally; it has no accounts and no servers of its own.
+
+Key facts:
+
+- Install on macOS/Linux: `curl -fsSL https://raw.githubusercontent.com/Lautaro005/workstudio/main/install.sh | sh` (add `-s -- --all` to also install brain, Lumina and OpenCue).
+- Install on Windows (PowerShell): `irm https://raw.githubusercontent.com/Lautaro005/workstudio/main/install.ps1 | iex`.
+- Commands: `workstudio` (open), `workstudio update`, `workstudio uninstall`, `workstudio mcp [--only brain,lumina,web]`.
+- One MCP server, `workstudio`, carries every app's tools named `<app>__<tool>` (for example `brain__search_knowledge`, `lumina__get_meeting`), plus `web__search` and `web__fetch`. It connects in one click to Claude Code, Claude Desktop, Codex, Cursor, Gemini CLI and Windsurf, keeping a `.bak-workstudio` backup.
+- Chat models: Claude Code (Opus/Sonnet/Haiku latest and versions such as Opus 5.5, Sonnet 5.5, Haiku 5.5, Fable 5.1), Codex (the account's models plus known GPT versions, with a "latest" per family), Gemini CLI, any Ollama model and OpenCue agents.
+- Data lives in `~/.workstudio` (override with `WORKSTUDIO_HOME`). Add your own apps in `~/.workstudio/apps.json`.
+- License: Apache-2.0 with the Commons Clause (free to use, modify and share; not to sell).
+
+## Docs
+
+- [Documentation](https://lautaro005.github.io/workstudio/docs.html): install options, first steps, apps, adding apps, chat, terminals, MCP server, notifications, updates, settings, files, commands, troubleshooting and uninstall (Spanish and English).
+- [Changelog](https://lautaro005.github.io/workstudio/changelog.html): what changed in each version.
+- [Privacy policy](https://lautaro005.github.io/workstudio/privacy.html): what is stored and what it connects to.
+- [README](https://github.com/Lautaro005/workstudio/blob/main/README.md): overview, MCP details and development notes.
+- [App catalog](https://lautaro005.github.io/workstudio/catalog/apps.json): the manifest format used to add apps.
+
+## The family
+
+- [brain](https://lautaro005.github.io/brain/): one local memory (MCP server) for all your AIs — profile, memories, notes, skills, hybrid search, graph, Fact check.
+- [Lumina](https://lautaro005.github.io/lumina/): meeting and class notes that write themselves, with local transcription.
+- [OpenCue](https://lautaro005.github.io/opencue/): personal agents with a face, memory, email, their own computer and automations.
+
+## Optional
+
+- [Source code](https://github.com/Lautaro005/workstudio)
+- [Releases and installers](https://github.com/Lautaro005/workstudio/releases)
+- [Security policy](https://github.com/Lautaro005/workstudio/blob/main/SECURITY.md)

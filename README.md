@@ -6,7 +6,7 @@
 brain remembers, Lumina listens, OpenCue works — WorkStudio brings them together like a workspace:<br>
 status, notifications, updates, shared MCP servers and up to six terminals at once. macOS, Windows and Linux.</p>
 
-<p align="center"><a href="https://lautaro005.github.io/workstudio/">Website</a> · <a href="https://github.com/Lautaro005/workstudio/releases">Releases</a> · <a href="CHANGELOG.md">Changelog</a></p>
+<p align="center"><a href="https://lautaro005.github.io/workstudio/">Website</a> · <a href="https://lautaro005.github.io/workstudio/docs.html">Docs</a> · <a href="https://github.com/Lautaro005/workstudio/releases">Releases</a> · <a href="CHANGELOG.md">Changelog</a></p>
 
 ## Install
 
@@ -71,8 +71,8 @@ HTTP servers you add are passed next to it, as they are. The servers it carries:
 
 | Model | How it runs |
 |---|---|
-| Claude Code | `claude -p` headless with your login, only the `workstudio` server (`--strict-mcp-config`) and no built-in tools |
-| Codex | `codex exec --json`, read-only sandbox, `workstudio` passed with `-c` |
+| Claude Code (Opus / Sonnet / Haiku *latest* and each version: Opus 5.5, Sonnet 5.5, Haiku 5.5, Fable 5.1, Opus 5 … Haiku 4.5) | `claude -p` headless with your login, only the `workstudio` server (`--strict-mcp-config`) and no built-in tools |
+| Codex (default, a *latest* per family and every version: your account's models from `~/.codex/models_cache.json` first, then the GPT versions Codex knows) | `codex exec --json`, read-only sandbox, `workstudio` passed with `-c` |
 | Gemini CLI | `gemini -p` in a folder whose `.gemini/settings.json` has only `workstudio` |
 | Ollama | `/api/chat` from WorkStudio, which runs the tool calls itself |
 | OpenCue agent | OpenCue's `send_to_agent`: the agent answers with its own tools (the pills don't apply) |

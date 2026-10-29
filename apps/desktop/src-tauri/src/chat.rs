@@ -160,29 +160,163 @@ fn ollama_models() -> Vec<Model> {
         .collect()
 }
 
+/// Claude Code takes the aliases (always the newest of each family) and the full model ids.
+const CLAUDE_MODELS: &[(&str, &str)] = &[
+    ("opus", "Opus · latest"),
+    ("sonnet", "Sonnet · latest"),
+    ("haiku", "Haiku · latest"),
+    ("claude-opus-5-5", "Claude Opus 5.5"),
+    ("claude-sonnet-5-5", "Claude Sonnet 5.5"),
+    ("claude-haiku-5-5", "Claude Haiku 5.5"),
+    ("claude-fable-5-1", "Claude Fable 5.1"),
+    ("claude-opus-5", "Claude Opus 5"),
+    ("claude-sonnet-5", "Claude Sonnet 5"),
+    ("claude-opus-4-8", "Claude Opus 4.8"),
+    ("claude-opus-4-7", "Claude Opus 4.7"),
+    ("claude-opus-4-6", "Claude Opus 4.6"),
+    ("claude-sonnet-4-6", "Claude Sonnet 4.6"),
+    ("claude-opus-4-5", "Claude Opus 4.5"),
+    ("claude-sonnet-4-5", "Claude Sonnet 4.5"),
+    ("claude-haiku-4-5", "Claude Haiku 4.5"),
+];
+
+/// Models Codex knows about, used when its own list (~/.codex/models_cache.json) is missing a family.
+const CODEX_KNOWN: &[&str] = &[
+    "gpt-6.1-sol",
+    "gpt-6.1-terra",
+    "gpt-6-sol",
+    "gpt-6-astra",
+    "gpt-6-luna",
+    "gpt-5.6-sol",
+    "gpt-5.6-terra",
+    "gpt-5.6-luna",
+    "gpt-5.5",
+    "gpt-5.3-codex",
+    "gpt-5.2-codex",
+    "gpt-5.1-codex-max",
+];
+
+/// "gpt-6.1-sol" -> "GPT-6.1-Sol"
+fn codex_name(slug: &str) -> String {
+    slug.split('-')
+        .map(|p| match p {
+            "gpt" => "GPT".to_string(),
+            _ => {
+                let mut c = p.chars();
+                match c.next() {
+                    Some(f) if f.is_ascii_alphabetic() => f.to_uppercase().chain(c).collect(),
+                    _ => p.to_string(),
+                }
+            }
+        })
+        .collect::<Vec<_>>()
+        .join("-")
+}
+
+/// Version numbers of a slug, to sort newest first: "gpt-6.1-sol" -> [6, 1].
+fn codex_version(slug: &str) -> Vec<u32> {
+    slug.split('-')
+        .nth(1)
+        .unwrap_or("")
+        .split('.')
+        .map(|n| n.parse().unwrap_or(0))
+        .collect()
+}
+
+/// The family after the version: "gpt-6.1-sol" -> "sol", "gpt-5.3-codex" -> "codex".
+fn codex_family(slug: &str) -> String {
+    slug.splitn(3, '-').nth(2).unwrap_or("").to_string()
+}
+
+/// Codex models: the ones the account lists first, then the other known versions, newest first,
+/// with a "latest" entry per family on top.
+pub fn codex_models(cache: Option<&Value>) -> Vec<(String, String)> {
+    let mut slugs: Vec<(String, String)> = Vec::new();
+    if let Some(list) = cache
+        .and_then(|v| v.get("models"))
+        .and_then(|m| m.as_array())
+    {
+        let mut listed: Vec<&Value> = list
+            .iter()
+            .filter(|m| m.get("visibility").and_then(|x| x.as_str()) == Some("list"))
+            .collect();
+        listed.sort_by_key(|m| m.get("priority").and_then(|x| x.as_i64()).unwrap_or(99));
+        for m in listed {
+            if let Some(slug) = m.get("slug").and_then(|x| x.as_str()) {
+                let name = m
+                    .get("display_name")
+                    .and_then(|x| x.as_str())
+                    .map(String::from)
+                    .unwrap_or_else(|| codex_name(slug));
+                slugs.push((slug.to_string(), name));
+            }
+        }
+    }
+    let account: Vec<String> = slugs.iter().map(|(s, _)| s.clone()).collect();
+    for k in CODEX_KNOWN {
+        if !slugs.iter().any(|(s, _)| s == k) {
+            slugs.push((k.to_string(), codex_name(k)));
+        }
+    }
+    let mut versions = slugs.clone();
+    versions.sort_by_key(|a| std::cmp::Reverse(codex_version(&a.0)));
+    // "latest" prefers what the account lists, then the newest known.
+    let mut ranked: Vec<(usize, &String)> = versions
+        .iter()
+        .map(|(s, _)| (if account.contains(s) { 0 } else { 1 }, s))
+        .collect();
+    ranked.sort_by_key(|(r, _)| *r);
+    let mut latest: Vec<(String, String)> = Vec::new();
+    let mut seen: Vec<String> = Vec::new();
+    for (_, slug) in ranked {
+        let fam = codex_family(slug);
+        if fam.is_empty() || seen.contains(&fam) {
+            continue;
+        }
+        seen.push(fam.clone());
+        let label = codex_name(&format!("gpt-x-{fam}"));
+        let label = label.trim_start_matches("GPT-X-");
+        latest.push((slug.clone(), format!("GPT {label} · latest")));
+    }
+    let mut out = vec![(String::new(), "Codex · predeterminado".to_string())];
+    out.extend(latest.into_iter().map(|(s, n)| (format!("latest:{s}"), n)));
+    out.extend(versions);
+    out
+}
+
 pub fn models() -> Vec<Model> {
     let mut out = Vec::new();
     if crate::shellenv::has("claude") {
-        for (id, name) in [
-            ("sonnet", "Claude Sonnet"),
-            ("opus", "Claude Opus"),
-            ("haiku", "Claude Haiku"),
-        ] {
+        for (id, name) in CLAUDE_MODELS {
             out.push(Model {
                 id: format!("claude:{id}"),
-                name: name.into(),
+                name: (*name).into(),
                 group: "Claude Code".into(),
                 tools: true,
             });
         }
     }
     if crate::shellenv::has("codex") {
-        out.push(Model {
-            id: "codex:".into(),
-            name: "Codex".into(),
-            group: "Codex".into(),
-            tools: true,
-        });
+        let cache = std::fs::read_to_string(
+            crate::paths::home()
+                .join(".codex")
+                .join("models_cache.json"),
+        )
+        .ok()
+        .and_then(|s| serde_json::from_str::<Value>(&s).ok());
+        for (id, name) in codex_models(cache.as_ref()) {
+            let name = if id.is_empty() {
+                crate::settings::tr("Codex · predeterminado", "Codex · default").to_string()
+            } else {
+                name
+            };
+            out.push(Model {
+                id: format!("codex:{id}"),
+                name,
+                group: "Codex".into(),
+                tools: true,
+            });
+        }
     }
     if crate::shellenv::has("gemini") {
         out.push(Model {
@@ -476,6 +610,7 @@ fn run_codex(run: &mut Run, model: &str, tools: &[String], prompt: &str) -> anyh
     let mut cmd = Command::new("codex");
     cmd.args(["exec", "--json", "--skip-git-repo-check", "-s", "read-only"]);
     cmd.args(["-c", "approval_policy=\"never\""]);
+    let model = model.strip_prefix("latest:").unwrap_or(model);
     if !model.is_empty() {
         cmd.args(["-m", model]);
     }
@@ -862,4 +997,33 @@ pub fn send(
 
 pub fn is_running(chat: &str) -> bool {
     running().lock().unwrap().contains_key(chat)
+}
+
+#[cfg(test)]
+mod model_tests {
+    use super::*;
+
+    #[test]
+    fn codex_list_puts_account_models_and_latest_first() {
+        let cache = json!({"models": [
+            {"slug": "gpt-5.6-luna", "display_name": "GPT-5.6-Luna", "visibility": "list", "priority": 9},
+            {"slug": "gpt-6-luna", "display_name": "GPT-6-Luna", "visibility": "list", "priority": 5},
+            {"slug": "gpt-reserve", "visibility": "hide", "priority": 4}
+        ]});
+        let m = codex_models(Some(&cache));
+        assert_eq!(m[0].0, "");
+        assert!(m
+            .iter()
+            .any(|(id, n)| id == "latest:gpt-6-luna" && n == "GPT Luna · latest"));
+        assert!(m.iter().any(|(id, _)| id == "latest:gpt-6.1-sol"));
+        assert!(!m.iter().any(|(id, _)| id.contains("reserve")));
+        assert_eq!(codex_name("gpt-5.1-codex-max"), "GPT-5.1-Codex-Max");
+        // Versions come newest first.
+        let v: Vec<&str> = m
+            .iter()
+            .filter(|(id, _)| !id.is_empty() && !id.starts_with("latest:"))
+            .map(|(id, _)| id.as_str())
+            .collect();
+        assert_eq!(v[0], "gpt-6.1-sol");
+    }
 }

@@ -1,5 +1,19 @@
 # Changelog
 
+## 0.1.1 — 2026-10-29
+
+- **More chat models.** Claude Code lists Opus, Sonnet and Haiku *latest* plus each version (Opus 5.5, Sonnet 5.5,
+  Haiku 5.5, Fable 5.1, Opus 5, Sonnet 5, Opus 4.8–4.5, Sonnet 4.6 and 4.5, Haiku 4.5). Codex lists its default, a
+  *latest* per family (Luna, Sol, Terra, Astra…) and every version: the models your account has in
+  `~/.codex/models_cache.json` first, then the other GPT versions Codex knows.
+- **Real logos** for Claude, OpenAI, Gemini, Ollama, Lumina and OpenCue in the chat, terminals, CLIs, updates, MCP and
+  the sidebar (black logos turn white in dark mode).
+- **Alignment fixes**: app cards on Home keep their status and buttons on the same line; Recent activity, Quick
+  terminal, the MCP page and Updates line their icons up with the card titles; multi-line rows keep the icon at the top.
+- **New website**: lighter, more minimal design; Spanish and English; nav items aligned with the logo and the Install
+  button; the app sketch just says "Good afternoon"; provider logos; new Docs, Privacy policy and Changelog pages; and
+  `llms.txt` for AI agents.
+
 ## 0.1.0 — 2026-10-27
 
 First version.

@@ -3,7 +3,7 @@ import { Terminal as XTerm, type ITheme } from "@xterm/xterm";
 import { FitAddon } from "@xterm/addon-fit";
 import { WebLinksAddon } from "@xterm/addon-web-links";
 import "@xterm/xterm/css/xterm.css";
-import { ChevronDown, Columns3, Download, FolderOpen, LayoutGrid, Maximize2, Minimize2, Plug, Plus, RefreshCw, RotateCw, Rows3, Wrench, X, Loader2 } from "lucide-react";
+import { ChevronDown, Columns3, Download, FolderOpen, LayoutGrid, Maximize2, Minimize2, Plug, Plus, RefreshCw, RotateCw, Rows3, Wrench, X, Loader2 } from "../components/icons";
 import { open as openDialog } from "@tauri-apps/plugin-dialog";
 import { call, here, inTauri, on, type CliStatus } from "../lib/api";
 import { MAX_PANES, PROFILES, useStore, type Pane } from "../lib/store";
@@ -89,6 +89,13 @@ function TerminalPane({ pane, active, onFocus, maximized, onMax, hidden }: { pan
     exits.set(pane.id, (code) => {
       term.write(`\r\n\x1b[2m[${tt("proceso terminado")}${code != null ? ` · ${tt("código")} ${code}` : ""}]\x1b[0m\r\n`);
       patchPane(pane.id, { exited: true });
+      // Shells that don't print the end mark still refresh versions when they close.
+      useStore.getState().commandDone(pane.id, null);
+    });
+    // Installs and updates end with OSC 777 "ws-done;<code>" (see runCommand).
+    const osc = term.parser.registerOscHandler(777, (data) => {
+      if (data.startsWith("ws-done;")) useStore.getState().commandDone(pane.id, Number(data.slice(8)) || 0);
+      return true;
     });
     const sub = term.onData((d) => call("pty_write", { id: pane.id, data: d }));
     call("pty_spawn", {
@@ -114,6 +121,7 @@ function TerminalPane({ pane, active, onFocus, maximized, onMax, hidden }: { pan
     return () => {
       ro.disconnect();
       sub.dispose();
+      osc.dispose();
       el.removeEventListener("mousedown", focusIn);
       writers.delete(pane.id);
       exits.delete(pane.id);
@@ -223,7 +231,7 @@ function NewMenu({ onPick, cli }: { onPick: (p: string) => void; cli: Record<str
 }
 
 function CliDrawer({ onClose, statuses, reload, loading }: { onClose: () => void; statuses: CliStatus[]; reload: () => void; loading: boolean }) {
-  const { clis, updates, runCommand } = useStore();
+  const { clis, updates, runCommand, busy } = useStore();
   const t = useT();
   return (
     <div className="drawer">
@@ -257,8 +265,12 @@ function CliDrawer({ onClose, statuses, reload, loading }: { onClose: () => void
                   {u?.available && u.latest && <span style={{ color: "var(--clay)", fontWeight: 700 }}> → {u.latest}</span>}
                 </div>
               </div>
-              {cmd ? (
-                <button className={`btn sm ${u?.available ? "primary" : ""}`} onClick={() => runCommand(t(s?.installed ? "Actualizar {name}" : "Instalar {name}", { name: c.name }), cmd)}>
+              {busy[`run:${c.id}`] ? (
+                <button className="btn sm" disabled>
+                  <Loader2 className="spin" /> {t(s?.installed ? "Actualizando…" : "Instalando…")}
+                </button>
+              ) : cmd && (!s?.installed || u?.available) ? (
+                <button className={`btn sm ${u?.available ? "primary" : ""}`} onClick={() => runCommand(t(s?.installed ? "Actualizar {name}" : "Instalar {name}", { name: c.name }), cmd, "~", c.id)}>
                   {s?.installed ? <RefreshCw /> : <Download />}
                   {s?.installed ? t("Actualizar") : t("Instalar")}
                 </button>
@@ -289,9 +301,10 @@ export function Terminals({ visible }: { visible: boolean }) {
       .then(setCliStatus)
       .finally(() => setLoadingCli(false));
   };
+  const versionTick = useStore((s) => s.versionTick);
   useEffect(() => {
     if (visible) loadCli();
-  }, [visible]);
+  }, [visible, versionTick]);
   useEffect(() => {
     if (panes.length && !panes.find((p) => p.id === active)) setActive(panes[panes.length - 1].id);
   }, [panes, active]);

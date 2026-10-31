@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { ArrowRight, Check, Download, ExternalLink, Loader2, RefreshCw, Sparkles } from "lucide-react";
+import { ArrowRight, Check, Download, ExternalLink, Loader2, RefreshCw, Sparkles } from "../components/icons";
 import { check, type Update } from "@tauri-apps/plugin-updater";
 import { relaunch } from "@tauri-apps/plugin-process";
 import { inTauri } from "../lib/api";
@@ -54,7 +54,7 @@ export function Updates() {
   const appRows = updates.filter((u) => u.kind === "app");
   const cliRows = updates.filter((u) => u.kind === "cli");
   const updateAll = async () => {
-    for (const u of avail) await runCommand(t("Actualizar {name}", { name: u.name }), u.command);
+    for (const u of avail) await runCommand(t("Actualizar {name}", { name: u.name }), u.command, "~", u.id);
   };
   const s = self.state;
   const row = (u: (typeof updates)[number]) => {
@@ -87,9 +87,13 @@ export function Updates() {
         ) : (
           <span />
         )}
-        {u.command ? (
-          <button className={`btn sm ${u.available ? "primary" : ""}`} onClick={() => runCommand(t(u.installed ? "Actualizar {name}" : "Instalar {name}", { name: u.name }), u.command)}>
-            {u.installed ? <RefreshCw /> : <Download />} {t(u.installed ? (u.available ? "Actualizar" : "Reinstalar") : "Instalar")}
+        {busy[`run:${u.id}`] ? (
+          <button className="btn sm" disabled>
+            <Loader2 className="spin" /> {t(u.installed ? "Actualizando…" : "Instalando…")}
+          </button>
+        ) : u.command && (u.available || !u.installed) ? (
+          <button className={`btn sm ${u.available ? "primary" : ""}`} onClick={() => runCommand(t(u.installed ? "Actualizar {name}" : "Instalar {name}", { name: u.name }), u.command, "~", u.id)}>
+            {u.installed ? <RefreshCw /> : <Download />} {t(u.installed ? "Actualizar" : "Instalar")}
           </button>
         ) : (
           <span />

@@ -43,7 +43,8 @@ command: `workstudio` opens it, `workstudio update` updates it, `workstudio unin
 | **Terminals** | Up to six real terminals in a grid. Profiles for Claude Code, Codex, Gemini CLI, Cursor Agent, brain, lumina and opencue. |
 | **One MCP server** | `workstudio mcp` joins the tools of your apps (and the servers you add) under one server, named `<app>__<tool>`. Terminals and the chat get it automatically; connect Claude Code, Claude Desktop, Codex, Cursor, Gemini or Windsurf with one click (with a backup). |
 | **Notifications** | brain vault changes, Lumina meetings, apps that start or stop, new versions — in the app and as system notifications. |
-| **Updates** | Checks GitHub releases and npm every few hours; updates each app and CLI from a terminal; WorkStudio updates itself (signed bundles). |
+| **Updates** | Checks GitHub releases and npm every few hours; updates each app and CLI from a terminal and reads the installed version again when the command ends; WorkStudio updates itself (signed bundles). |
+| **Models** | Settings → Models: choose which models of each provider show in the chat picker and add your own by ID. |
 
 ### One MCP server
 

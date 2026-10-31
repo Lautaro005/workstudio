@@ -1,4 +1,4 @@
-import { ArrowRight, Download, ExternalLink, MoreHorizontal, Play, Plug, RefreshCw, Square, SquareTerminal, Loader2, MessageSquare } from "lucide-react";
+import { ArrowRight, Download, ExternalLink, MoreHorizontal, Play, Plug, RefreshCw, Square, SquareTerminal, Loader2, MessageSquare } from "../components/icons";
 import { useEffect, useState } from "react";
 import { call, here, type AppDef, type McpServer } from "../lib/api";
 import { PROFILES, useStore } from "../lib/store";
@@ -40,8 +40,8 @@ export function AppCard({ app }: { app: AppDef }) {
           </button>
           {menu.open && (
             <div className="popover menu" style={{ right: 0, top: 30 }}>
-              {st?.installed && (
-                <button className="menu-item" onClick={() => (menu.setOpen(false), runCommand(t("Actualizar {name}", { name: app.name }), here(app.update)))}>
+              {st?.installed && upd && !busy[`run:${app.id}`] && (
+                <button className="menu-item" onClick={() => (menu.setOpen(false), runCommand(t("Actualizar {name}", { name: app.name }), here(app.update), "~", app.id))}>
                   <RefreshCw /> {t("Actualizar")}
                 </button>
               )}
@@ -65,19 +65,25 @@ export function AppCard({ app }: { app: AppDef }) {
       <div className="status">
         <Dot state={state as "on"} /> {label}
         {st?.version && <span className="muted mono">· {st.version}</span>}
-        {upd && <span className="chip mustard">{t("Nueva {v}", { v: upd.latest ?? "" })}</span>}
+        {busy[`run:${app.id}`] ? (
+          <span className="chip">
+            <Loader2 className="spin" /> {t("Actualizando…")}
+          </span>
+        ) : (
+          upd && <span className="chip mustard">{t("Nueva {v}", { v: upd.latest ?? "" })}</span>
+        )}
       </div>
       <div className="actions">
         {!st?.installed ? (
-          <button className="btn primary" onClick={() => runCommand(t("Instalar {name}", { name: app.name }), here(app.install))}>
+          <button className="btn primary" onClick={() => runCommand(t("Instalar {name}", { name: app.name }), here(app.install), "~", app.id)}>
             <Download /> {t("Instalar")}
           </button>
         ) : st.running || app.kind === "native" ? (
-          <button className="btn primary" onClick={() => (app.kind === "native" ? start(app.id) : openApp(app.id))} disabled={!!b}>
+          <button className="btn" onClick={() => (app.kind === "native" ? start(app.id) : openApp(app.id))} disabled={!!b}>
             <ArrowRight /> {t("Abrir")}
           </button>
         ) : (
-          <button className="btn olive" onClick={() => start(app.id).then(() => openApp(app.id))} disabled={!!b}>
+          <button className="btn" onClick={() => start(app.id).then(() => openApp(app.id))} disabled={!!b}>
             {b ? <Loader2 className="spin" /> : <Play />} {t("Iniciar")}
           </button>
         )}
@@ -95,10 +101,11 @@ export function Home() {
   const lang = useLang();
   const [servers, setServers] = useState<McpServer[]>([]);
   const [cliOk, setCliOk] = useState<Record<string, boolean>>({});
+  const versionTick = useStore((s) => s.versionTick);
   useEffect(() => {
     call<McpServer[]>("mcp_list").then(setServers).catch(() => {});
     call<{ id: string; installed: boolean }[]>("clis_status").then((l) => setCliOk(Object.fromEntries(l.map((c) => [c.id, c.installed]))));
-  }, []);
+  }, [versionTick]);
   const running = Object.values(statuses).filter((s) => s.running).length;
   const avail = updates.filter((u) => u.available).length;
   const carried = servers.filter((s) => s.enabled && s.ready && !s.url);

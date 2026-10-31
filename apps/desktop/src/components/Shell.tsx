@@ -1,7 +1,7 @@
 import { useEffect, useMemo, useState } from "react";
 import {
   Bell, ChevronsLeft, ChevronsRight, Grid3x3, House, LayoutGrid, Plug, RefreshCw, Search, Settings as Cog, SquareTerminal, Activity, ArrowUpCircle, Play, Square, CheckCheck, Trash2, MessageSquare,
-} from "lucide-react";
+} from "./icons";
 import { call } from "../lib/api";
 import { appName, PROFILES, useStore } from "../lib/store";
 import { useT } from "../lib/i18n";

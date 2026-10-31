@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { CircleAlert, Download, Link2, Loader2, Plug, Plus, Server, Trash2, Unlink, FileCode2, ListTree } from "lucide-react";
+import { CircleAlert, Download, Link2, Loader2, Plug, Plus, Server, Trash2, Unlink, FileCode2, ListTree } from "../components/icons";
 import { call, type McpClient, type McpServer } from "../lib/api";
 import { useStore } from "../lib/store";
 import { useT } from "../lib/i18n";

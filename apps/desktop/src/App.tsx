@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { CircleAlert, CircleCheck, Info, Download, Brain, Bot, NotebookPen } from "lucide-react";
+import { CircleAlert, CircleCheck, Info, Download, Brain, Bot, NotebookPen } from "./components/icons";
 import { Palette, ROUTE_ORDER, Sidebar, Topbar } from "./components/Shell";
 import { Dot, Glyph, Modal } from "./components/ui";
 import { here } from "./lib/api";
@@ -93,7 +93,7 @@ function Welcome() {
                         <Dot state="on" /> {t("Instalada")}
                       </span>
                     ) : (
-                      <button className="btn sm" onClick={() => (done(), runCommand(t("Instalar {name}", { name: a.name }), here(a.install)))}>
+                      <button className="btn sm" onClick={() => (done(), runCommand(t("Instalar {name}", { name: a.name }), here(a.install), "~", a.id))}>
                         <Download /> {t("Instalar")}
                       </button>
                     )}

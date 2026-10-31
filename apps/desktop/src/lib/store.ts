@@ -1,6 +1,6 @@
 import { create } from "zustand";
 import { tt } from "./i18n";
-import { call, on, type AppDef, type AppInfo, type AppStatus, type CliDef, type LaunchInfo, type Note, type Settings, type UpdateInfo } from "./api";
+import { call, isWindows, on, type AppDef, type AppInfo, type AppStatus, type CliDef, type LaunchInfo, type Note, type Settings, type UpdateInfo } from "./api";
 
 export type Pane = {
   id: string;
@@ -12,6 +12,10 @@ export type Pane = {
   nonce: number;
   exited?: boolean;
   mcp?: number;
+  /** App or CLI this pane installs or updates; versions reload when its command ends. */
+  target?: string;
+  /** The command already reported that it ended. */
+  done?: boolean;
 };
 
 export type Toast = { id: number; kind: "info" | "success" | "error"; text: string };
@@ -43,6 +47,8 @@ type State = {
   chatLive: Record<string, Live>;
   /** Bumps when a chat answer ends, so views reload it from disk. */
   chatTick: number;
+  /** Bumps after an install or update ends and versions were read again. */
+  versionTick: number;
 
   init: () => Promise<void>;
   go: (route: string) => void;
@@ -60,7 +66,8 @@ type State = {
   reloadNotes: () => Promise<void>;
   refreshLaunch: () => Promise<LaunchInfo | null>;
   addPane: (profile: string, opts?: Partial<Pane>) => Promise<string | null>;
-  runCommand: (title: string, command: string, cwd?: string) => Promise<void>;
+  runCommand: (title: string, command: string, cwd?: string, target?: string) => Promise<void>;
+  commandDone: (paneId: string, code: number | null) => Promise<void>;
   closePane: (id: string) => void;
   restartPane: (id: string) => void;
   patchPane: (id: string, patch: Partial<Pane>) => void;
@@ -129,6 +136,7 @@ export const useStore = create<State>((set, get) => ({
   appIntent: null,
   chatLive: {},
   chatTick: 0,
+  versionTick: 0,
 
   async init() {
     const [cat, sts, notes, updates, settings, info] = await Promise.all([
@@ -296,10 +304,34 @@ export const useStore = create<State>((set, get) => ({
     return pane.id;
   },
 
-  async runCommand(title, command, cwd = "~") {
-    const id = await get().addPane("shell", { title, initial: command, cwd });
+  async runCommand(title, command, cwd = "~", target) {
+    // The command ends by printing a private escape (OSC 777) the terminal catches, so we know when to read versions again.
+    const initial = command.trim() ? withDoneMark(command) : command;
+    const id = await get().addPane("shell", { title, initial, cwd, target });
     if (id) {
+      if (target) set((s) => ({ busy: { ...s.busy, [`run:${target}`]: id } }));
       set({ route: "terminals", focusPane: null });
+    }
+  },
+
+  async commandDone(paneId, code) {
+    const pane = get().panes.find((p) => p.id === paneId);
+    if (!pane || pane.done || !pane.target) return;
+    get().patchPane(paneId, { done: true });
+    if (pane.target) {
+      set((s) => {
+        const b = { ...s.busy };
+        delete b[`run:${pane.target}`];
+        return { busy: b };
+      });
+    }
+    if (code === 0) get().toast(tt("{title}: listo", { title: pane.title }), "success");
+    else if (code != null) get().toast(tt("{title}: terminó con error (código {code})", { title: pane.title, code }), "error");
+    try {
+      await get().refresh(true);
+      await get().checkUpdates(false);
+    } finally {
+      set((s) => ({ versionTick: s.versionTick + 1 }));
     }
   },
 
@@ -321,8 +353,14 @@ export const useStore = create<State>((set, get) => ({
   },
 }));
 
-/** Lumina and OpenCue show their own logos. */
-const BRAND_APPS = ["lumina", "opencue"];
+/** Appends the end mark to a command typed into the shell (POSIX shells or PowerShell). */
+function withDoneMark(command: string) {
+  if (isWindows()) return `${command}; $wsOk = $?; Write-Host -NoNewline ("$([char]27)]777;ws-done;" + $(if ($wsOk) { 0 } else { 1 }) + "$([char]7)")`;
+  return `${command}; printf '\\033]777;ws-done;%s\\007' "$?"`;
+}
+
+/** brain, Lumina and OpenCue show their own logos. */
+const BRAND_APPS = ["brain", "lumina", "opencue"];
 const withBrands = (apps: AppDef[]) => apps.map((a) => (BRAND_APPS.includes(a.id) ? { ...a, icon: a.id } : a));
 
 export const appName = (apps: AppDef[], id: string) => apps.find((a) => a.id === id)?.name ?? (id || "WorkStudio");

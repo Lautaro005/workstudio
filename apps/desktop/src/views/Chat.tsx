@@ -1,12 +1,13 @@
 // The chat: talk to Claude Code, Codex, Gemini, a local Ollama model or an OpenCue agent, with pills
 // that hand it brain, Lumina and web search through WorkStudio's MCP server.
 import { useEffect, useMemo, useRef, useState } from "react";
-import { ArrowUp, Bot, Brain, Check, ChevronDown, Globe, Loader2, MessageSquarePlus, NotebookPen, Square, Trash2, Wrench, CircleAlert } from "lucide-react";
+import { ArrowUp, Bot, Brain, Check, ChevronDown, Globe, Loader2, MessageSquarePlus, NotebookPen, Square, Trash2, Wrench, CircleAlert } from "../components/icons";
 import { call, type Chat as ChatT, type ChatModel, type ChatSummary, type McpServer } from "../lib/api";
 import { useStore } from "../lib/store";
 import { useT } from "../lib/i18n";
 import { Glyph, Logo, timeAgo, usePopover } from "../components/ui";
 import { Markdown } from "../components/Markdown";
+import { allModels, visibleModels } from "../lib/chatModels";
 
 type Pill = { id: string; label: string; icon: typeof Brain; tone: string; app?: string };
 const PILLS: Pill[] = [
@@ -98,7 +99,8 @@ export function Chat() {
 
   const model = settings?.chat_model ?? "";
   const tools = settings?.chat_tools ?? ["brain"];
-  const cur = models.find((m) => m.id === model);
+  const shown = visibleModels(models, settings);
+  const cur = allModels(models, settings).find((m) => m.id === model);
   const canTools = cur ? cur.tools : true;
 
   const reloadList = () => call<ChatSummary[]>("chat_list").then(setList).catch(() => {});
@@ -109,7 +111,8 @@ export function Chat() {
       .then((m) => {
         setModels(m);
         const s = useStore.getState().settings;
-        if (m.length && !m.find((x) => x.id === s?.chat_model)) saveSettings({ chat_model: m[0].id });
+        const v = visibleModels(m, s);
+        if (v.length && !allModels(m, s).find((x) => x.id === s?.chat_model)) saveSettings({ chat_model: v[0].id });
       })
       .finally(() => setLoadingModels(false));
     const h = () => newChat();
@@ -316,7 +319,7 @@ export function Chat() {
                 })}
               </div>
               <span className="spacer" />
-              <ModelPicker models={models} value={model} onChange={(id) => saveSettings({ chat_model: id })} loading={loadingModels} />
+              <ModelPicker models={cur && !shown.includes(cur) ? [...shown, cur] : shown} value={model} onChange={(id) => saveSettings({ chat_model: id })} loading={loadingModels} />
               {running ? (
                 <button className="send stop" onClick={() => current && call("chat_stop", { id: current })} title={t("Detener")} aria-label={t("Detener")}>
                   <Square />

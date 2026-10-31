@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { BellRing, CheckCheck, Trash2 } from "lucide-react";
+import { BellRing, CheckCheck, Trash2 } from "../components/icons";
 import { call } from "../lib/api";
 import { appName, useStore } from "../lib/store";
 import { NoteIcon, timeAgo } from "../components/ui";

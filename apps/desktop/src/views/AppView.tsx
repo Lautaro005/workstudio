@@ -2,7 +2,7 @@
 // child webview laid over the content area (or open there directly, if the user checks that).
 // Native apps (OpenCue) open in their own window.
 import { useEffect, useLayoutEffect, useRef, useState } from "react";
-import { ArrowRight, ArrowUpRight, Download, ExternalLink, FolderOpen, Info, Loader2, Maximize2, Play, Plug, RefreshCw, RotateCw, Square, SquareTerminal, Trash2 } from "lucide-react";
+import { ArrowRight, ArrowUpRight, Download, ExternalLink, FolderOpen, Info, Loader2, Maximize2, Play, Plug, RefreshCw, RotateCw, Square, SquareTerminal, Trash2 } from "../components/icons";
 import { call, here, inTauri, type AppDef } from "../lib/api";
 import { useStore } from "../lib/store";
 import { appText, useLang, useT } from "../lib/i18n";
@@ -87,7 +87,7 @@ function Details({ app, onOpen }: { app: AppDef; onOpen: () => void }) {
         </div>
         <div className="col" style={{ alignItems: "stretch", minWidth: 180 }}>
           {!st?.installed ? (
-            <button className="btn primary lg" onClick={() => runCommand(t("Instalar {name}", { name: app.name }), here(app.install))}>
+            <button className="btn primary lg" onClick={() => runCommand(t("Instalar {name}", { name: app.name }), here(app.install), "~", app.id)}>
               <Download /> {t("Instalar")}
             </button>
           ) : app.kind === "native" ? (
@@ -125,10 +125,17 @@ function Details({ app, onOpen }: { app: AppDef; onOpen: () => void }) {
           <div className="card-pad col" style={{ gap: 14 }}>
             <p style={{ color: "var(--ink-2)", lineHeight: 1.6 }}>{text.description}</p>
             <div className="row wrap">
-              {st?.installed && (
-                <button className="btn" onClick={() => runCommand(t("Actualizar {name}", { name: app.name }), here(app.update))}>
-                  <RefreshCw /> {t("Actualizar")}
+              {busy[`run:${app.id}`] ? (
+                <button className="btn" disabled>
+                  <Loader2 className="spin" /> {t("Actualizando…")}
                 </button>
+              ) : (
+                st?.installed &&
+                upd && (
+                  <button className="btn primary" onClick={() => runCommand(t("Actualizar {name}", { name: app.name }), here(app.update), "~", app.id)}>
+                    <RefreshCw /> {t("Actualizar a {v}", { v: upd.latest ?? "" })}
+                  </button>
+                )
               )}
               {app.cli && st?.installed && (
                 <button className="btn" onClick={() => runCommand(app.name, "", app.home || "~")}>

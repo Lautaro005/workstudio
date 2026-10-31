@@ -216,7 +216,7 @@ export const mock = {
         settings = a.value;
         return null;
       case "app_info":
-        return { version: "0.1.1", os: "macos", arch: "aarch64", data_dir: "~/.workstudio", workspace: "~/.workstudio/workspace", shell: "/bin/zsh" };
+        return { version: "0.1.2", os: "macos", arch: "aarch64", data_dir: "~/.workstudio", workspace: "~/.workstudio/workspace", shell: "/bin/zsh" };
       default:
         return null;
     }

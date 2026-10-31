@@ -1,7 +1,7 @@
 import { useEffect, useRef, useState, type ReactNode } from "react";
 import {
   Bot, Box, Brain, Check, CircleAlert, Copy, Info, NotebookPen, Sparkles, SquareTerminal, GitBranch, Cpu, Gem, MousePointer2, RefreshCw, Bell, Plug,
-} from "lucide-react";
+} from "./icons";
 import { useStore } from "../lib/store";
 import { locale, resolveLang, tt } from "../lib/i18n";
 
@@ -19,7 +19,8 @@ const ICONS: Record<string, typeof Box> = {
 };
 
 /** Logos in public/brands. "mono" ones are black and get inverted in dark mode; "tile" ones are full app icons. */
-export const BRANDS: Record<string, { src: string; kind: "mono" | "tile" }> = {
+export const BRANDS: Record<string, { src: string; kind: "mono" | "tile"; invert?: boolean }> = {
+  brain: { src: "brands/brain.png", kind: "tile", invert: true },
   anthropic: { src: "brands/anthropic.png", kind: "mono" },
   openai: { src: "brands/openai.png", kind: "mono" },
   gemini: { src: "brands/gemini.png", kind: "mono" },
@@ -36,13 +37,13 @@ export const BRANDS: Record<string, { src: string; kind: "mono" | "tile" }> = {
 export function BrandImg({ name, className = "" }: { name: string; className?: string }) {
   const b = BRANDS[name];
   if (!b) return null;
-  return <img className={`brand-img ${b.kind} ${className}`} src={b.src} alt="" draggable={false} />;
+  return <img className={`brand-img ${b.kind} ${b.invert ? "inv" : ""} ${className}`} src={b.src} alt="" draggable={false} />;
 }
 
 export function AppIcon({ name, size }: { name: string; size?: number }) {
   if (BRANDS[name]) return <BrandImg name={name} />;
   const I = ICONS[name] ?? Box;
-  return <I size={size} strokeWidth={1.9} />;
+  return <I size={size} weight="duotone" />;
 }
 
 const COLORS = ["clay", "olive", "mustard", "ink"];

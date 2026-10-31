@@ -661,7 +661,7 @@ fn run_codex(run: &mut Run, model: &str, tools: &[String], prompt: &str) -> anyh
     Ok(())
 }
 
-fn run_gemini(run: &mut Run, tools: &[String], prompt: &str) -> anyhow::Result<()> {
+fn run_gemini(run: &mut Run, model: &str, tools: &[String], prompt: &str) -> anyhow::Result<()> {
     // Gemini CLI reads its MCP servers from .gemini/settings.json in the folder it runs in.
     let folder = crate::paths::ws_dir().join("chat-gemini");
     let s = crate::mcp::hub_server(Some(tools));
@@ -675,6 +675,9 @@ fn run_gemini(run: &mut Run, tools: &[String], prompt: &str) -> anyhow::Result<(
         &serde_json::to_string_pretty(&settings)?,
     )?;
     let mut cmd = Command::new("gemini");
+    if !model.is_empty() {
+        cmd.args(["-m", model]);
+    }
     cmd.args(["-p", &format!("{}\n\n{}", system_prompt(tools), prompt)]);
     if !tools.is_empty() {
         cmd.args(["--allowed-mcp-server-names", "workstudio", "-y"]);
@@ -957,7 +960,7 @@ pub fn send(
         let res = match kind {
             "claude" => run_claude(&mut run, name, &tools, &prompt),
             "codex" => run_codex(&mut run, name, &tools, &prompt),
-            "gemini" => run_gemini(&mut run, &tools, &prompt),
+            "gemini" => run_gemini(&mut run, name, &tools, &prompt),
             "ollama" => run_ollama(&mut run, name, &tools, &prior, &text),
             "opencue" => run_opencue(&mut run, name, &prompt),
             _ => Err(anyhow::anyhow!("Elegí un modelo")),

@@ -1,6 +1,7 @@
-import { useState } from "react";
-import { FolderOpen, Languages, Monitor, Moon, Sun } from "lucide-react";
-import { call } from "../lib/api";
+import { useEffect, useState } from "react";
+import { FolderOpen, Languages, Monitor, Moon, Plus, Sun, Trash2 } from "../components/icons";
+import { call, type ChatModel } from "../lib/api";
+import { allModels, CUSTOM_PROVIDERS } from "../lib/chatModels";
 import { useStore } from "../lib/store";
 import { Glyph, Switch } from "../components/ui";
 import { reveal, openUrl } from "../lib/open";
@@ -10,10 +11,120 @@ const SECTIONS = [
   ["general", "General"],
   ["notifications", "Notificaciones"],
   ["apps", "Apps"],
+  ["models", "Modelos"],
   ["terminal", "Terminal"],
   ["updates", "Actualizaciones"],
   ["about", "Acerca de"],
 ] as const;
+
+const PROVIDER_LOOK: Record<string, [string, string]> = {
+  "Claude Code": ["anthropic", "clay"],
+  Codex: ["openai", "ink"],
+  Gemini: ["gemini", "mustard"],
+  Ollama: ["ollama", "ink"],
+  OpenCue: ["opencue", "olive"],
+};
+
+/** Settings → Models: which models of each provider show in the chat picker, and models added by hand. */
+function ModelsSettings() {
+  const { settings, saveSettings } = useStore();
+  const t = useT();
+  const [detected, setDetected] = useState<ChatModel[] | null>(null);
+  const [draft, setDraft] = useState<Record<string, string>>({});
+  useEffect(() => {
+    call<ChatModel[]>("chat_models").then(setDetected).catch(() => setDetected([]));
+  }, []);
+  if (!settings) return null;
+  const hidden = new Set(settings.chat_hidden_models ?? []);
+  const custom = settings.chat_custom_models ?? [];
+  const all = allModels(detected ?? [], settings);
+  const groups = [...new Set([...all.map((m) => m.group), ...CUSTOM_PROVIDERS.map((p) => p.group)])];
+  const setHidden = (ids: string[], hide: boolean) => {
+    const next = new Set(hidden);
+    ids.forEach((id) => (hide ? next.add(id) : next.delete(id)));
+    saveSettings({ chat_hidden_models: [...next] });
+  };
+  const add = (group: string) => {
+    const p = CUSTOM_PROVIDERS.find((x) => x.group === group)!;
+    const raw = (draft[group] ?? "").trim();
+    if (!raw) return;
+    const id = `${p.prefix}:${raw}`;
+    if (all.some((m) => m.id === id)) {
+      setHidden([id], false);
+    } else {
+      saveSettings({ chat_custom_models: [...custom, { id, name: raw }] });
+    }
+    setDraft((d) => ({ ...d, [group]: "" }));
+  };
+  const remove = (id: string) => saveSettings({ chat_custom_models: custom.filter((m) => m.id !== id), chat_hidden_models: [...hidden].filter((x) => x !== id) });
+  if (detected === null) return <section className="card card-pad muted">{t("Buscando modelos…")}</section>;
+  return (
+    <div className="col" style={{ gap: 20 }}>
+      <p className="muted small">{t("Elegí qué modelos de cada proveedor aparecen en el selector del chat. Solo se listan los proveedores instalados; podés sumar un modelo por su ID.")}</p>
+      {groups.map((g) => {
+        const list = all.filter((m) => m.group === g);
+        const prov = CUSTOM_PROVIDERS.find((p) => p.group === g);
+        if (!list.length && !prov) return null;
+        const look = PROVIDER_LOOK[g] ?? ["box", "ink"];
+        const on = list.filter((m) => !hidden.has(m.id)).length;
+        return (
+          <section key={g} className="card">
+            <div className="card-head">
+              <Glyph icon={look[0]} color={look[1]} className="xs" />
+              <h3>{g === "OpenCue" ? t("Agentes de OpenCue") : g}</h3>
+              <span className="muted small">{t("{a} de {b} visibles", { a: on, b: list.length })}</span>
+              <span className="spacer" />
+              {list.length > 0 && (
+                <>
+                  <button className="btn sm ghost" onClick={() => setHidden(list.map((m) => m.id), false)}>
+                    {t("Mostrar todos")}
+                  </button>
+                  <button className="btn sm ghost" onClick={() => setHidden(list.map((m) => m.id), true)}>
+                    {t("Ocultar todos")}
+                  </button>
+                </>
+              )}
+            </div>
+            {list.length === 0 && <div className="set-row muted small">{t("No está instalado o no tiene modelos todavía.")}</div>}
+            {list.map((m) => {
+              const isCustom = custom.some((c) => c.id === m.id);
+              return (
+                <div key={m.id} className="set-row model-row">
+                  <div className="txt">
+                    <b>
+                      {m.name} {isCustom && <span className="chip">{t("agregado")}</span>}
+                    </b>
+                    <small className="mono">{m.id.split(":").slice(1).join(":") || t("predeterminado")}</small>
+                  </div>
+                  {isCustom && (
+                    <button className="icon-btn sm" onClick={() => remove(m.id)} aria-label={t("Quitar")}>
+                      <Trash2 />
+                    </button>
+                  )}
+                  <Switch on={!hidden.has(m.id)} onChange={(v) => setHidden([m.id], !v)} label={m.name} />
+                </div>
+              );
+            })}
+            {prov && (
+              <div className="set-row">
+                <input
+                  className="input mono"
+                  placeholder={t("ID del modelo, por ejemplo {id}", { id: prov.example })}
+                  value={draft[g] ?? ""}
+                  onChange={(e) => setDraft((d) => ({ ...d, [g]: e.target.value }))}
+                  onKeyDown={(e) => e.key === "Enter" && add(g)}
+                />
+                <button className="btn sm" onClick={() => add(g)} disabled={!(draft[g] ?? "").trim()}>
+                  <Plus /> {t("Agregar")}
+                </button>
+              </div>
+            )}
+          </section>
+        );
+      })}
+    </div>
+  );
+}
 
 function Row({ title, sub, children }: { title: string; sub?: string; children: React.ReactNode }) {
   const t = useT();
@@ -134,6 +245,7 @@ export function Settings() {
                 ))}
             </section>
           )}
+          {sec === "models" && <ModelsSettings />}
           {sec === "terminal" && (
             <section className="card">
               <Row title="Tamaño de letra" sub={`${s.terminal_font_size} px`}>

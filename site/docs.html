@@ -248,7 +248,7 @@
 <tr><td>Ollama</td><td>Cada modelo instalado (sin los de embeddings).</td><td><code>/api/chat</code>; WorkStudio ejecuta las herramientas.</td></tr>
 <tr><td>Agentes de OpenCue</td><td>Cada agente.</td><td>Responde el agente con sus propias herramientas (las pastillas no aplican).</td></tr>
 </table></div>
-<p>Solo aparecen los modelos cuyo CLI está instalado. Las conversaciones se guardan en <code>~/.workstudio/chats</code>.</p>
+<p>Solo aparecen los modelos cuyo CLI está instalado. En Ajustes → Modelos elegís cuáles se muestran y podés sumar un modelo por su ID (por ejemplo uno que salió después de tu versión de WorkStudio). Las conversaciones se guardan en <code>~/.workstudio/chats</code>.</p>
 </div>
 <div data-l="en">
 <h2>Chat</h2>
@@ -261,7 +261,7 @@
 <tr><td>Ollama</td><td>Every installed model (except embedding ones).</td><td><code>/api/chat</code>; WorkStudio runs the tools.</td></tr>
 <tr><td>OpenCue agents</td><td>Every agent.</td><td>The agent answers with its own tools (pills don't apply).</td></tr>
 </table></div>
-<p>Only models whose CLI is installed show up. Conversations are stored in <code>~/.workstudio/chats</code>.</p>
+<p>Only models whose CLI is installed show up. In Settings → Models you choose which ones show and can add a model by its ID (for example one released after your WorkStudio version). Conversations are stored in <code>~/.workstudio/chats</code>.</p>
 </div>
 </section>
 
@@ -354,7 +354,7 @@
 <p>WorkStudio revisa GitHub y npm cada pocas horas (el intervalo se cambia en Ajustes) y te avisa. En Actualizaciones:</p>
 <ul>
 <li><b>WorkStudio</b> se actualiza solo con paquetes firmados; al terminar se reinicia.</li>
-<li><b>Cada app</b> se actualiza con su comando, en una terminal para que veas cada paso.</li>
+<li><b>Cada app</b> se actualiza con su comando, en una terminal para que veas cada paso. Mientras corre, el botón dice «Actualizando…»; al terminar, WorkStudio vuelve a leer la versión instalada, cambia el número que muestra y saca el botón de actualizar.</li>
 <li><b>Los CLIs de agentes</b> (Claude Code, Codex, Gemini CLI, Cursor Agent) se actualizan igual.</li>
 </ul>
 <p>Desde la terminal: <code>workstudio update</code>.</p>
@@ -364,7 +364,7 @@
 <p>WorkStudio checks GitHub and npm every few hours (the interval is in Settings) and tells you. In Updates:</p>
 <ul>
 <li><b>WorkStudio</b> updates itself with signed bundles and restarts when done.</li>
-<li><b>Each app</b> updates with its own command, in a terminal so you see every step.</li>
+<li><b>Each app</b> updates with its own command, in a terminal so you see every step. While it runs the button says "Updating…"; when it ends, WorkStudio reads the installed version again, updates the number it shows and removes the update button.</li>
 <li><b>Agent CLIs</b> (Claude Code, Codex, Gemini CLI, Cursor Agent) update the same way.</li>
 </ul>
 <p>From the terminal: <code>workstudio update</code>.</p>
@@ -379,6 +379,7 @@
 <tr><td>General</td><td>Tu nombre (para el saludo), idioma (español, inglés o el del sistema), tema (claro, oscuro o el del sistema) y cerrar a la bandeja.</td></tr>
 <tr><td>Avisos</td><td>Avisos del sistema y un botón para probarlos.</td></tr>
 <tr><td>Apps</td><td>Qué apps se abren dentro de WorkStudio.</td></tr>
+<tr><td>Modelos</td><td>Qué modelos de cada proveedor aparecen en el selector del chat, y modelos propios agregados por su ID (Claude Code, Codex y Gemini).</td></tr>
 <tr><td>Terminal</td><td>Tamaño de letra, shell y workspace de los agentes.</td></tr>
 <tr><td>Actualizaciones</td><td>Buscar solo y cada cuánto.</td></tr>
 <tr><td>Acerca de</td><td>Versión, carpeta de datos y código.</td></tr>
@@ -391,6 +392,7 @@
 <tr><td>General</td><td>Your name (for the greeting), language (Spanish, English or the system's), theme (light, dark or the system's) and close to the tray.</td></tr>
 <tr><td>Notifications</td><td>System notifications and a button to test them.</td></tr>
 <tr><td>Apps</td><td>Which apps open inside WorkStudio.</td></tr>
+<tr><td>Models</td><td>Which models of each provider show in the chat picker, plus your own models added by ID (Claude Code, Codex and Gemini).</td></tr>
 <tr><td>Terminal</td><td>Font size, shell and the agents' workspace.</td></tr>
 <tr><td>Updates</td><td>Check automatically and how often.</td></tr>
 <tr><td>About</td><td>Version, data folder and source code.</td></tr>

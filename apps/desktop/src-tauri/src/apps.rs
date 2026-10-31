@@ -99,13 +99,7 @@ fn location(app: &AppDef) -> Option<String> {
 
 fn version(app: &AppDef, running: bool) -> Option<String> {
     let src = app.version.as_ref()?;
-    if running && !src.json_url.is_empty() {
-        if let Some(v) = http_get_json(&src.json_url, 900) {
-            if let Some(s) = v.get(&src.field).and_then(|x| x.as_str()) {
-                return Some(s.to_string());
-            }
-        }
-    }
+    // The installed file first: right after an update the running app still reports its old version.
     if !src.file.is_empty() {
         if let Ok(s) = std::fs::read_to_string(crate::paths::expand(&src.file)) {
             let s = s.trim();
@@ -130,6 +124,13 @@ fn version(app: &AppDef, running: bool) -> Option<String> {
                 if !last.is_empty() {
                     return Some(last);
                 }
+            }
+        }
+    }
+    if running && !src.json_url.is_empty() {
+        if let Some(v) = http_get_json(&src.json_url, 900) {
+            if let Some(s) = v.get(&src.field).and_then(|x| x.as_str()) {
+                return Some(s.to_string());
             }
         }
     }

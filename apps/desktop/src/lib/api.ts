@@ -132,6 +132,10 @@ export type Settings = {
   open_in_app: string[];
   chat_model?: string;
   chat_tools?: string[];
+  /** Model ids hidden from the chat picker. */
+  chat_hidden_models?: string[];
+  /** Models added by hand, e.g. { id: "claude:claude-opus-6", name: "Claude Opus 6" }. */
+  chat_custom_models?: { id: string; name: string }[];
   [k: string]: unknown;
 };
 

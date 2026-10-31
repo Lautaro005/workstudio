@@ -1,5 +1,19 @@
 # Changelog
 
+## 0.1.2 — 2026-10-31
+
+- **Lighter look**, with the same approach as the website: white cards without shadows or color stripes, the sidebar on
+  the page background, neutral icon tiles, flat buttons (orange only for installing), more space and lighter headings.
+- **New icons**: Phosphor icons across the app (duotone in app tiles) instead of Lucide.
+- **brain's logo** in the sidebar, Home, MCP, Updates, the launcher and on the website.
+- **Settings → Models**: show or hide each model of each provider in the chat picker, and add your own models by ID
+  for Claude Code, Codex and Gemini. Gemini now runs the model you pick (`-m`).
+- **Updates refresh themselves**: installs and updates run in a terminal as before, and when the command ends
+  WorkStudio reads the installed versions again — the version text changes, the "New vX" chip and the Update button go
+  away, and a notice says whether it worked. While it runs, the button says "Updating…". The installed version is now
+  read from the app's version file or command before asking the running app (which still reports the old one).
+- Update buttons only show when there is an update (no more "Reinstall" on apps that are up to date).
+
 ## 0.1.1 — 2026-10-29
 
 - **More chat models.** Claude Code lists Opus, Sonnet and Haiku *latest* plus each version (Opus 5.5, Sonnet 5.5,

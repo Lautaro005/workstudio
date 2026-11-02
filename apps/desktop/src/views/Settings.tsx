@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { FolderOpen, Languages, Monitor, Moon, Plus, Sun, Trash2 } from "../components/icons";
-import { call, type ChatModel } from "../lib/api";
+import { call, type ChatModel, type Skill } from "../lib/api";
 import { allModels, CUSTOM_PROVIDERS } from "../lib/chatModels";
 import { useStore } from "../lib/store";
 import { Glyph, Switch } from "../components/ui";
@@ -11,6 +11,7 @@ const SECTIONS = [
   ["general", "General"],
   ["notifications", "Notificaciones"],
   ["apps", "Apps"],
+  ["chat", "Chat"],
   ["models", "Modelos"],
   ["terminal", "Terminal"],
   ["updates", "Actualizaciones"],
@@ -24,6 +25,48 @@ const PROVIDER_LOOK: Record<string, [string, string]> = {
   Ollama: ["ollama", "ink"],
   OpenCue: ["opencue", "olive"],
 };
+
+/** Settings → Chat: personal instructions every chat gets, and where skills live. */
+function ChatSettings() {
+  const { settings, saveSettings } = useStore();
+  const t = useT();
+  const [skills, setSkills] = useState<Skill[]>([]);
+  useEffect(() => {
+    call<Skill[]>("skills_list", { folder: null }).then(setSkills).catch(() => {});
+  }, []);
+  if (!settings) return null;
+  return (
+    <section className="card card-pad col" style={{ gap: 16 }}>
+      <div className="field">
+        <label>{t("Instrucciones personales")}</label>
+        <span className="hint">{t("Van en todos los chats, con cualquier modelo: cómo querés que te respondan, a qué te dedicás, qué evitar. Cada proyecto puede sumar las suyas.")}</span>
+        <textarea
+          rows={7}
+          className="input"
+          style={{ width: "100%", height: "auto", padding: "9px 11px", lineHeight: 1.5, resize: "vertical" }}
+          defaultValue={(settings.chat_instructions as string) ?? ""}
+          placeholder={t("Ej.: Soy abogado en Buenos Aires. Respondé directo, con fuentes, y avisame cuando algo no esté claro.")}
+          onBlur={(e) => saveSettings({ chat_instructions: e.target.value })}
+        />
+      </div>
+      <div className="field">
+        <label>{t("Skills")}</label>
+        <span className="hint">{t("Carpetas con SKILL.md en ~/.workstudio/skills, ~/.claude/skills o en la carpeta de trabajo. Activalas con / en el chat o dejalas fijas en un proyecto.")}</span>
+        <div className="row wrap" style={{ gap: 6, marginTop: 4 }}>
+          {skills.length === 0 && <span className="small muted">{t("Todavía no hay skills.")}</span>}
+          {skills.map((k) => (
+            <span key={k.path} className="chip" title={k.description}>
+              {k.name}
+            </span>
+          ))}
+        </div>
+        <button className="btn sm" style={{ alignSelf: "flex-start", marginTop: 6 }} onClick={async () => reveal(await call<string>("skills_folder"))}>
+          <FolderOpen /> {t("Abrir carpeta de skills")}
+        </button>
+      </div>
+    </section>
+  );
+}
 
 /** Settings → Models: which models of each provider show in the chat picker, and models added by hand. */
 function ModelsSettings() {
@@ -245,6 +288,7 @@ export function Settings() {
                 ))}
             </section>
           )}
+          {sec === "chat" && <ChatSettings />}
           {sec === "models" && <ModelsSettings />}
           {sec === "terminal" && (
             <section className="card">

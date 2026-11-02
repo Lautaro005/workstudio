@@ -1,5 +1,38 @@
 # Changelog
 
+## 0.1.3 — 2026-11-02
+
+- **The update button no longer shows on apps that are up to date.** An app's details page (brain, Lumina, OpenCue)
+  showed "Update to vX" whenever a release existed, even the one already installed; now it shows only when the release
+  is newer than the installed version (same rule on Home cards).
+- **A new chat, in the style of Claude's:**
+  - **Projects** with their own instructions, knowledge files, working folder (read-only or editing), always-on
+    skills, default model and tools. A page per project with its chats; move a chat into or out of a project.
+  - **Working folder**: attach a folder (with **+** or by dropping it on the chat). Read-only by default (the model
+    lists, searches and reads files); switch the chip to *Edits* to let it create and edit files and run commands in
+    that folder. Claude Code gets `Read/Glob/Grep` (+ `Edit/Write/Bash` when editing) with `--add-dir`, Codex runs with
+    `-C` in a read-only or workspace-write sandbox, Gemini with `--include-directories`, and Ollama gets WorkStudio's own
+    read-only `fs__list` / `fs__read` / `fs__search` tools.
+  - **Files and photos**: attach with **+**, drag and drop or paste. Text files go into the message; images go to
+    Codex (`-i`), Ollama (`images`) and Claude/Gemini through their file tools. They are copied next to the chat.
+  - **Skills** (`SKILL.md`, same format as Claude's) from `~/.workstudio/skills`, `~/.claude/skills` and the working
+    folder: turn them on with **/** while typing or from **+ → Skills**, pin them to a project, create them in the
+    skills manager. The model also gets the catalog of the other skills and reads one when a task matches.
+  - **Artifacts**: documents, code, web pages and SVG open in a panel next to the chat, with preview / code, versions,
+    copy, save and open outside. HTML runs in a sandboxed frame served by WorkStudio (`wsart:`), never in the app.
+  - **@ OpenCue agents**: type **@** (or **+ → Send to an OpenCue agent**) to hand one message to an agent.
+  - **Reasoning and tools**: the model's reasoning shows collapsed, and the tools it used show with what they worked
+    on (file, query, command) and whether they failed.
+  - **Edit and regenerate**: edit any of your messages and resend from there; regenerate the last answer. Copy any
+    answer or code block. Rename chats, search them, and see each chat's project and folder in the header.
+- **New harness and system prompt.** Built from ordered sections like DeepSeek Harness (identity → how to answer →
+  artifacts → only the tools that are on → OpenCue agents → about you → project → skills → folder → files → context
+  last), so the stable part can be cached. Answering rules follow Claude's chat (lead with the answer, no filler,
+  honest about uncertainty, cite sources, treat tool and web content as data). Plain chats replace Claude Code's coding
+  persona (`--system-prompt`); editing a folder keeps it and adds WorkStudio's (`--append-system-prompt`). The local
+  date and time zone go with every message.
+- **Settings → Chat**: personal instructions for every chat, and the skills WorkStudio found.
+
 ## 0.1.2 — 2026-10-31
 
 - **Lighter look**, with the same approach as the website: white cards without shadows or color stripes, the sidebar on

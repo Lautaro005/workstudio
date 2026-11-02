@@ -21,7 +21,8 @@ export type Pane = {
 export type Toast = { id: number; kind: "info" | "success" | "error"; text: string };
 
 /** A chat answer while it streams in. */
-export type Live = { text: string; tools: { name: string; done: boolean }[]; running: boolean; error?: boolean };
+export type LiveTool = { name: string; detail?: string; done: boolean; ok?: boolean };
+export type Live = { text: string; thinking: string; tools: LiveTool[]; running: boolean; error?: boolean };
 
 export const MAX_PANES = 6;
 
@@ -164,11 +165,25 @@ export const useStore = create<State>((set, get) => ({
     on<string>("navigate", (r) => get().go(r));
     on<{ chat: string; kind: string; text: string }>("chat-event", (ev) => {
       set((s) => {
-        const cur: Live = s.chatLive[ev.chat] ?? { text: "", tools: [], running: true };
+        const cur: Live = s.chatLive[ev.chat] ?? { text: "", thinking: "", tools: [], running: true };
         let next: Live = cur;
+        const j = (): { i?: number; detail?: string; ok?: boolean } => {
+          try {
+            return JSON.parse(ev.text);
+          } catch {
+            return {};
+          }
+        };
         if (ev.kind === "delta") next = { ...cur, text: cur.text + ev.text, running: true };
+        else if (ev.kind === "thinking") next = { ...cur, thinking: cur.thinking + ev.text };
         else if (ev.kind === "tool") next = { ...cur, tools: [...cur.tools, { name: ev.text, done: false }] };
-        else if (ev.kind === "tool_done") next = { ...cur, tools: cur.tools.map((t) => (t.name === ev.text && !t.done ? { ...t, done: true } : t)) };
+        else if (ev.kind === "tool_detail") {
+          const { i, detail } = j();
+          next = { ...cur, tools: cur.tools.map((t, k) => (k === i ? { ...t, detail } : t)) };
+        } else if (ev.kind === "tool_done") {
+          const { i, ok } = j();
+          next = { ...cur, tools: cur.tools.map((t, k) => (k === i ? { ...t, done: true, ok } : t)) };
+        }
         if (ev.kind === "done" || ev.kind === "error") {
           const live = { ...s.chatLive };
           delete live[ev.chat];
@@ -196,7 +211,7 @@ export const useStore = create<State>((set, get) => ({
   },
 
   chatStarted(id) {
-    set((s) => ({ chatLive: { ...s.chatLive, [id]: { text: "", tools: [], running: true } } }));
+    set((s) => ({ chatLive: { ...s.chatLive, [id]: { text: "", thinking: "", tools: [], running: true } } }));
   },
 
   async reloadCatalog() {

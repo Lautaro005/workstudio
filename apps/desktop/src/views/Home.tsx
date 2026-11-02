@@ -1,6 +1,6 @@
 import { ArrowRight, Download, ExternalLink, MoreHorizontal, Play, Plug, RefreshCw, Square, SquareTerminal, Loader2, MessageSquare } from "../components/icons";
 import { useEffect, useState } from "react";
-import { call, here, type AppDef, type McpServer } from "../lib/api";
+import { call, here, isNewer, type AppDef, type McpServer } from "../lib/api";
 import { PROFILES, useStore } from "../lib/store";
 import { appText, locale, useLang, useT } from "../lib/i18n";
 import { Dot, Glyph, Logo, NoteIcon, timeAgo, usePopover, termLook } from "../components/ui";
@@ -20,7 +20,8 @@ export function AppCard({ app }: { app: AppDef }) {
   const t = useT();
   const lang = useLang();
   const st = statuses[app.id];
-  const upd = updates.find((u) => u.id === app.id && u.available);
+  const st0 = statuses[app.id];
+  const upd = updates.find((u) => u.id === app.id && u.available && !!u.latest && (!st0?.version || isNewer(u.latest, st0.version)));
   const menu = usePopover();
   const b = busy[app.id];
   const state = b ? "busy" : st?.running ? "on" : st?.installed ? "idle" : "off";

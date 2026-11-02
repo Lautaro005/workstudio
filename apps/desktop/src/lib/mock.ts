@@ -27,7 +27,7 @@ let settings = {
   chat_tools: ["brain"],
 };
 
-type MockChat = { id: string; title: string; created: number; updated: number; model: string; tools: string[]; messages: any[] };
+type MockChat = { id: string; title: string; created: number; updated: number; model: string; tools: string[]; messages: any[]; project?: string; folder?: string; mode?: string; skills?: string[] };
 const chats: MockChat[] = [
   {
     id: "c1",
@@ -80,6 +80,14 @@ const updates = [
 ];
 
 const ptys = new Map<string, string>();
+
+const projects: any[] = [
+  { id: "p1", name: "Tesis", description: "Mi tesis sobre derecho penal", instructions: "Respondé con citas de doctrina y jurisprudencia argentina.", folder: "~/Documentos/Tesis", mode: "read", model: "", tools: ["brain", "web"], skills: [], files: [{ name: "indice.md", path: "~/.workstudio/projects/p1/files/indice.md", size: 3200 }], created: Date.now() - 864e5 * 3, updated: Date.now() - 36e5 },
+];
+const skills = [
+  { name: "resumen-reunion", description: "Resume reuniones en decisiones, pendientes y responsables", source: "workstudio", path: "~/.workstudio/skills/resumen-reunion/SKILL.md" },
+  { name: "pdf", description: "Leer, completar y armar PDFs", source: "claude", path: "~/.claude/skills/pdf/SKILL.md" },
+];
 
 export const mock = {
   listen(ev: string, cb: Cb) {
@@ -142,7 +150,7 @@ export const mock = {
           { id: "opencue:pacman", name: "pacman", group: "OpenCue", tools: false },
         ];
       case "chat_list":
-        return [...chats].sort((x, y) => y.updated - x.updated).map(({ id, title, updated, model }) => ({ id, title, updated, model }));
+        return [...chats].sort((x, y) => y.updated - x.updated).map(({ id, title, updated, model, project }) => ({ id, title, updated, model, project }));
       case "chat_get":
         return chats.find((c) => c.id === a.id) ?? null;
       case "chat_delete": {
@@ -153,24 +161,90 @@ export const mock = {
       case "chat_stop":
         return null;
       case "chat_send": {
-        let c = chats.find((x) => x.id === a.chat);
+        const o = a.opts;
+        let c: MockChat | undefined = chats.find((x) => x.id === o.chat);
         if (!c) {
-          c = { id: `c${Date.now()}`, title: a.text.slice(0, 60), created: Date.now(), updated: Date.now(), model: a.model, tools: a.tools, messages: [] };
+          c = { id: `c${Date.now()}`, title: (o.text || o.files?.[0]?.name || "").slice(0, 60), created: Date.now(), updated: Date.now(), model: o.model, tools: o.tools, messages: [], project: o.project, folder: o.folder, mode: o.mode, skills: o.skills };
           chats.push(c);
         }
-        c.messages.push({ role: "user", text: a.text, ts: Date.now(), model: "", tools: [], error: false });
+        if (o.truncate != null) c.messages = c.messages.slice(0, o.truncate);
+        c.folder = o.folder;
+        c.mode = o.mode;
+        c.skills = o.skills;
+        c.messages.push({ role: "user", text: o.text, ts: Date.now(), model: "", tools: [], error: false, files: o.files, agent: o.agent, skills: (o.skills ?? []).map((p: string) => p.split("/").slice(-2, -1)[0]) });
         const id = c.id;
-        const answer = "Esto es la **vista previa del navegador**: en la app, la respuesta llega del modelo que elegiste, con " + (a.tools.length ? a.tools.join(", ") : "ninguna herramienta") + ".";
-        const words = answer.split(" ");
-        if (a.tools[0]) setTimeout(() => emit("chat-event", { chat: id, kind: "tool", text: `${a.tools[0]}__search` }), 200);
-        words.forEach((w, i) => setTimeout(() => emit("chat-event", { chat: id, kind: "delta", text: (i ? " " : "") + w }), 500 + i * 60));
+        const wantsPage = /pomodoro|página|pagina|html|page/i.test(o.text);
+        const answer = o.agent
+          ? `Listo, me ocupo desde OpenCue. (vista previa: respondería **${o.agent}**)`
+          : wantsPage
+            ? 'Te armé un pomodoro simple: 25 minutos de foco y 5 de descanso.\n\n<artifact id="pomodoro" type="html" title="Pomodoro">\n<!doctype html><html><body style="font-family:system-ui;display:grid;place-items:center;height:100vh;margin:0;background:#faf8f4"><div style="text-align:center"><h1 id="t" style="font-size:64px;margin:0">25:00</h1><button onclick="go()" style="font-size:18px;padding:8px 18px;border-radius:10px;border:0;background:#c2410c;color:#fff">Empezar</button></div><script>let s=1500,i;function go(){clearInterval(i);i=setInterval(()=>{s--;t.textContent=String(Math.floor(s/60)).padStart(2,"0")+":"+String(s%60).padStart(2,"0")},1000)}</script></body></html>\n</artifact>\n\nTocá **Empezar** para arrancar.'
+            : "Esto es la **vista previa del navegador**: en la app, la respuesta llega del modelo que elegiste, con " + (o.tools.length ? o.tools.join(", ") : "ninguna herramienta") + (o.files?.length ? ` y ${o.files.length} archivo(s)` : "") + (o.folder ? ` en \`${o.folder}\`` : "") + ".\n\n```python\nprint('hola')\n```";
+        const chunks = answer.match(/[\s\S]{1,24}/g) ?? [];
+        const tool = o.agent ? `OpenCue → ${o.agent}` : o.tools[0] ? `${o.tools[0]}__search_knowledge` : "";
+        setTimeout(() => emit("chat-event", { chat: id, kind: "thinking", text: "El usuario quiere algo concreto. Reviso qué herramientas tengo y armo la respuesta." }), 120);
+        if (tool) {
+          setTimeout(() => emit("chat-event", { chat: id, kind: "tool", text: tool }), 250);
+          setTimeout(() => emit("chat-event", { chat: id, kind: "tool_detail", text: JSON.stringify({ i: 0, detail: o.text.slice(0, 40) }) }), 300);
+          setTimeout(() => emit("chat-event", { chat: id, kind: "tool_done", text: JSON.stringify({ i: 0, ok: true }) }), 450);
+        }
+        chunks.forEach((w, i) => setTimeout(() => emit("chat-event", { chat: id, kind: "delta", text: w }), 500 + i * 25));
         setTimeout(() => {
-          c!.messages.push({ role: "assistant", text: answer, ts: Date.now(), model: a.model, tools: a.tools[0] ? [{ name: `${a.tools[0]}__search`, ok: true }] : [], error: false });
+          c!.messages.push({ role: "assistant", text: answer, ts: Date.now(), model: o.agent ? `opencue:${o.agent}` : o.model, tools: tool ? [{ name: tool, ok: true, detail: o.text.slice(0, 40) }] : [], error: false, thinking: "El usuario quiere algo concreto. Reviso qué herramientas tengo y armo la respuesta.", agent: o.agent });
           c!.updated = Date.now();
           emit("chat-event", { chat: id, kind: "done", text: answer });
-        }, 600 + words.length * 60);
+        }, 600 + chunks.length * 25);
         return id;
       }
+      case "chat_update": {
+        const c = chats.find((x) => x.id === a.id);
+        if (c && a.title) c.title = a.title;
+        if (c && a.project != null) c.project = a.project;
+        return c;
+      }
+      case "files_inspect":
+        return (a.paths as string[]).filter((p) => p.includes(".")).map((p) => ({ name: p.split("/").pop(), path: p, kind: /\.(png|jpe?g)$/.test(p) ? "image" : "text", size: 1200 }));
+      case "files_preview":
+        return "";
+      case "files_save_blob":
+        return { name: a.name, path: `/tmp/${a.name}`, kind: "image", size: 1000 };
+      case "project_list":
+        return [...projects].sort((x, y) => y.updated - x.updated);
+      case "project_save": {
+        const p = { ...a.project };
+        if (!p.id) {
+          p.id = `p${Date.now()}`;
+          p.created = Date.now();
+          projects.push(p);
+        } else {
+          const i = projects.findIndex((x) => x.id === p.id);
+          p.files = projects[i]?.files ?? [];
+          projects[i] = p;
+        }
+        p.updated = Date.now();
+        return p;
+      }
+      case "project_delete": {
+        const i = projects.findIndex((x) => x.id === a.id);
+        if (i >= 0) projects.splice(i, 1);
+        chats.forEach((c) => c.project === a.id && (c.project = ""));
+        return null;
+      }
+      case "project_add_files":
+      case "project_remove_file":
+        return projects.find((x) => x.id === a.id);
+      case "skills_list":
+        return skills;
+      case "skill_read":
+        return "# Pasos\n1. Leé la transcripción.\n2. Sacá decisiones, pendientes y responsables.";
+      case "skill_save":
+        skills.push({ name: a.name, description: a.description, source: "workstudio", path: `~/.workstudio/skills/${a.name}/SKILL.md` });
+        return skills[skills.length - 1];
+      case "skill_delete":
+        return null;
+      case "skills_folder":
+        return "~/.workstudio/skills";
+      case "artifact_put":
+        return "k";
       case "mcp_clients":
         return [
           { id: "claude-code", name: "Claude Code", path: "~/.claude.json", detected: true, connected: ["workstudio"], external: [{ name: "vmpal", summary: "/Applications/VMPal.app/… --mcp" }] },
@@ -216,7 +290,7 @@ export const mock = {
         settings = a.value;
         return null;
       case "app_info":
-        return { version: "0.1.2", os: "macos", arch: "aarch64", data_dir: "~/.workstudio", workspace: "~/.workstudio/workspace", shell: "/bin/zsh" };
+        return { version: "0.1.3", os: "macos", arch: "aarch64", data_dir: "~/.workstudio", workspace: "~/.workstudio/workspace", shell: "/bin/zsh" };
       default:
         return null;
     }

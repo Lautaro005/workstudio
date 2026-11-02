@@ -1,8 +1,29 @@
 // A small Markdown renderer for chat answers: headings, paragraphs, lists, quotes, code blocks,
 // tables, inline code, bold, italic and links. It builds React elements (no raw HTML), so a
 // model's answer can never inject markup.
-import { Fragment, type ReactNode } from "react";
+import { Fragment, useState, type ReactNode } from "react";
 import { openUrl } from "../lib/open";
+import { tt } from "../lib/i18n";
+
+function CopyCode({ text }: { text: string }) {
+  const [ok, setOk] = useState(false);
+  return (
+    <button
+      className="md-copy"
+      onClick={async () => {
+        try {
+          await navigator.clipboard.writeText(text);
+          setOk(true);
+          setTimeout(() => setOk(false), 1200);
+        } catch {
+          /* ignore */
+        }
+      }}
+    >
+      {ok ? tt("Copiado") : tt("Copiar")}
+    </button>
+  );
+}
 
 function inline(text: string, key = "i"): ReactNode[] {
   const out: ReactNode[] = [];
@@ -88,6 +109,7 @@ export function Markdown({ text }: { text: string }) {
       i++;
       blocks.push(
         <pre key={key()} className="md-code" data-lang={lang || undefined}>
+          <CopyCode text={body.join("\n")} />
           <code>{body.join("\n")}</code>
         </pre>,
       );

@@ -7,7 +7,9 @@ import {
   TranslateIcon, SquaresFourIcon, LinkSimpleIcon, TreeStructureIcon, CircleNotchIcon, ArrowsOutSimpleIcon, ChatCircleIcon, NotePencilIcon, ArrowsInSimpleIcon,
   MonitorIcon, MoonIcon, DotsThreeIcon, CursorIcon, NotebookIcon, PlayIcon, PlugIcon, PlusIcon, ArrowsClockwiseIcon, ArrowClockwiseIcon, RowsIcon,
   MagnifyingGlassIcon, HardDrivesIcon, GearSixIcon, SparkleIcon, StopIcon, TerminalWindowIcon, SunIcon, TrashIcon, LinkBreakIcon, WrenchIcon, XIcon,
-  SlidersHorizontalIcon, EyeIcon, EyeSlashIcon, type IconProps as PIconProps, type IconWeight,
+  SlidersHorizontalIcon, EyeIcon, EyeSlashIcon, PaperclipIcon, FolderSimpleIcon, FolderSimplePlusIcon, LightningIcon, AtIcon, PencilSimpleIcon,
+  CaretRightIcon, ImageIcon, FilePdfIcon, FileIcon, FileTextIcon, CodeIcon, BrowserIcon, LockSimpleIcon, FoldersIcon, ChatsCircleIcon, BookOpenIcon,
+  ArrowLeftIcon, SidebarSimpleIcon, FloppyDiskIcon, LightbulbIcon, MagicWandIcon, type IconProps as PIconProps, type IconWeight,
 } from "@phosphor-icons/react";
 
 export type IconProps = {
@@ -90,3 +92,25 @@ export const Wrench = mk(WrenchIcon);
 export const X = mk(XIcon);
 export const Eye = mk(EyeIcon);
 export const EyeOff = mk(EyeSlashIcon);
+export const Paperclip = mk(PaperclipIcon);
+export const Folder = mk(FolderSimpleIcon);
+export const FolderPlus = mk(FolderSimplePlusIcon);
+export const Zap = mk(LightningIcon);
+export const AtSign = mk(AtIcon);
+export const Pencil = mk(PencilSimpleIcon);
+export const ChevronRight = mk(CaretRightIcon);
+export const ImageIc = mk(ImageIcon);
+export const FilePdf = mk(FilePdfIcon);
+export const FileIc = mk(FileIcon);
+export const FileText = mk(FileTextIcon);
+export const Code = mk(CodeIcon);
+export const Browser = mk(BrowserIcon);
+export const Lock = mk(LockSimpleIcon);
+export const Folders = mk(FoldersIcon);
+export const Chats = mk(ChatsCircleIcon);
+export const BookOpen = mk(BookOpenIcon);
+export const ArrowLeft = mk(ArrowLeftIcon);
+export const PanelRight = mk(SidebarSimpleIcon);
+export const Save = mk(FloppyDiskIcon);
+export const Lightbulb = mk(LightbulbIcon);
+export const Wand = mk(MagicWandIcon);

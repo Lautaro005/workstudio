@@ -4,9 +4,12 @@ mod chat;
 mod hub;
 mod mcp;
 mod paths;
+mod projects;
+mod prompt;
 mod pty;
 mod settings;
 mod shellenv;
+mod skills;
 mod state;
 mod updates;
 mod web;
@@ -428,14 +431,154 @@ fn chat_delete(id: String) {
 }
 
 #[tauri::command]
-fn chat_send(
-    app: AppHandle,
-    chat: Option<String>,
-    text: String,
-    model: String,
-    tools: Vec<String>,
-) -> R<String> {
-    chat::send(app, chat, text, model, tools).map_err(e)
+fn chat_send(app: AppHandle, opts: chat::SendOpts) -> R<String> {
+    chat::send(app, opts).map_err(e)
+}
+
+#[tauri::command]
+fn chat_update(id: String, title: Option<String>, project: Option<String>) -> R<chat::Chat> {
+    chat::update(&id, title, project).map_err(e)
+}
+
+#[tauri::command]
+fn files_inspect(paths: Vec<String>) -> Vec<chat::Attachment> {
+    chat::inspect(&paths)
+}
+
+/// A small image as a data URL, for thumbnails of attachments.
+#[tauri::command]
+fn files_preview(path: String) -> String {
+    use base64::Engine;
+    let p = std::path::Path::new(&path);
+    if chat::kind_of(p) != "image" {
+        return String::new();
+    }
+    let ext = p
+        .extension()
+        .map(|e| e.to_string_lossy().to_lowercase())
+        .unwrap_or_default();
+    match std::fs::read(p) {
+        Ok(b) if b.len() < 12_000_000 => format!(
+            "data:image/{};base64,{}",
+            if ext == "jpg" { "jpeg" } else { &ext },
+            base64::engine::general_purpose::STANDARD.encode(b)
+        ),
+        _ => String::new(),
+    }
+}
+
+#[tauri::command]
+fn files_save_blob(name: String, data: String) -> R<chat::Attachment> {
+    chat::save_blob(&name, &data).map_err(e)
+}
+
+// ---------- projects & skills ----------
+
+#[tauri::command]
+fn project_list() -> Vec<projects::Project> {
+    projects::list()
+}
+
+#[tauri::command]
+fn project_save(project: projects::Project) -> R<projects::Project> {
+    projects::save(project).map_err(e)
+}
+
+#[tauri::command]
+fn project_delete(id: String, chats: bool) {
+    for c in chat::list() {
+        if c.project == id {
+            if chats {
+                chat::stop(&c.id);
+                chat::delete(&c.id);
+            } else {
+                let _ = chat::update(&c.id, None, Some(String::new()));
+            }
+        }
+    }
+    projects::delete(&id)
+}
+
+#[tauri::command]
+fn project_add_files(id: String, paths: Vec<String>) -> R<projects::Project> {
+    projects::add_files(&id, &paths).map_err(e)
+}
+
+#[tauri::command]
+fn project_remove_file(id: String, name: String) -> R<projects::Project> {
+    projects::remove_file(&id, &name).map_err(e)
+}
+
+#[tauri::command]
+fn skills_list(folder: Option<String>) -> Vec<skills::Skill> {
+    skills::list(folder.as_deref())
+}
+
+#[tauri::command]
+fn skill_read(path: String) -> R<String> {
+    skills::content(&path)
+        .map(|(_, body)| body)
+        .ok_or_else(|| settings::tr("No pude leer la skill", "Couldn't read the skill").into())
+}
+
+#[tauri::command]
+fn skill_save(name: String, description: String, body: String) -> R<skills::Skill> {
+    skills::save(&name, &description, &body).map_err(e)
+}
+
+#[tauri::command]
+fn skill_delete(path: String) -> R<()> {
+    skills::delete(&path).map_err(e)
+}
+
+#[tauri::command]
+fn skills_folder() -> String {
+    let d = skills::ws_skills_dir();
+    let _ = std::fs::create_dir_all(&d);
+    d.to_string_lossy().into_owned()
+}
+
+// ---------- artifacts ----------
+
+#[tauri::command]
+fn artifact_put(html: String) -> R<String> {
+    chat::artifact_put(&html).map_err(e)
+}
+
+#[tauri::command]
+fn artifact_save(path: String, content: String) -> R<()> {
+    std::fs::write(path, content).map_err(e)
+}
+
+/// Opens an artifact with the system (the browser for HTML).
+#[tauri::command]
+fn artifact_open(name: String, content: String) -> R<()> {
+    let p = chat::artifact_export(&name, &content).map_err(e)?;
+    tauri_plugin_opener::open_path(p, None::<&str>).map_err(e)
+}
+
+/// Serves stored HTML artifacts to the sandboxed preview frame, with their own permissive CSP
+/// (scripts and CDN libraries), apart from the app's.
+fn artifact_protocol(path: &str) -> tauri::http::Response<Vec<u8>> {
+    let key = path
+        .trim_start_matches('/')
+        .split(['/', '?'])
+        .next()
+        .unwrap_or("");
+    match chat::artifact_get(key) {
+        Some(body) => tauri::http::Response::builder()
+            .header("Content-Type", "text/html; charset=utf-8")
+            .header(
+                "Content-Security-Policy",
+                "default-src 'none'; script-src 'unsafe-inline' 'unsafe-eval' https://cdnjs.cloudflare.com https://cdn.jsdelivr.net https://unpkg.com; style-src 'unsafe-inline' https://cdnjs.cloudflare.com https://cdn.jsdelivr.net https://fonts.googleapis.com; font-src https://fonts.gstatic.com https://cdnjs.cloudflare.com https://cdn.jsdelivr.net data:; img-src data: blob: https:; media-src data: blob: https:; connect-src https://cdnjs.cloudflare.com https://cdn.jsdelivr.net",
+            )
+            .body(body)
+            .unwrap_or_default(),
+        None => tauri::http::Response::builder()
+            .status(404)
+            .body(Vec::new())
+            .unwrap_or_default(),
+    }
 }
 
 #[tauri::command]
@@ -669,6 +812,7 @@ pub fn run() {
         .plugin(tauri_plugin_dialog::init())
         .plugin(tauri_plugin_process::init())
         .plugin(tauri_plugin_updater::Builder::new().build())
+        .register_uri_scheme_protocol("wsart", |_ctx, req| artifact_protocol(req.uri().path()))
         .setup(|app| {
             build_tray(app)?;
             state::start_watcher(app.handle().clone());
@@ -717,6 +861,23 @@ pub fn run() {
             chat_get,
             chat_delete,
             chat_send,
+            chat_update,
+            files_inspect,
+            files_save_blob,
+            files_preview,
+            project_list,
+            project_save,
+            project_delete,
+            project_add_files,
+            project_remove_file,
+            skills_list,
+            skill_read,
+            skill_save,
+            skill_delete,
+            skills_folder,
+            artifact_put,
+            artifact_save,
+            artifact_open,
             chat_stop,
             chat_running,
             notes_list,

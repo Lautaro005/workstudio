@@ -39,7 +39,7 @@ command: `workstudio` opens it, `workstudio update` updates it, `workstudio unin
 |---|---|
 | **Workspace** | Home with every app's status and version; sidebar with live status; Google-style app launcher; ⌘K palette. Spanish and English. |
 | **Apps inside** | Each app opens on its details; brain's dashboard and Lumina can also be used inside WorkStudio (with the preferences of their own window), or open there directly if you check it. OpenCue opens in its own window. |
-| **Chat** | Talk to Claude Code, Codex, Gemini, any Ollama model or an OpenCue agent. Pills turn on brain, Lumina and web search (built into WorkStudio). Conversations stay in `~/.workstudio/chats`. |
+| **Chat** | Like Claude's: talk to Claude Code, Codex, Gemini, any Ollama model or an OpenCue agent (@name). Projects with instructions, knowledge files and a working folder; attach files and photos; skills (`/`); artifacts in a side panel; pills for brain, Lumina and web search. Conversations stay in `~/.workstudio/chats`. |
 | **Terminals** | Up to six real terminals in a grid. Profiles for Claude Code, Codex, Gemini CLI, Cursor Agent, brain, lumina and opencue. |
 | **One MCP server** | `workstudio mcp` joins the tools of your apps (and the servers you add) under one server, named `<app>__<tool>`. Terminals and the chat get it automatically; connect Claude Code, Claude Desktop, Codex, Cursor, Gemini or Windsurf with one click (with a backup). |
 | **Notifications** | brain vault changes, Lumina meetings, apps that start or stop, new versions — in the app and as system notifications. |
@@ -76,7 +76,20 @@ HTTP servers you add are passed next to it, as they are. The servers it carries:
 | Codex (default, a *latest* per family and every version: your account's models from `~/.codex/models_cache.json` first, then the GPT versions Codex knows) | `codex exec --json`, read-only sandbox, `workstudio` passed with `-c` |
 | Gemini CLI | `gemini -p` in a folder whose `.gemini/settings.json` has only `workstudio` |
 | Ollama | `/api/chat` from WorkStudio, which runs the tool calls itself |
-| OpenCue agent | OpenCue's `send_to_agent`: the agent answers with its own tools (the pills don't apply) |
+| OpenCue agent | OpenCue's `send_to_agent`: the agent answers with its own tools (the pills don't apply). Pick it in the menu or type `@name` |
+
+- **Projects** (`~/.workstudio/projects`): instructions, knowledge files (their text goes with every message), a
+  working folder, always-on skills, default model and tools.
+- **Working folder**: read-only by default; switch it to *Edits* to let the model create and edit files and run
+  commands there. Claude Code gets `Read/Glob/Grep` (+ `Edit/Write/Bash`) with `--add-dir`; Codex `-C` with a
+  read-only or workspace-write sandbox; Gemini `--include-directories`; Ollama WorkStudio's read-only `fs__*` tools.
+- **Files**: attach, drop or paste; copied to `~/.workstudio/chats/files/<chat>`.
+- **Skills**: `SKILL.md` folders in `~/.workstudio/skills`, `~/.claude/skills` or the working folder. `/` turns one on.
+- **Artifacts**: `<artifact id type title>` blocks open in a side panel (preview, code, versions, save). HTML runs in a
+  sandboxed frame served by WorkStudio's `wsart:` protocol.
+- **System prompt**: built in `src-tauri/src/prompt.rs` from ordered sections (identity, answering rules, artifacts,
+  only the tools that are on, agents, your personal instructions, project, skills, folder, files, and the runtime
+  context last so the prefix can be cached).
 
 ### Adding an app
 

@@ -3,7 +3,7 @@
 // Native apps (OpenCue) open in their own window.
 import { useEffect, useLayoutEffect, useRef, useState } from "react";
 import { ArrowRight, ArrowUpRight, Download, ExternalLink, FolderOpen, Info, Loader2, Maximize2, Play, Plug, RefreshCw, RotateCw, Square, SquareTerminal, Trash2 } from "../components/icons";
-import { call, here, inTauri, type AppDef } from "../lib/api";
+import { call, here, inTauri, isNewer, type AppDef } from "../lib/api";
 import { useStore } from "../lib/store";
 import { appText, useLang, useT } from "../lib/i18n";
 import { CopyLine, Dot, Glyph } from "../components/ui";
@@ -60,6 +60,8 @@ function Details({ app, onOpen }: { app: AppDef; onOpen: () => void }) {
   const text = appText(app, lang);
   const st = statuses[app.id];
   const upd = updates.find((u) => u.id === app.id);
+  // Only offer an update when the release is newer than what is installed right now.
+  const hasUpdate = !!(st?.installed && upd?.available && upd.latest && (!st.version || isNewer(upd.latest, st.version)));
   const b = busy[app.id];
   const web = app.kind === "web" && !!app.url;
   const openFirst = (settings?.open_in_app ?? []).includes(app.id);
@@ -82,7 +84,7 @@ function Details({ app, onOpen }: { app: AppDef; onOpen: () => void }) {
               {st?.running ? t("Corriendo") : st?.installed ? t("Instalado, detenido") : t("No instalado")}
             </span>
             {st?.version && <span className="chip mono">{st.version}</span>}
-            {upd?.available && <span className="chip mustard">{t("Hay {v}", { v: upd.latest ?? "" })}</span>}
+            {hasUpdate && <span className="chip mustard">{t("Hay {v}", { v: upd?.latest ?? "" })}</span>}
           </div>
         </div>
         <div className="col" style={{ alignItems: "stretch", minWidth: 180 }}>
@@ -130,10 +132,9 @@ function Details({ app, onOpen }: { app: AppDef; onOpen: () => void }) {
                   <Loader2 className="spin" /> {t("Actualizando…")}
                 </button>
               ) : (
-                st?.installed &&
-                upd && (
+                hasUpdate && (
                   <button className="btn primary" onClick={() => runCommand(t("Actualizar {name}", { name: app.name }), here(app.update), "~", app.id)}>
-                    <RefreshCw /> {t("Actualizar a {v}", { v: upd.latest ?? "" })}
+                    <RefreshCw /> {t("Actualizar a {v}", { v: upd?.latest ?? "" })}
                   </button>
                 )
               )}

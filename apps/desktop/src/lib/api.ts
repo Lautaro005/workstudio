@@ -141,10 +141,65 @@ export type Settings = {
 
 export type AppInfo = { version: string; os: string; arch: string; data_dir: string; workspace: string; shell: string };
 
+const vparts = (v: string) => (v.match(/\d+/g) ?? []).map(Number);
+/** Same rule as the Rust side: "v0.03.3.4" == "0.3.3.4", "0.1.10" > "0.1.9". */
+export function isNewer(latest: string, current: string) {
+  const a = vparts(latest);
+  const b = vparts(current);
+  if (!a.length || !b.length) return false;
+  for (let i = 0; i < Math.max(a.length, b.length); i++) {
+    const x = a[i] ?? 0;
+    const y = b[i] ?? 0;
+    if (x !== y) return x > y;
+  }
+  return false;
+}
+
 export const isWindows = () => navigator.userAgent.includes("Windows");
 export const here = (c: Cmds) => (isWindows() ? c.windows : c.unix);
 
 export type ChatModel = { id: string; name: string; group: string; tools: boolean };
-export type ChatMsg = { role: "user" | "assistant"; text: string; ts: number; model: string; tools: { name: string; ok: boolean }[]; error: boolean };
-export type Chat = { id: string; title: string; created: number; updated: number; model: string; tools: string[]; messages: ChatMsg[] };
-export type ChatSummary = { id: string; title: string; updated: number; model: string };
+export type Attachment = { name: string; path: string; kind: "text" | "image" | "pdf" | "file" | string; size: number };
+export type ToolUse = { name: string; ok: boolean; detail?: string };
+export type ChatMsg = {
+  role: "user" | "assistant";
+  text: string;
+  ts: number;
+  model: string;
+  tools: ToolUse[];
+  error: boolean;
+  files?: Attachment[];
+  thinking?: string;
+  agent?: string;
+  skills?: string[];
+};
+export type Chat = {
+  id: string;
+  title: string;
+  created: number;
+  updated: number;
+  model: string;
+  tools: string[];
+  messages: ChatMsg[];
+  project?: string;
+  folder?: string;
+  mode?: "read" | "edit" | string;
+  skills?: string[];
+};
+export type ChatSummary = { id: string; title: string; updated: number; model: string; project?: string };
+export type Project = {
+  id: string;
+  name: string;
+  description: string;
+  instructions: string;
+  folder: string;
+  mode: "read" | "edit" | string;
+  model: string;
+  tools: string[];
+  skills: string[];
+  files: { name: string; path: string; size: number }[];
+  created: number;
+  updated: number;
+};
+export type Skill = { name: string; description: string; source: "workstudio" | "claude" | "folder" | string; path: string };
+export type OpenCueAgent = { id: string; name: string };

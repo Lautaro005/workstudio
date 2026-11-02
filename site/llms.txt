@@ -8,6 +8,7 @@ Key facts:
 - Install on Windows (PowerShell): `irm https://raw.githubusercontent.com/Lautaro005/workstudio/main/install.ps1 | iex`.
 - Commands: `workstudio` (open), `workstudio update`, `workstudio uninstall`, `workstudio mcp [--only brain,lumina,web]`.
 - One MCP server, `workstudio`, carries every app's tools named `<app>__<tool>` (for example `brain__search_knowledge`, `lumina__get_meeting`), plus `web__search` and `web__fetch`. It connects in one click to Claude Code, Claude Desktop, Codex, Cursor, Gemini CLI and Windsurf, keeping a `.bak-workstudio` backup.
+- Chat (like Claude's): projects with instructions, knowledge files and a working folder (read-only or editing), file and photo attachments, skills (SKILL.md, turned on with /), artifacts in a side panel (documents, code, HTML, SVG), @mentions to hand a message to an OpenCue agent, brain / Lumina / web search pills, edit and regenerate.
 - Chat models: Claude Code (Opus/Sonnet/Haiku latest and versions such as Opus 5.5, Sonnet 5.5, Haiku 5.5, Fable 5.1), Codex (the account's models plus known GPT versions, with a "latest" per family), Gemini CLI, any Ollama model and OpenCue agents.
 - Data lives in `~/.workstudio` (override with `WORKSTUDIO_HOME`). Add your own apps in `~/.workstudio/apps.json`.
 - License: Apache-2.0 with the Commons Clause (free to use, modify and share; not to sell).

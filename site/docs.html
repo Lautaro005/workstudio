@@ -242,26 +242,46 @@
 <p>Un chat sobre los modelos que ya tenés. Elegís el modelo arriba y, con las pastillas, qué herramientas puede usar: <b>brain</b>, <b>Lumina</b> y <b>Web</b> (búsqueda y lectura de páginas propias de WorkStudio).</p>
 <div class="table-scroll"><table>
 <tr><th>Modelo</th><th>Cuáles aparecen</th><th>Cómo corre</th></tr>
-<tr><td>Claude Code</td><td>Opus, Sonnet y Haiku <i>latest</i>, y las versiones: Opus 5.5, Sonnet 5.5, Haiku 5.5, Fable 5.1, Opus 5, Sonnet 5, Opus 4.8 a 4.5, Sonnet 4.6 y 4.5, Haiku 4.5.</td><td><code>claude -p</code> con tu sesión, solo el servidor <code>workstudio</code> y sin herramientas propias.</td></tr>
+<tr><td>Claude Code</td><td>Opus, Sonnet y Haiku <i>latest</i>, y las versiones: Opus 5.5, Sonnet 5.5, Haiku 5.5, Fable 5.1, Opus 5, Sonnet 5, Opus 4.8 a 4.5, Sonnet 4.6 y 4.5, Haiku 4.5.</td><td><code>claude -p</code> con tu sesión y solo el servidor <code>workstudio</code>; herramientas de archivos solo con carpeta o adjuntos.</td></tr>
 <tr><td>Codex</td><td>El predeterminado, un <i>latest</i> por familia (Luna, Sol, Terra…) y cada versión: los que lista tu cuenta en <code>~/.codex/models_cache.json</code> primero y después los demás que conoce Codex.</td><td><code>codex exec --json</code> en modo solo lectura, con <code>workstudio</code> pasado con <code>-c</code>.</td></tr>
 <tr><td>Gemini</td><td>El de Gemini CLI.</td><td><code>gemini -p</code> en una carpeta con solo <code>workstudio</code>.</td></tr>
 <tr><td>Ollama</td><td>Cada modelo instalado (sin los de embeddings).</td><td><code>/api/chat</code>; WorkStudio ejecuta las herramientas.</td></tr>
 <tr><td>Agentes de OpenCue</td><td>Cada agente.</td><td>Responde el agente con sus propias herramientas (las pastillas no aplican).</td></tr>
 </table></div>
 <p>Solo aparecen los modelos cuyo CLI está instalado. En Ajustes → Modelos elegís cuáles se muestran y podés sumar un modelo por su ID (por ejemplo uno que salió después de tu versión de WorkStudio). Las conversaciones se guardan en <code>~/.workstudio/chats</code>.</p>
+<h3>Proyectos, carpeta, archivos y skills</h3>
+<ul>
+<li><b>Proyectos</b>: instrucciones propias, archivos de conocimiento (su texto va con cada mensaje), carpeta de trabajo, skills fijas, modelo y herramientas predeterminados. Cada proyecto tiene su página con sus chats.</li>
+<li><b>Carpeta de trabajo</b>: con <b>+</b> o soltándola en el chat. Por defecto es de <b>solo lectura</b> (el modelo lista, busca y lee); cambiá el chip a <b>Edita</b> para que pueda crear y editar archivos y correr comandos ahí.</li>
+<li><b>Archivos y fotos</b>: con <b>+</b>, arrastrando o pegando. Los de texto van en el mensaje; las imágenes llegan a los modelos que las aceptan.</li>
+<li><b>Skills</b>: carpetas con <code>SKILL.md</code> (como en Claude) en <code>~/.workstudio/skills</code>, <code>~/.claude/skills</code> o en la carpeta de trabajo. Escribí <b>/</b> para activar una.</li>
+<li><b>Agentes de OpenCue</b>: escribí <b>@</b> y el nombre para mandarle ese mensaje a un agente.</li>
+<li><b>Artefactos</b>: documentos, código, páginas web y SVG se abren en un panel al costado, con vista previa, código, versiones, copiar y guardar. El HTML corre aislado.</li>
+<li><b>Instrucciones personales</b> para todos los chats en Ajustes → Chat. Podés editar un mensaje tuyo y reenviarlo, o regenerar la última respuesta.</li>
+</ul>
 </div>
 <div data-l="en">
 <h2>Chat</h2>
 <p>A chat over the models you already have. Pick the model at the top and, with the pills, which tools it can use: <b>brain</b>, <b>Lumina</b> and <b>Web</b> (WorkStudio's own search and page reader).</p>
 <div class="table-scroll"><table>
 <tr><th>Model</th><th>What shows up</th><th>How it runs</th></tr>
-<tr><td>Claude Code</td><td>Opus, Sonnet and Haiku <i>latest</i>, plus the versions: Opus 5.5, Sonnet 5.5, Haiku 5.5, Fable 5.1, Opus 5, Sonnet 5, Opus 4.8 to 4.5, Sonnet 4.6 and 4.5, Haiku 4.5.</td><td><code>claude -p</code> with your login, only the <code>workstudio</code> server and no built-in tools.</td></tr>
+<tr><td>Claude Code</td><td>Opus, Sonnet and Haiku <i>latest</i>, plus the versions: Opus 5.5, Sonnet 5.5, Haiku 5.5, Fable 5.1, Opus 5, Sonnet 5, Opus 4.8 to 4.5, Sonnet 4.6 and 4.5, Haiku 4.5.</td><td><code>claude -p</code> with your login and only the <code>workstudio</code> server; file tools only with a folder or attachments.</td></tr>
 <tr><td>Codex</td><td>The default, one <i>latest</i> per family (Luna, Sol, Terra…) and every version: the ones your account lists in <code>~/.codex/models_cache.json</code> first, then the rest Codex knows.</td><td><code>codex exec --json</code> read-only, with <code>workstudio</code> passed with <code>-c</code>.</td></tr>
 <tr><td>Gemini</td><td>Gemini CLI's model.</td><td><code>gemini -p</code> in a folder with only <code>workstudio</code>.</td></tr>
 <tr><td>Ollama</td><td>Every installed model (except embedding ones).</td><td><code>/api/chat</code>; WorkStudio runs the tools.</td></tr>
 <tr><td>OpenCue agents</td><td>Every agent.</td><td>The agent answers with its own tools (pills don't apply).</td></tr>
 </table></div>
 <p>Only models whose CLI is installed show up. In Settings → Models you choose which ones show and can add a model by its ID (for example one released after your WorkStudio version). Conversations are stored in <code>~/.workstudio/chats</code>.</p>
+<h3>Projects, folder, files and skills</h3>
+<ul>
+<li><b>Projects</b>: their own instructions, knowledge files (their text goes with every message), working folder, pinned skills, default model and tools. Each project has a page with its chats.</li>
+<li><b>Working folder</b>: with <b>+</b> or by dropping it on the chat. <b>Read-only</b> by default (the model lists, searches and reads); switch the chip to <b>Edits</b> to let it create and edit files and run commands there.</li>
+<li><b>Files and photos</b>: with <b>+</b>, drag and drop or paste. Text files go into the message; images reach the models that accept them.</li>
+<li><b>Skills</b>: folders with a <code>SKILL.md</code> (like Claude's) in <code>~/.workstudio/skills</code>, <code>~/.claude/skills</code> or the working folder. Type <b>/</b> to turn one on.</li>
+<li><b>OpenCue agents</b>: type <b>@</b> and the name to hand that message to an agent.</li>
+<li><b>Artifacts</b>: documents, code, web pages and SVG open in a side panel, with preview, code, versions, copy and save. HTML runs sandboxed.</li>
+<li><b>Personal instructions</b> for every chat in Settings → Chat. You can edit one of your messages and resend it, or regenerate the last answer.</li>
+</ul>
 </div>
 </section>
 
@@ -410,7 +430,10 @@
 <tr><td><code>apps.json</code></td><td>Tus apps propias.</td></tr>
 <tr><td><code>mcp.json</code></td><td>Los servidores MCP que agregaste.</td></tr>
 <tr><td><code>notifications.json</code></td><td>El centro de avisos.</td></tr>
-<tr><td><code>chats/</code></td><td>Las conversaciones del chat.</td></tr>
+<tr><td><code>chats/</code></td><td>Las conversaciones del chat (y sus adjuntos en <code>chats/files</code>).</td></tr>
+<tr><td><code>projects/</code></td><td>Los proyectos del chat y sus archivos.</td></tr>
+<tr><td><code>skills/</code></td><td>Tus skills (<code>SKILL.md</code>).</td></tr>
+<tr><td><code>artifacts/</code></td><td>Artefactos HTML para la vista previa.</td></tr>
 <tr><td><code>mcp/</code></td><td>Las configs generadas para los agentes.</td></tr>
 <tr><td><code>workspace/</code></td><td>Donde arrancan los agentes de las terminales.</td></tr>
 <tr><td><code>logs/</code></td><td>Registros para diagnosticar problemas.</td></tr>
@@ -425,7 +448,10 @@
 <tr><td><code>apps.json</code></td><td>Your own apps.</td></tr>
 <tr><td><code>mcp.json</code></td><td>MCP servers you added.</td></tr>
 <tr><td><code>notifications.json</code></td><td>The notification center.</td></tr>
-<tr><td><code>chats/</code></td><td>Chat conversations.</td></tr>
+<tr><td><code>chats/</code></td><td>Chat conversations (and their attachments in <code>chats/files</code>).</td></tr>
+<tr><td><code>projects/</code></td><td>Chat projects and their files.</td></tr>
+<tr><td><code>skills/</code></td><td>Your skills (<code>SKILL.md</code>).</td></tr>
+<tr><td><code>artifacts/</code></td><td>HTML artifacts for the preview.</td></tr>
 <tr><td><code>mcp/</code></td><td>Configs generated for agents.</td></tr>
 <tr><td><code>workspace/</code></td><td>Where terminal agents start.</td></tr>
 <tr><td><code>logs/</code></td><td>Logs to diagnose problems.</td></tr>

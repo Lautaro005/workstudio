@@ -5,7 +5,7 @@
 #   curl -fsSL https://raw.githubusercontent.com/Lautaro005/workstudio/main/install.sh | sh -s -- --all
 #
 # Options
-#   --all                 also install brain, Lumina and OpenCue
+#   --all                 also install brain, Lumina, OpenCue and OpenBlocks
 #   --with brain,lumina   also install only those apps
 #   --user                macOS: install into ~/Applications instead of /Applications
 #   --build               build from source instead of downloading a release (needs git, node, cargo)
@@ -35,7 +35,7 @@ need() { command -v "$1" >/dev/null 2>&1 || fail "$1 is required"; }
 
 while [ $# -gt 0 ]; do
   case "$1" in
-    --all) WITH="brain,lumina,opencue" ;;
+    --all) WITH="brain,lumina,opencue,openblocks" ;;
     --with) shift; WITH="${1:-}" ;;
     --with=*) WITH="${1#--with=}" ;;
     --user) USER_ONLY=1 ;;
@@ -161,7 +161,7 @@ WRAP
 [Desktop Entry]
 Type=Application
 Name=AI WorkStudio
-Comment=One workspace for brain, OpenCue, Lumina and your local AI apps
+Comment=One workspace for brain, OpenCue, Lumina, OpenBlocks and your local AI apps
 Exec=$BIN_DIR/workstudio
 Icon=workstudio
 Categories=Development;Utility;
@@ -179,6 +179,7 @@ if [ -n "$WITH" ]; then
       brain)   cmd="curl -fsSL https://raw.githubusercontent.com/Lautaro005/brain/main/install.sh | bash" ;;
       lumina)  cmd="curl -fsSL https://lautaro005.github.io/lumina/install.sh | sh" ;;
       opencue) cmd="curl -fsSL https://lautaro005.github.io/opencue/install.sh | sh" ;;
+      openblocks) cmd="curl -fsSL https://raw.githubusercontent.com/Lautaro005/openblocks/main/install.sh | sh" ;;
       *) say "skipping unknown app: $app"; continue ;;
     esac
     say "Installing $app"

@@ -201,5 +201,25 @@ export type Project = {
   created: number;
   updated: number;
 };
-export type Skill = { name: string; description: string; source: "workstudio" | "claude" | "folder" | string; path: string };
+export type Skill = { name: string; description: string; source: string; group: string; path: string };
+export type Schedule = { kind: "daily" | "weekly" | "interval" | "manual" | string; time: string; days: number[]; every_minutes: number };
+export type Automation = {
+  id: string;
+  name: string;
+  prompt: string;
+  model: string;
+  tools: string[];
+  skills: string[];
+  project: string;
+  folder: string;
+  mode: "read" | "edit" | string;
+  enabled: boolean;
+  schedule: Schedule;
+  created: number;
+  last_run: number;
+  last_chat: string;
+  last_error: string;
+  runs: number;
+  next_run?: number | null;
+};
 export type OpenCueAgent = { id: string; name: string };

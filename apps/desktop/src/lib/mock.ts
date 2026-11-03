@@ -54,6 +54,7 @@ let statuses = [
   { id: "brain", installed: true, running: true, version: "v0.03.3.4", location: "~/.brain" },
   { id: "opencue", installed: true, running: false, version: "0.5.2", location: "~/Applications/OpenCue.app" },
   { id: "lumina", installed: true, running: true, version: "0.1.6", location: "~/.lumina" },
+  { id: "openblocks", installed: true, running: true, version: "0.1.0", location: "~/.openblocks" },
 ];
 
 let notes = [
@@ -67,6 +68,7 @@ const servers = [
   { name: "brain", command: "/Users/you/.local/bin/uv", args: ["run", "--directory", "/Users/you/.brain", "python", "server.py"], env: {}, url: "", headers: {}, enabled: true, source: "app:brain", description: "Vault, memoria, búsqueda híbrida, skills, grafo, Fact check y web_search", ready: true, problem: "" },
   { name: "opencue", command: "/Users/you/.local/bin/opencue", args: ["mcp-serve", "--agent", ""], env: {}, url: "", headers: {}, enabled: true, source: "app:opencue", description: "Memoria, archivos, computadora y automatizaciones de un agente de OpenCue", ready: false, problem: "Elegí qué agente de OpenCue expone sus herramientas" },
   { name: "lumina", command: "/Users/you/.local/bin/lumina", args: ["mcp"], env: {}, url: "", headers: {}, enabled: true, source: "app:lumina", description: "Reuniones, transcripciones, notas y fuentes indexadas", ready: true, problem: "" },
+  { name: "openblocks", command: "/Users/you/.local/bin/openblocks", args: ["mcp"], env: {}, url: "", headers: {}, enabled: true, source: "app:openblocks", description: "Buscar, leer, crear y editar las páginas del vault de OpenBlocks (tu second brain)", ready: true, problem: "" },
   { name: "github", command: "", args: [], env: {}, url: "https://api.githubcopilot.com/mcp/", headers: {}, enabled: false, source: "import:claude-code", description: "", ready: true, problem: "" },
 ];
 
@@ -85,8 +87,18 @@ const projects: any[] = [
   { id: "p1", name: "Tesis", description: "Mi tesis sobre derecho penal", instructions: "Respondé con citas de doctrina y jurisprudencia argentina.", folder: "~/Documentos/Tesis", mode: "read", model: "", tools: ["brain", "web"], skills: [], files: [{ name: "indice.md", path: "~/.workstudio/projects/p1/files/indice.md", size: 3200 }], created: Date.now() - 864e5 * 3, updated: Date.now() - 36e5 },
 ];
 const skills = [
-  { name: "resumen-reunion", description: "Resume reuniones en decisiones, pendientes y responsables", source: "workstudio", path: "~/.workstudio/skills/resumen-reunion/SKILL.md" },
-  { name: "pdf", description: "Leer, completar y armar PDFs", source: "claude", path: "~/.claude/skills/pdf/SKILL.md" },
+  { name: "resumen-reunion", description: "Resume reuniones en decisiones, pendientes y responsables", source: "workstudio", group: "WorkStudio", path: "~/.workstudio/skills/resumen-reunion/SKILL.md" },
+  { name: "second-brain-setup", description: "Set up a second brain in the OpenBlocks vault: brain dump, 5–10 context files, an AGENTS.md routing table and an index per folder", source: "builtin", group: "OpenBlocks", path: "~/.workstudio/builtin-skills/second-brain-setup/SKILL.md" },
+  { name: "second-brain-operator", description: "Keep the second brain current: pick the best sources, save only insights and set up a daily automation", source: "builtin", group: "OpenBlocks", path: "~/.workstudio/builtin-skills/second-brain-operator/SKILL.md" },
+  { name: "second-brain-optimizer", description: "Weekly health check of the second brain with a score out of 100", source: "builtin", group: "OpenBlocks", path: "~/.workstudio/builtin-skills/second-brain-optimizer/SKILL.md" },
+  { name: "pdf", description: "Leer, completar y armar PDFs", source: "claude", group: "Claude Code", path: "~/.claude/skills/pdf/SKILL.md" },
+  { name: "design-critique", description: "Structured design feedback", source: "plugin", group: "Claude Code · plugins", path: "~/.claude/plugins/cache/x/design/1/skills/design-critique/SKILL.md" },
+  { name: "code-review", description: "Review a diff for bugs", source: "codex", group: "Codex", path: "~/.codex/skills/code-review/SKILL.md" },
+  { name: "agenda", description: "Armar la agenda de la semana", source: "opencue", group: "OpenCue", path: "~/Library/Application Support/opencue/skills/agenda/SKILL.md" },
+  { name: "notas", description: "Cómo guardar notas en el vault", source: "brain", group: "brain", path: "~/.brain/vault/skills/notas.md" },
+];
+const automations: any[] = [
+  { id: "a1", name: "Actualización diaria del second brain", prompt: "Run the daily update of my second brain.", model: "claude:sonnet", tools: ["openblocks", "lumina"], skills: ["~/.workstudio/builtin-skills/second-brain-operator/SKILL.md"], project: "", folder: "", mode: "read", enabled: true, schedule: { kind: "daily", time: "07:30", days: [], every_minutes: 60 }, created: Date.now() - 864e5, last_run: Date.now() - 36e5 * 20, last_chat: "", last_error: "", runs: 1, next_run: Date.now() + 36e5 * 4 },
 ];
 
 export const mock = {
@@ -237,10 +249,26 @@ export const mock = {
       case "skill_read":
         return "# Pasos\n1. Leé la transcripción.\n2. Sacá decisiones, pendientes y responsables.";
       case "skill_save":
-        skills.push({ name: a.name, description: a.description, source: "workstudio", path: `~/.workstudio/skills/${a.name}/SKILL.md` });
+        skills.push({ name: a.name, description: a.description, source: "workstudio", group: "WorkStudio", path: `~/.workstudio/skills/${a.name}/SKILL.md` });
         return skills[skills.length - 1];
       case "skill_delete":
         return null;
+      case "automations_list":
+        return automations;
+      case "automation_save": {
+        const x = a.a;
+        if (x.id) Object.assign(automations.find((y) => y.id === x.id) ?? {}, x);
+        else automations.push({ ...x, id: `a${Date.now()}`, created: Date.now(), next_run: Date.now() + 36e5 });
+        return x;
+      }
+      case "automation_delete":
+        automations.splice(automations.findIndex((y) => y.id === a.id), 1);
+        return null;
+      case "automation_enable":
+        automations.find((y) => y.id === a.id).enabled = a.on;
+        return null;
+      case "automation_run":
+        return "";
       case "skills_folder":
         return "~/.workstudio/skills";
       case "artifact_put":

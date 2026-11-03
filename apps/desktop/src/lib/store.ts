@@ -48,6 +48,8 @@ type State = {
   chatLive: Record<string, Live>;
   /** Bumps when a chat answer ends, so views reload it from disk. */
   chatTick: number;
+  /** A chat the chat view should open when it shows (from Automations). */
+  chatIntent: string | null;
   /** Bumps after an install or update ends and versions were read again. */
   versionTick: number;
 
@@ -56,6 +58,7 @@ type State = {
   openApp: (id: string) => void;
   takeAppIntent: (id: string) => boolean;
   chatStarted: (id: string) => void;
+  openChatId: (id: string) => void;
   reloadCatalog: () => Promise<void>;
   refresh: (versions?: boolean) => Promise<void>;
   start: (id: string) => Promise<void>;
@@ -137,6 +140,7 @@ export const useStore = create<State>((set, get) => ({
   appIntent: null,
   chatLive: {},
   chatTick: 0,
+  chatIntent: null,
   versionTick: 0,
 
   async init() {
@@ -208,6 +212,10 @@ export const useStore = create<State>((set, get) => ({
     if (get().appIntent !== id) return false;
     set({ appIntent: null });
     return true;
+  },
+
+  openChatId(id) {
+    set({ chatIntent: id, route: "chat" });
   },
 
   chatStarted(id) {
@@ -374,8 +382,8 @@ function withDoneMark(command: string) {
   return `${command}; printf '\\033]777;ws-done;%s\\007' "$?"`;
 }
 
-/** brain, Lumina and OpenCue show their own logos. */
-const BRAND_APPS = ["brain", "lumina", "opencue"];
+/** brain, Lumina, OpenCue and OpenBlocks show their own logos. */
+const BRAND_APPS = ["brain", "lumina", "opencue", "openblocks"];
 const withBrands = (apps: AppDef[]) => apps.map((a) => (BRAND_APPS.includes(a.id) ? { ...a, icon: a.id } : a));
 
 export const appName = (apps: AppDef[], id: string) => apps.find((a) => a.id === id)?.name ?? (id || "WorkStudio");

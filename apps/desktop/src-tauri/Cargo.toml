@@ -1,6 +1,6 @@
 [package]
 name = "workstudio"
-version = "0.1.3"
+version = "0.1.4"
 description = "AI WorkStudio — one workspace for brain, OpenCue, Lumina and the apps that come next"
 authors = ["Lautaro Silva"]
 license-file = "../../../LICENSE"
@@ -35,6 +35,7 @@ dirs = "6"
 toml_edit = "0.22"
 anyhow = "1"
 which = "7"
+chrono = { version = "0.4", default-features = false, features = ["clock", "std"] }
 
 [profile.release]
 codegen-units = 1

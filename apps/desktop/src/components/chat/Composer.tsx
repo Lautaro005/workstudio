@@ -4,7 +4,7 @@
 // the right next to Send.
 import { useEffect, useRef, useState } from "react";
 import { open as openDialog } from "@tauri-apps/plugin-dialog";
-import { ArrowUp, AtSign, Bot, Brain, Check, ChevronDown, ChevronRight, Folder, FolderPlus, Globe, Lock, NotebookPen, Paperclip, Pencil, Plus, Square, Zap, Settings as Gear } from "../icons";
+import { ArrowUp, AtSign, Bot, Brain, Check, ChevronDown, ChevronRight, Folder, FolderPlus, Globe, Lock, NotebookPen, Notebook, Paperclip, Pencil, Plus, Square, Zap, Settings as Gear } from "../icons";
 import { call, inTauri, type Attachment, type ChatModel, type OpenCueAgent, type Skill } from "../../lib/api";
 import { useT } from "../../lib/i18n";
 import { useStore } from "../../lib/store";
@@ -18,8 +18,30 @@ export type Pill = { id: string; label: string; icon: typeof Brain; tone: string
 export const PILLS: Pill[] = [
   { id: "brain", label: "brain", icon: Brain, tone: "clay", app: "brain" },
   { id: "lumina", label: "Lumina", icon: NotebookPen, tone: "mustard", app: "lumina" },
+  { id: "openblocks", label: "OpenBlocks", icon: Notebook, tone: "ink", app: "openblocks" },
   { id: "web", label: "Web", icon: Globe, tone: "olive" },
 ];
+
+/** Skills keep the order they came in (already sorted by tool); this lists them under their titles. */
+const groupOf = (s: Skill) => s.group || "Skills";
+function GroupedSkills({ items, render }: { items: Skill[]; render: (s: Skill, i: number) => React.ReactNode }) {
+  let last = "";
+  return (
+    <>
+      {items.map((s, i) => {
+        const g = groupOf(s);
+        const head = g !== last;
+        last = g;
+        return (
+          <div key={s.path} className="skill-row">
+            {head && <div className="menu-label group-title">{g}</div>}
+            {render(s, i)}
+          </div>
+        );
+      })}
+    </>
+  );
+}
 
 const baseName = (p: string) => p.replace(/[\\/]+$/, "").split(/[\\/]/).pop() || p;
 
@@ -193,7 +215,7 @@ export function Composer({
   };
   const options =
     sug?.kind === "skill"
-      ? skills.filter((s) => s.name.toLowerCase().includes(sug.query) || s.description.toLowerCase().includes(sug.query)).slice(0, 8)
+      ? skills.filter((s) => !sug.query || `${s.name} ${s.description} ${groupOf(s)}`.toLowerCase().includes(sug.query)).slice(0, 60)
       : sug?.kind === "agent"
         ? agents.filter((a) => a.name.toLowerCase().includes(sug.query)).slice(0, 8)
         : [];
@@ -222,16 +244,34 @@ export function Composer({
       <div className="composer">
         {sug && options.length > 0 && (
           <div className="popover menu suggest-menu" role="listbox">
-            <div className="menu-label">{sug.kind === "skill" ? t("Skills") : t("Agentes de OpenCue")}</div>
-            {options.map((o, i) => (
-              <button key={i} className={`menu-item ${i === sel ? "sel" : ""}`} onMouseDown={(e) => (e.preventDefault(), choose(i))} onMouseEnter={() => setSel(i)}>
-                {sug.kind === "skill" ? <Zap /> : <Glyph icon="opencue" color="olive" className="xs" />}
-                <span className="sug-txt">
-                  <b>{sug.kind === "skill" ? (o as Skill).name : `@${(o as OpenCueAgent).name}`}</b>
-                  {sug.kind === "skill" && (o as Skill).description && <span className="muted">{(o as Skill).description}</span>}
-                </span>
-              </button>
-            ))}
+            {sug.kind === "skill" ? (
+              <div className="menu-scroll">
+                <GroupedSkills
+                  items={options as Skill[]}
+                  render={(o, i) => (
+                    <button className={`menu-item ${i === sel ? "sel" : ""}`} onMouseDown={(e) => (e.preventDefault(), choose(i))} onMouseEnter={() => setSel(i)}>
+                      <Zap />
+                      <span className="sug-txt">
+                        <b>/{o.name}</b>
+                        {o.description && <span className="muted">{o.description}</span>}
+                      </span>
+                    </button>
+                  )}
+                />
+              </div>
+            ) : (
+              <>
+                <div className="menu-label">{t("Agentes de OpenCue")}</div>
+                {options.map((o, i) => (
+                  <button key={i} className={`menu-item ${i === sel ? "sel" : ""}`} onMouseDown={(e) => (e.preventDefault(), choose(i))} onMouseEnter={() => setSel(i)}>
+                    <Glyph icon="opencue" color="olive" className="xs" />
+                    <span className="sug-txt">
+                      <b>@{(o as OpenCueAgent).name}</b>
+                    </span>
+                  </button>
+                ))}
+              </>
+            )}
           </div>
         )}
         {chips && (
@@ -338,15 +378,18 @@ export function Composer({
                     </button>
                     {skills.length === 0 && <div className="menu-label">{t("Todavía no hay skills.")}</div>}
                     <div className="menu-scroll">
-                      {skills.map((s) => (
-                        <button key={s.path} className="menu-item two" onClick={() => toggleSkill(s.path)} title={s.path}>
-                          <span className="check-box">{draft.skills.includes(s.path) && <Check size={12} />}</span>
-                          <span className="sug-txt">
-                            <b>{s.name}</b>
-                            {s.description && <span className="muted">{s.description}</span>}
-                          </span>
-                        </button>
-                      ))}
+                      <GroupedSkills
+                        items={skills}
+                        render={(s) => (
+                          <button className="menu-item two" onClick={() => toggleSkill(s.path)} title={s.path}>
+                            <span className="check-box">{draft.skills.includes(s.path) && <Check size={12} />}</span>
+                            <span className="sug-txt">
+                              <b>{s.name}</b>
+                              {s.description && <span className="muted">{s.description}</span>}
+                            </span>
+                          </button>
+                        )}
+                      />
                     </div>
                     <div className="menu-sep" />
                     <button className="menu-item" onClick={() => (plus.setOpen(false), onManageSkills())}>

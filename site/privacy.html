@@ -40,7 +40,7 @@
 <div data-l="es">
 <p><b>Corto:</b> AI WorkStudio no tiene cuentas, no tiene servidores propios y no junta datos sobre vos. Todo lo que guarda queda en tu compu.</p>
 <h2>Qué guarda y dónde</h2>
-<p>Tus ajustes, tus apps propias, los servidores MCP que agregás, los avisos, las conversaciones del chat y los registros se guardan en <code>~/.workstudio</code> en tu compu. No se mandan a ningún lado. Podés borrarlos cuando quieras borrando esa carpeta.</p>
+<p>Tus ajustes, tus apps propias, los servidores MCP que agregás, los avisos, las conversaciones del chat, tus automatizaciones y los registros se guardan en <code>~/.workstudio</code> en tu compu. No se mandan a ningún lado. Podés borrarlos cuando quieras borrando esa carpeta.</p>
 <h2>Con quién se conecta</h2>
 <div class="table-scroll"><table>
 <tr><th>Destino</th><th>Para qué</th><th>Qué se manda</th></tr>
@@ -51,6 +51,7 @@
 </table></div>
 <h2>Los modelos que usás</h2>
 <p>Cuando chateás con Claude Code, Codex, Gemini o un agente de OpenCue, WorkStudio usa esos programas con tu sesión. Lo que escribís y lo que devuelven las herramientas va al proveedor de ese modelo, bajo sus propias condiciones. Con Ollama todo queda en tu compu.</p>
+<p>Con la pastilla OpenBlocks activada, el modelo que elegiste puede leer y editar las páginas de tu vault de OpenBlocks a través de su servidor MCP, y lo que lee va al proveedor de ese modelo igual que el resto de la conversación. Las automatizaciones funcionan igual, con un horario, solo mientras WorkStudio está abierto.</p>
 <h2>Clientes MCP</h2>
 <p>Cuando conectás un cliente MCP, WorkStudio edita su archivo de configuración en tu compu y guarda una copia <code>.bak-workstudio</code> antes. No manda nada afuera.</p>
 <h2>Este sitio</h2>
@@ -61,7 +62,7 @@
 <div data-l="en">
 <p><b>Short version:</b> AI WorkStudio has no accounts, no servers of its own and collects no data about you. Everything it keeps stays on your computer.</p>
 <h2>What it keeps and where</h2>
-<p>Your settings, your own apps, the MCP servers you add, notifications, chat conversations and logs are stored in <code>~/.workstudio</code> on your computer. They aren't sent anywhere. You can delete them anytime by deleting that folder.</p>
+<p>Your settings, your own apps, the MCP servers you add, notifications, chat conversations, your automations and logs are stored in <code>~/.workstudio</code> on your computer. They aren't sent anywhere. You can delete them anytime by deleting that folder.</p>
 <h2>What it connects to</h2>
 <div class="table-scroll"><table>
 <tr><th>Destination</th><th>Why</th><th>What is sent</th></tr>
@@ -72,6 +73,7 @@
 </table></div>
 <h2>The models you use</h2>
 <p>When you chat with Claude Code, Codex, Gemini or an OpenCue agent, WorkStudio runs those programs with your login. What you write and what the tools return goes to that model's provider, under its own terms. With Ollama everything stays on your computer.</p>
+<p>With the OpenBlocks pill on, the model you chose can read and edit the pages of your OpenBlocks vault through its MCP server, and what it reads goes to that model's provider like the rest of the conversation. Automations run the same way, on a schedule, only while WorkStudio is open.</p>
 <h2>MCP clients</h2>
 <p>When you connect an MCP client, WorkStudio edits its config file on your computer and keeps a <code>.bak-workstudio</code> copy first. Nothing is sent out.</p>
 <h2>This website</h2>
@@ -87,7 +89,7 @@
     <div class="grid">
       <div><a class="brand" href="./"><img src="assets/logo.svg" alt="">AI WorkStudio</a><p style="margin-top:12px;max-width:260px"><span data-l="es">Tus IAs locales en un solo estudio.</span><span data-l="en">Your local AI apps in one studio.</span></p></div>
       <div><h5><span data-l="es">Producto</span><span data-l="en">Product</span></h5><ul><li><a href="docs.html">Docs</a></li><li><a href="changelog.html">Changelog</a></li><li><a href="https://github.com/Lautaro005/workstudio/releases"><span data-l="es">Descargas</span><span data-l="en">Downloads</span></a></li><li><a href="llms.txt">llms.txt</a></li></ul></div>
-      <div><h5><span data-l="es">La familia</span><span data-l="en">The family</span></h5><ul><li><a href="https://lautaro005.github.io/brain/">brain</a></li><li><a href="https://lautaro005.github.io/opencue/">OpenCue</a></li><li><a href="https://lautaro005.github.io/lumina/">Lumina</a></li></ul></div>
+      <div><h5><span data-l="es">La familia</span><span data-l="en">The family</span></h5><ul><li><a href="https://lautaro005.github.io/brain/">brain</a></li><li><a href="https://lautaro005.github.io/opencue/">OpenCue</a></li><li><a href="https://lautaro005.github.io/lumina/">Lumina</a></li><li><a href="https://lautaro005.github.io/openblocks/">OpenBlocks</a></li></ul></div>
       <div><h5><span data-l="es">Proyecto</span><span data-l="en">Project</span></h5><ul><li><a href="https://github.com/Lautaro005/workstudio">GitHub</a></li><li><a href="privacy.html"><span data-l="es">Privacidad</span><span data-l="en">Privacy policy</span></a></li><li><a href="https://github.com/Lautaro005/workstudio/blob/main/LICENSE"><span data-l="es">Licencia</span><span data-l="en">License</span></a></li></ul></div>
     </div>
     <div class="legal"><span>© 2026 Lautaro Silva · Apache-2.0 + Commons Clause</span><span class="lang" role="group" aria-label="Idioma / Language"><button data-set-lang="es">Español</button><button data-set-lang="en">English</button></span></div>

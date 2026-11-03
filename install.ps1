@@ -2,8 +2,8 @@
 #
 #   irm https://raw.githubusercontent.com/Lautaro005/workstudio/main/install.ps1 | iex
 #
-# Also install the family (brain, Lumina, OpenCue):
-#   $env:WORKSTUDIO_WITH = "brain,lumina,opencue"; irm https://raw.githubusercontent.com/Lautaro005/workstudio/main/install.ps1 | iex
+# Also install the family (brain, Lumina, OpenCue, OpenBlocks):
+#   $env:WORKSTUDIO_WITH = "brain,lumina,opencue,openblocks"; irm https://raw.githubusercontent.com/Lautaro005/workstudio/main/install.ps1 | iex
 # Remove it (your data in ~\.workstudio stays):
 #   $env:WORKSTUDIO_UNINSTALL = "1"; irm https://raw.githubusercontent.com/Lautaro005/workstudio/main/install.ps1 | iex
 $ErrorActionPreference = "Stop"
@@ -60,6 +60,7 @@ if ($env:WORKSTUDIO_WITH) {
       "brain"   { Say "Installing brain";   irm https://raw.githubusercontent.com/Lautaro005/brain/main/install.ps1 | iex }
       "lumina"  { Say "Installing Lumina";  irm https://lautaro005.github.io/lumina/install.ps1 | iex }
       "opencue" { Say "Installing OpenCue"; irm https://lautaro005.github.io/opencue/install.ps1 | iex }
+      "openblocks" { Say "Installing OpenBlocks"; irm https://raw.githubusercontent.com/Lautaro005/openblocks/main/install.ps1 | iex }
       default   { Say "Skipping unknown app: $app" }
     }
   }

@@ -1,14 +1,16 @@
 # AI WorkStudio
 
-> AI WorkStudio is a free, open-source desktop app (macOS, Windows, Linux) that brings local AI apps — brain, Lumina, OpenCue and any app you add — into one place: their status, notifications and updates, one shared MCP server for your agents, a chat over the models you already have and up to six terminals. Everything runs locally; it has no accounts and no servers of its own.
+> AI WorkStudio is a free, open-source desktop app (macOS, Windows, Linux) that brings local AI apps — brain, Lumina, OpenCue, OpenBlocks and any app you add — into one place: their status, notifications and updates, one shared MCP server for your agents, a chat over the models you already have (with your OpenBlocks vault as a second brain), automations and up to six terminals. Everything runs locally; it has no accounts and no servers of its own.
 
 Key facts:
 
-- Install on macOS/Linux: `curl -fsSL https://raw.githubusercontent.com/Lautaro005/workstudio/main/install.sh | sh` (add `-s -- --all` to also install brain, Lumina and OpenCue).
+- Install on macOS/Linux: `curl -fsSL https://raw.githubusercontent.com/Lautaro005/workstudio/main/install.sh | sh` (add `-s -- --all` to also install brain, Lumina, OpenCue and OpenBlocks).
 - Install on Windows (PowerShell): `irm https://raw.githubusercontent.com/Lautaro005/workstudio/main/install.ps1 | iex`.
-- Commands: `workstudio` (open), `workstudio update`, `workstudio uninstall`, `workstudio mcp [--only brain,lumina,web]`.
-- One MCP server, `workstudio`, carries every app's tools named `<app>__<tool>` (for example `brain__search_knowledge`, `lumina__get_meeting`), plus `web__search` and `web__fetch`. It connects in one click to Claude Code, Claude Desktop, Codex, Cursor, Gemini CLI and Windsurf, keeping a `.bak-workstudio` backup.
-- Chat (like Claude's): projects with instructions, knowledge files and a working folder (read-only or editing), file and photo attachments, skills (SKILL.md, turned on with /), artifacts in a side panel (documents, code, HTML, SVG), @mentions to hand a message to an OpenCue agent, brain / Lumina / web search pills, edit and regenerate.
+- Commands: `workstudio` (open), `workstudio update`, `workstudio uninstall`, `workstudio mcp [--only brain,lumina,openblocks,web]`.
+- One MCP server, `workstudio`, carries every app's tools named `<app>__<tool>` (for example `brain__search_knowledge`, `lumina__get_meeting`, `openblocks__search_pages`), plus `web__search` and `web__fetch`. It connects in one click to Claude Code, Claude Desktop, Codex, Cursor, Gemini CLI and Windsurf, keeping a `.bak-workstudio` backup.
+- Chat (like Claude's): projects with instructions, knowledge files and a working folder (read-only or editing), file and photo attachments, skills (SKILL.md) from every tool — WorkStudio, OpenBlocks, Claude Code and its plugins, Codex, Gemini, OpenCue, brain — listed under titles and searched with /, artifacts in a side panel (documents, code, HTML, SVG), @mentions to hand a message to an OpenCue agent, brain / Lumina / OpenBlocks / web pills, edit and regenerate. Tools used show as plain text, with no background.
+- Second brain (0.1.4): with the OpenBlocks pill the model reads the vault's `AGENTS` routing map first, saves insights instead of raw data, keeps the folder structure fixed and follows a "business first" rule (Ben AI's method). Built-in skills: `/second-brain-setup`, `/second-brain-operator`, `/second-brain-optimizer`.
+- Automations (0.1.4): prompts that run on a schedule (daily, chosen weekdays, every N minutes, or by hand) as a new chat, with the model, pills, skills, project and folder you pick; stored in `~/.workstudio/automations.json`; they run while WorkStudio is open.
 - Chat models: Claude Code (Opus/Sonnet/Haiku latest and versions such as Opus 5.5, Sonnet 5.5, Haiku 5.5, Fable 5.1), Codex (the account's models plus known GPT versions, with a "latest" per family), Gemini CLI, any Ollama model and OpenCue agents.
 - Data lives in `~/.workstudio` (override with `WORKSTUDIO_HOME`). Add your own apps in `~/.workstudio/apps.json`.
 - License: Apache-2.0 with the Commons Clause (free to use, modify and share; not to sell).
@@ -26,6 +28,7 @@ Key facts:
 - [brain](https://lautaro005.github.io/brain/): one local memory (MCP server) for all your AIs — profile, memories, notes, skills, hybrid search, graph, Fact check.
 - [Lumina](https://lautaro005.github.io/lumina/): meeting and class notes that write themselves, with local transcription.
 - [OpenCue](https://lautaro005.github.io/opencue/): personal agents with a face, memory, email, their own computer and automations.
+- [OpenBlocks](https://lautaro005.github.io/openblocks/): block notes on your own folder of Markdown (Notion + Obsidian), with agents that read and edit your pages. In WorkStudio it is the chat's second brain.
 
 ## Optional
 

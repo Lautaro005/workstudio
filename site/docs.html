@@ -60,12 +60,12 @@
 <section id="que-es">
 <div data-l="es">
 <h2>Qué es</h2>
-<p>AI WorkStudio es una app de escritorio para macOS, Windows y Linux que junta tus apps de IA locales — <a href="https://lautaro005.github.io/brain/">brain</a>, <a href="https://lautaro005.github.io/lumina/">Lumina</a>, <a href="https://lautaro005.github.io/opencue/">OpenCue</a> y las que sumes — en un solo lugar. Muestra su estado, sus avisos y sus versiones, las arranca y las detiene, junta sus herramientas en un solo servidor MCP y suma un chat y hasta seis terminales.</p>
+<p>AI WorkStudio es una app de escritorio para macOS, Windows y Linux que junta tus apps de IA locales — <a href="https://lautaro005.github.io/brain/">brain</a>, <a href="https://lautaro005.github.io/lumina/">Lumina</a>, <a href="https://lautaro005.github.io/opencue/">OpenCue</a>, <a href="https://lautaro005.github.io/openblocks/">OpenBlocks</a> y las que sumes — en un solo lugar. Muestra su estado, sus avisos y sus versiones, las arranca y las detiene, junta sus herramientas en un solo servidor MCP y suma un chat y hasta seis terminales.</p>
 <p>Cada app sigue siendo independiente: WorkStudio no las reemplaza, las encuentra y las conecta. Todo corre en tu compu.</p>
 </div>
 <div data-l="en">
 <h2>What it is</h2>
-<p>AI WorkStudio is a desktop app for macOS, Windows and Linux that brings your local AI apps — <a href="https://lautaro005.github.io/brain/">brain</a>, <a href="https://lautaro005.github.io/lumina/">Lumina</a>, <a href="https://lautaro005.github.io/opencue/">OpenCue</a> and any you add — into one place. It shows their status, notifications and versions, starts and stops them, merges their tools into a single MCP server and adds a chat and up to six terminals.</p>
+<p>AI WorkStudio is a desktop app for macOS, Windows and Linux that brings your local AI apps — <a href="https://lautaro005.github.io/brain/">brain</a>, <a href="https://lautaro005.github.io/lumina/">Lumina</a>, <a href="https://lautaro005.github.io/opencue/">OpenCue</a>, <a href="https://lautaro005.github.io/openblocks/">OpenBlocks</a> and any you add — into one place. It shows their status, notifications and versions, starts and stops them, merges their tools into a single MCP server and adds a chat and up to six terminals.</p>
 <p>Each app stays independent: WorkStudio doesn't replace them, it finds and connects them. Everything runs on your computer.</p>
 </div>
 </section>
@@ -78,7 +78,7 @@
 <p>Opciones (después de <code>sh -s --</code>):</p>
 <div class="table-scroll"><table>
 <tr><th>Opción</th><th>Qué hace</th></tr>
-<tr><td><code>--all</code></td><td>Instala también brain, Lumina y OpenCue.</td></tr>
+<tr><td><code>--all</code></td><td>Instala también brain, Lumina, OpenCue y OpenBlocks.</td></tr>
 <tr><td><code>--with brain,lumina</code></td><td>Instala solo esas apps además de WorkStudio.</td></tr>
 <tr><td><code>--user</code></td><td>macOS: instala en <code>~/Applications</code> en vez de <code>/Applications</code>.</td></tr>
 <tr><td><code>--build</code></td><td>Compila desde el código en vez de bajar una versión (necesita git, Node y Rust).</td></tr>
@@ -101,7 +101,7 @@
 <p>Options (after <code>sh -s --</code>):</p>
 <div class="table-scroll"><table>
 <tr><th>Option</th><th>What it does</th></tr>
-<tr><td><code>--all</code></td><td>Also installs brain, Lumina and OpenCue.</td></tr>
+<tr><td><code>--all</code></td><td>Also installs brain, Lumina, OpenCue and OpenBlocks.</td></tr>
 <tr><td><code>--with brain,lumina</code></td><td>Installs only those apps besides WorkStudio.</td></tr>
 <tr><td><code>--user</code></td><td>macOS: installs into <code>~/Applications</code> instead of <code>/Applications</code>.</td></tr>
 <tr><td><code>--build</code></td><td>Builds from source instead of downloading a release (needs git, Node and Rust).</td></tr>
@@ -152,6 +152,7 @@
 <tr><td><b>brain</b></td><td>Memoria compartida para tus IAs: perfil, memorias, notas, skills, búsqueda híbrida, grafo y Fact check.</td><td><code>http://127.0.0.1:8765</code>, dentro de WorkStudio</td><td><code>brain__*</code></td></tr>
 <tr><td><b>Lumina</b></td><td>Notas de reuniones y clases: transcribe en tu compu y escribe notas con resumen.</td><td><code>http://127.0.0.1:47770</code>, dentro de WorkStudio</td><td><code>lumina__*</code></td></tr>
 <tr><td><b>OpenCue</b></td><td>Agentes personales con memoria, email, computadora propia y automatizaciones.</td><td>Su propia ventana</td><td><code>opencue__*</code> (elegís el agente en MCP)</td></tr>
+<tr><td><b>OpenBlocks</b></td><td>Notas en bloques sobre una carpeta de Markdown (como Notion y Obsidian). Es el <i>second brain</i> del chat.</td><td><code>http://127.0.0.1:47880</code>, dentro de WorkStudio</td><td><code>openblocks__*</code></td></tr>
 </table></div>
 <p>Cada app tiene una página de detalles con su estado, versión, comandos para iniciarla o actualizarla y su servidor MCP. Para brain y Lumina podés marcar que se abran directamente dentro de WorkStudio; usan las mismas preferencias que su propia ventana.</p>
 <p>El lanzador de apps (el ícono de grilla arriba a la derecha) abre cualquier app con un clic.</p>
@@ -163,6 +164,7 @@
 <tr><td><b>brain</b></td><td>Shared memory for your AIs: profile, memories, notes, skills, hybrid search, graph and Fact check.</td><td><code>http://127.0.0.1:8765</code>, inside WorkStudio</td><td><code>brain__*</code></td></tr>
 <tr><td><b>Lumina</b></td><td>Meeting and class notes: transcribes on your computer and writes notes with a summary.</td><td><code>http://127.0.0.1:47770</code>, inside WorkStudio</td><td><code>lumina__*</code></td></tr>
 <tr><td><b>OpenCue</b></td><td>Personal agents with memory, email, their own computer and automations.</td><td>Its own window</td><td><code>opencue__*</code> (pick the agent in MCP)</td></tr>
+<tr><td><b>OpenBlocks</b></td><td>Block notes on a folder of Markdown (like Notion and Obsidian). It is the chat's <i>second brain</i>.</td><td><code>http://127.0.0.1:47880</code>, inside WorkStudio</td><td><code>openblocks__*</code></td></tr>
 </table></div>
 <p>Each app has a details page with its status, version, commands to start or update it and its MCP server. brain and Lumina can be set to open straight inside WorkStudio; they use the same preferences as their own window.</p>
 <p>The app launcher (the grid icon at the top right) opens any app in one click.</p>
@@ -239,7 +241,7 @@
 <section id="chat">
 <div data-l="es">
 <h2>Chat</h2>
-<p>Un chat sobre los modelos que ya tenés. Elegís el modelo arriba y, con las pastillas, qué herramientas puede usar: <b>brain</b>, <b>Lumina</b> y <b>Web</b> (búsqueda y lectura de páginas propias de WorkStudio).</p>
+<p>Un chat sobre los modelos que ya tenés. Elegís el modelo arriba y, con las pastillas, qué herramientas puede usar: <b>brain</b>, <b>Lumina</b>, <b>OpenBlocks</b> y <b>Web</b> (búsqueda y lectura de páginas propias de WorkStudio).</p>
 <div class="table-scroll"><table>
 <tr><th>Modelo</th><th>Cuáles aparecen</th><th>Cómo corre</th></tr>
 <tr><td>Claude Code</td><td>Opus, Sonnet y Haiku <i>latest</i>, y las versiones: Opus 5.5, Sonnet 5.5, Haiku 5.5, Fable 5.1, Opus 5, Sonnet 5, Opus 4.8 a 4.5, Sonnet 4.6 y 4.5, Haiku 4.5.</td><td><code>claude -p</code> con tu sesión y solo el servidor <code>workstudio</code>; herramientas de archivos solo con carpeta o adjuntos.</td></tr>
@@ -254,15 +256,17 @@
 <li><b>Proyectos</b>: instrucciones propias, archivos de conocimiento (su texto va con cada mensaje), carpeta de trabajo, skills fijas, modelo y herramientas predeterminados. Cada proyecto tiene su página con sus chats.</li>
 <li><b>Carpeta de trabajo</b>: con <b>+</b> o soltándola en el chat. Por defecto es de <b>solo lectura</b> (el modelo lista, busca y lee); cambiá el chip a <b>Edita</b> para que pueda crear y editar archivos y correr comandos ahí.</li>
 <li><b>Archivos y fotos</b>: con <b>+</b>, arrastrando o pegando. Los de texto van en el mensaje; las imágenes llegan a los modelos que las aceptan.</li>
-<li><b>Skills</b>: carpetas con <code>SKILL.md</code> (como en Claude) en <code>~/.workstudio/skills</code>, <code>~/.claude/skills</code> o en la carpeta de trabajo. Escribí <b>/</b> para activar una.</li>
+<li><b>Skills</b>: WorkStudio detecta las de todas tus herramientas y las muestra <b>separadas con títulos</b>: <i>WorkStudio</i> (<code>~/.workstudio/skills</code>), <i>OpenBlocks</i> (las de second brain que trae WorkStudio y las de <code>skills/</code> de tu vault), <i>Claude Code</i> (<code>~/.claude/skills</code>) y <i>sus plugins</i>, <i>Codex</i> (<code>~/.codex/skills</code>, <code>~/.agents/skills</code>), <i>Gemini</i>, <i>OpenCue</i>, <i>brain</i> (<code>skills/</code> de su vault) y las de la carpeta de trabajo. Escribí <b>/</b> para ver la lista y seguí escribiendo para buscar por nombre, descripción o título; con las flechas y Enter la activás.</li>
+<li><b>OpenBlocks como second brain</b>: con la pastilla OpenBlocks, el modelo lee primero el mapa <code>AGENTS</code> de tu vault, abre solo las carpetas que indica, guarda <i>insights</i> (no datos crudos), mantiene fija la estructura y sigue la regla «el negocio primero». Está basado en la guía de second brain de Ben AI; las skills <code>/second-brain-setup</code>, <code>/second-brain-operator</code> y <code>/second-brain-optimizer</code> lo arman, lo actualizan y lo limpian.</li>
 <li><b>Agentes de OpenCue</b>: escribí <b>@</b> y el nombre para mandarle ese mensaje a un agente.</li>
 <li><b>Artefactos</b>: documentos, código, páginas web y SVG se abren en un panel al costado, con vista previa, código, versiones, copiar y guardar. El HTML corre aislado.</li>
+<li><b>Herramientas usadas</b>: aparecen como una línea de texto simple («Usó 2 herramientas») que se despliega, sin caja ni fondo.</li>
 <li><b>Instrucciones personales</b> para todos los chats en Ajustes → Chat. Podés editar un mensaje tuyo y reenviarlo, o regenerar la última respuesta.</li>
 </ul>
 </div>
 <div data-l="en">
 <h2>Chat</h2>
-<p>A chat over the models you already have. Pick the model at the top and, with the pills, which tools it can use: <b>brain</b>, <b>Lumina</b> and <b>Web</b> (WorkStudio's own search and page reader).</p>
+<p>A chat over the models you already have. Pick the model at the top and, with the pills, which tools it can use: <b>brain</b>, <b>Lumina</b>, <b>OpenBlocks</b> and <b>Web</b> (WorkStudio's own search and page reader).</p>
 <div class="table-scroll"><table>
 <tr><th>Model</th><th>What shows up</th><th>How it runs</th></tr>
 <tr><td>Claude Code</td><td>Opus, Sonnet and Haiku <i>latest</i>, plus the versions: Opus 5.5, Sonnet 5.5, Haiku 5.5, Fable 5.1, Opus 5, Sonnet 5, Opus 4.8 to 4.5, Sonnet 4.6 and 4.5, Haiku 4.5.</td><td><code>claude -p</code> with your login and only the <code>workstudio</code> server; file tools only with a folder or attachments.</td></tr>
@@ -277,9 +281,11 @@
 <li><b>Projects</b>: their own instructions, knowledge files (their text goes with every message), working folder, pinned skills, default model and tools. Each project has a page with its chats.</li>
 <li><b>Working folder</b>: with <b>+</b> or by dropping it on the chat. <b>Read-only</b> by default (the model lists, searches and reads); switch the chip to <b>Edits</b> to let it create and edit files and run commands there.</li>
 <li><b>Files and photos</b>: with <b>+</b>, drag and drop or paste. Text files go into the message; images reach the models that accept them.</li>
-<li><b>Skills</b>: folders with a <code>SKILL.md</code> (like Claude's) in <code>~/.workstudio/skills</code>, <code>~/.claude/skills</code> or the working folder. Type <b>/</b> to turn one on.</li>
+<li><b>Skills</b>: WorkStudio finds the ones from all your tools and lists them <b>under titles</b>: <i>WorkStudio</i> (<code>~/.workstudio/skills</code>), <i>OpenBlocks</i> (the second-brain ones WorkStudio ships plus your vault's <code>skills/</code>), <i>Claude Code</i> (<code>~/.claude/skills</code>) and <i>its plugins</i>, <i>Codex</i> (<code>~/.codex/skills</code>, <code>~/.agents/skills</code>), <i>Gemini</i>, <i>OpenCue</i>, <i>brain</i> (its vault's <code>skills/</code>) and the working folder's. Type <b>/</b> to see the list and keep typing to search by name, description or title; arrows and Enter turn one on.</li>
+<li><b>OpenBlocks as a second brain</b>: with the OpenBlocks pill on, the model reads your vault's <code>AGENTS</code> map first, opens only the folders it points to, saves <i>insights</i> (not raw data), keeps the structure fixed and follows a "business first" rule. It is based on Ben AI's second-brain guide; the <code>/second-brain-setup</code>, <code>/second-brain-operator</code> and <code>/second-brain-optimizer</code> skills build, update and clean it.</li>
 <li><b>OpenCue agents</b>: type <b>@</b> and the name to hand that message to an agent.</li>
 <li><b>Artifacts</b>: documents, code, web pages and SVG open in a side panel, with preview, code, versions, copy and save. HTML runs sandboxed.</li>
+<li><b>Tools used</b> show as one plain line of text ("Used 2 tools") that expands, with no box or background.</li>
 <li><b>Personal instructions</b> for every chat in Settings → Chat. You can edit one of your messages and resend it, or regenerate the last answer.</li>
 </ul>
 </div>
@@ -287,6 +293,14 @@
 
 <section id="terminales">
 <div data-l="es">
+<h2>Automatizaciones</h2>
+<p>El item <b>Automatizaciones</b> de la barra lateral corre prompts por tu cuenta, con el modelo, las pastillas (brain, Lumina, OpenBlocks, Web), las skills, el proyecto y la carpeta que elijas. Cada corrida es un chat llamado «⚡ nombre», así ves la respuesta, las herramientas y los artefactos.</p>
+<ul>
+<li><b>Cuándo</b>: todos los días a una hora, días elegidos de la semana, cada N minutos o solo a mano (<i>Ejecutar ahora</i>).</li>
+<li>Corren <b>mientras WorkStudio está abierto</b> (al cerrar la ventana queda en la bandeja). Si estaba cerrado a la hora de una, corre una sola vez al abrirse.</li>
+<li><b>Plantillas</b> del método de second brain de Ben AI: actualización diaria (guarda insights de tus reuniones en el vault), limpieza semanal con puntaje de salud, briefing de la mañana y cierre del día.</li>
+<li>Se guardan en <code>~/.workstudio/automations.json</code>.</li>
+</ul>
 <h2>Terminales</h2>
 <p>Hasta seis terminales reales a la vez, en grilla. Cada una es una sesión de tu shell. Los perfiles:</p>
 <div class="table-scroll"><table>
@@ -301,6 +315,14 @@
 <p>Los agentes arrancan en <code>~/.workstudio/workspace</code> (se cambia en Ajustes) o en la carpeta que elijas con «En carpeta…». Desde el panel de CLIs instalás o actualizás Claude Code, Codex, Gemini CLI y Cursor Agent.</p>
 </div>
 <div data-l="en">
+<h2>Automations</h2>
+<p>The <b>Automations</b> item in the sidebar runs prompts on its own, with the model, pills (brain, Lumina, OpenBlocks, Web), skills, project and folder you choose. Every run is a chat titled “⚡ name”, so you see the answer, the tools and the artifacts.</p>
+<ul>
+<li><b>When</b>: every day at a time, chosen days of the week, every N minutes or only by hand (<i>Run now</i>).</li>
+<li>They run <b>while WorkStudio is open</b> (closing the window keeps it in the tray). If it was closed at the time of one, it runs once when it opens.</li>
+<li><b>Templates</b> from Ben AI's second-brain method: a daily update (saves insights from your meetings in the vault), a weekly clean-up with a health score, a morning briefing and an end-of-day wrap-up.</li>
+<li>They live in <code>~/.workstudio/automations.json</code>.</li>
+</ul>
 <h2>Terminals</h2>
 <p>Up to six real terminals at once, in a grid. Each is a session of your shell. Profiles:</p>
 <div class="table-scroll"><table>
@@ -321,7 +343,7 @@
 <h2>Servidor MCP</h2>
 <p><code>workstudio mcp</code> es un servidor MCP que arranca los servidores de tus apps, junta sus herramientas y reparte cada llamada. Las herramientas se llaman <code>&lt;app&gt;__&lt;herramienta&gt;</code>, por ejemplo <code>brain__search_knowledge</code>. Tus agentes ven un solo servidor en vez de una lista larga.</p>
 <ul>
-<li><code>workstudio mcp --only brain,lumina,web</code> lo limita a esas apps; <code>web</code> suma <code>web__search</code> y <code>web__fetch</code> de WorkStudio.</li>
+<li><code>workstudio mcp --only brain,lumina,openblocks,web</code> lo limita a esas apps; <code>web</code> suma <code>web__search</code> y <code>web__fetch</code> de WorkStudio.</li>
 <li>Los servidores MCP que agregues en la pestaña Servidores (stdio o http) viajan con él.</li>
 <li>OpenCue expone las herramientas de un agente: elegilo en MCP → Servidores.</li>
 </ul>
@@ -334,13 +356,13 @@
 <tr><td>Codex</td><td><code>~/.codex/config.toml</code></td></tr>
 <tr><td>Cursor, Gemini, Windsurf</td><td>Su <code>mcp.json</code> o <code>settings.json</code></td></tr>
 </table></div>
-<p>La primera vez guarda una copia <code>.bak-workstudio</code> del archivo. Si ya tenías brain, Lumina u OpenCue sueltos, los saca para que nada aparezca dos veces. Desconectar quita solo lo que puso WorkStudio. La pestaña Config generada muestra el JSON listo para copiar.</p>
+<p>La primera vez guarda una copia <code>.bak-workstudio</code> del archivo. Si ya tenías brain, Lumina, OpenCue u OpenBlocks sueltos, los saca para que nada aparezca dos veces. Desconectar quita solo lo que puso WorkStudio. La pestaña Config generada muestra el JSON listo para copiar.</p>
 </div>
 <div data-l="en">
 <h2>MCP server</h2>
 <p><code>workstudio mcp</code> is an MCP server that starts your apps' servers, merges their tools and routes each call. Tools are named <code>&lt;app&gt;__&lt;tool&gt;</code>, for example <code>brain__search_knowledge</code>. Your agents see one server instead of a long list.</p>
 <ul>
-<li><code>workstudio mcp --only brain,lumina,web</code> limits it to those apps; <code>web</code> adds WorkStudio's <code>web__search</code> and <code>web__fetch</code>.</li>
+<li><code>workstudio mcp --only brain,lumina,openblocks,web</code> limits it to those apps; <code>web</code> adds WorkStudio's <code>web__search</code> and <code>web__fetch</code>.</li>
 <li>MCP servers you add in the Servers tab (stdio or http) travel with it.</li>
 <li>OpenCue exposes one agent's tools: pick it in MCP → Servers.</li>
 </ul>
@@ -353,7 +375,7 @@
 <tr><td>Codex</td><td><code>~/.codex/config.toml</code></td></tr>
 <tr><td>Cursor, Gemini, Windsurf</td><td>Their <code>mcp.json</code> or <code>settings.json</code></td></tr>
 </table></div>
-<p>The first time it keeps a <code>.bak-workstudio</code> copy of the file. If you already had brain, Lumina or OpenCue on their own, it removes them so nothing shows up twice. Disconnecting removes only what WorkStudio added. The Generated config tab shows the JSON ready to copy.</p>
+<p>The first time it keeps a <code>.bak-workstudio</code> copy of the file. If you already had brain, Lumina, OpenCue or OpenBlocks on their own, it removes them so nothing shows up twice. Disconnecting removes only what WorkStudio added. The Generated config tab shows the JSON ready to copy.</p>
 </div>
 </section>
 
@@ -433,6 +455,8 @@
 <tr><td><code>chats/</code></td><td>Las conversaciones del chat (y sus adjuntos en <code>chats/files</code>).</td></tr>
 <tr><td><code>projects/</code></td><td>Los proyectos del chat y sus archivos.</td></tr>
 <tr><td><code>skills/</code></td><td>Tus skills (<code>SKILL.md</code>).</td></tr>
+<tr><td><code>builtin-skills/</code></td><td>Las skills de second brain que trae WorkStudio (se reescriben al actualizar).</td></tr>
+<tr><td><code>automations.json</code></td><td>Tus automatizaciones.</td></tr>
 <tr><td><code>artifacts/</code></td><td>Artefactos HTML para la vista previa.</td></tr>
 <tr><td><code>mcp/</code></td><td>Las configs generadas para los agentes.</td></tr>
 <tr><td><code>workspace/</code></td><td>Donde arrancan los agentes de las terminales.</td></tr>
@@ -451,6 +475,8 @@
 <tr><td><code>chats/</code></td><td>Chat conversations (and their attachments in <code>chats/files</code>).</td></tr>
 <tr><td><code>projects/</code></td><td>Chat projects and their files.</td></tr>
 <tr><td><code>skills/</code></td><td>Your skills (<code>SKILL.md</code>).</td></tr>
+<tr><td><code>builtin-skills/</code></td><td>The second-brain skills WorkStudio ships (rewritten on update).</td></tr>
+<tr><td><code>automations.json</code></td><td>Your automations.</td></tr>
 <tr><td><code>artifacts/</code></td><td>HTML artifacts for the preview.</td></tr>
 <tr><td><code>mcp/</code></td><td>Configs generated for agents.</td></tr>
 <tr><td><code>workspace/</code></td><td>Where terminal agents start.</td></tr>
@@ -534,7 +560,7 @@
     <div class="grid">
       <div><a class="brand" href="./"><img src="assets/logo.svg" alt="">AI WorkStudio</a><p style="margin-top:12px;max-width:260px"><span data-l="es">Tus IAs locales en un solo estudio.</span><span data-l="en">Your local AI apps in one studio.</span></p></div>
       <div><h5><span data-l="es">Producto</span><span data-l="en">Product</span></h5><ul><li><a href="docs.html">Docs</a></li><li><a href="changelog.html">Changelog</a></li><li><a href="https://github.com/Lautaro005/workstudio/releases"><span data-l="es">Descargas</span><span data-l="en">Downloads</span></a></li><li><a href="llms.txt">llms.txt</a></li></ul></div>
-      <div><h5><span data-l="es">La familia</span><span data-l="en">The family</span></h5><ul><li><a href="https://lautaro005.github.io/brain/">brain</a></li><li><a href="https://lautaro005.github.io/opencue/">OpenCue</a></li><li><a href="https://lautaro005.github.io/lumina/">Lumina</a></li></ul></div>
+      <div><h5><span data-l="es">La familia</span><span data-l="en">The family</span></h5><ul><li><a href="https://lautaro005.github.io/brain/">brain</a></li><li><a href="https://lautaro005.github.io/opencue/">OpenCue</a></li><li><a href="https://lautaro005.github.io/lumina/">Lumina</a></li><li><a href="https://lautaro005.github.io/openblocks/">OpenBlocks</a></li></ul></div>
       <div><h5><span data-l="es">Proyecto</span><span data-l="en">Project</span></h5><ul><li><a href="https://github.com/Lautaro005/workstudio">GitHub</a></li><li><a href="privacy.html"><span data-l="es">Privacidad</span><span data-l="en">Privacy policy</span></a></li><li><a href="https://github.com/Lautaro005/workstudio/blob/main/LICENSE"><span data-l="es">Licencia</span><span data-l="en">License</span></a></li></ul></div>
     </div>
     <div class="legal"><span>© 2026 Lautaro Silva · Apache-2.0 + Commons Clause</span><span class="lang" role="group" aria-label="Idioma / Language"><button data-set-lang="es">Español</button><button data-set-lang="en">English</button></span></div>

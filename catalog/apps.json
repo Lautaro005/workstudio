@@ -180,6 +180,67 @@
       "webstore": "app.lumina.desktop",
       "tagline_en": "Meeting notes that write themselves",
       "description_en": "Listens to meetings and classes, transcribes on your computer (Parakeet, Canary, Whisper), turns your notes into complete notes, writes the summary, answers live questions with your sources and lets you chat about everything."
+    },
+    {
+      "id": "openblocks",
+      "name": "OpenBlocks",
+      "tagline": "Notas en bloques sobre tu propia carpeta",
+      "description": "App de notas que escribe como Notion y guarda como Obsidian: editor por bloques sobre un vault de Markdown, bases de datos, vista previa de archivos, grafo, historial y un chat con agentes que leen y editan tus páginas. Es el second brain de tu chat en WorkStudio.",
+      "color": "mustard",
+      "icon": "openblocks",
+      "repo": "Lautaro005/openblocks",
+      "site": "https://lautaro005.github.io/openblocks/",
+      "kind": "web",
+      "url": "http://127.0.0.1:47880/",
+      "health": {
+        "url": "http://127.0.0.1:47880/api/status",
+        "contains": "openblocks"
+      },
+      "home": "~/.openblocks",
+      "cli": "openblocks",
+      "mac_app": "OpenBlocks.app",
+      "process": "openblocks",
+      "version": {
+        "json_url": "http://127.0.0.1:47880/api/status",
+        "field": "version",
+        "cmd": "openblocks --version"
+      },
+      "start": {
+        "unix": "openblocks serve",
+        "windows": "openblocks serve"
+      },
+      "stop": {
+        "url": "http://127.0.0.1:47880/api/quit",
+        "header": "X-OpenBlocks",
+        "value": "1"
+      },
+      "install": {
+        "unix": "curl -fsSL https://raw.githubusercontent.com/Lautaro005/openblocks/main/install.sh | sh",
+        "windows": "irm https://raw.githubusercontent.com/Lautaro005/openblocks/main/install.ps1 | iex"
+      },
+      "update": {
+        "unix": "openblocks update",
+        "windows": "openblocks update"
+      },
+      "mcp": {
+        "name": "openblocks",
+        "command": "{cli}",
+        "args": [
+          "mcp"
+        ],
+        "description": "Buscar, leer, crear y editar las páginas del vault de OpenBlocks (tu second brain)",
+        "description_en": "Search, read, create and edit the pages of your OpenBlocks vault (your second brain)"
+      },
+      "features": [
+        "MCP",
+        "Vault Markdown",
+        "Editor por bloques",
+        "Bases de datos",
+        "Grafo",
+        "Agentes"
+      ],
+      "tagline_en": "Block notes on your own folder",
+      "description_en": "A notes app that writes like Notion and saves like Obsidian: a block editor on a Markdown vault, databases, file previews, a graph, history and a chat with agents that read and edit your pages. It is your chat's second brain in WorkStudio."
     }
   ],
   "clis": [

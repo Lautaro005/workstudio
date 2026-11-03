@@ -3,8 +3,8 @@
 <h1 align="center">AI WorkStudio</h1>
 
 <p align="center"><b>Your local AI apps in one studio.</b><br>
-brain remembers, Lumina listens, OpenCue works — WorkStudio brings them together like a workspace:<br>
-status, notifications, updates, shared MCP servers and up to six terminals at once. macOS, Windows and Linux.</p>
+brain remembers, Lumina listens, OpenCue works, OpenBlocks takes notes — WorkStudio brings them together like a workspace:<br>
+status, notifications, updates, shared MCP servers, a chat with a second brain, automations and up to six terminals at once. macOS, Windows and Linux.</p>
 
 <p align="center"><a href="https://lautaro005.github.io/workstudio/">Website</a> · <a href="https://lautaro005.github.io/workstudio/docs.html">Docs</a> · <a href="https://github.com/Lautaro005/workstudio/releases">Releases</a> · <a href="CHANGELOG.md">Changelog</a></p>
 
@@ -16,7 +16,7 @@ macOS / Linux:
 curl -fsSL https://raw.githubusercontent.com/Lautaro005/workstudio/main/install.sh | sh
 ```
 
-With brain, Lumina and OpenCue too:
+With brain, Lumina, OpenCue and OpenBlocks too:
 
 ```bash
 curl -fsSL https://raw.githubusercontent.com/Lautaro005/workstudio/main/install.sh | sh -s -- --all
@@ -39,7 +39,9 @@ command: `workstudio` opens it, `workstudio update` updates it, `workstudio unin
 |---|---|
 | **Workspace** | Home with every app's status and version; sidebar with live status; Google-style app launcher; ⌘K palette. Spanish and English. |
 | **Apps inside** | Each app opens on its details; brain's dashboard and Lumina can also be used inside WorkStudio (with the preferences of their own window), or open there directly if you check it. OpenCue opens in its own window. |
-| **Chat** | Like Claude's: talk to Claude Code, Codex, Gemini, any Ollama model or an OpenCue agent (@name). Projects with instructions, knowledge files and a working folder; attach files and photos; skills (`/`); artifacts in a side panel; pills for brain, Lumina and web search. Conversations stay in `~/.workstudio/chats`. |
+| **Chat** | Like Claude's: talk to Claude Code, Codex, Gemini, any Ollama model or an OpenCue agent (@name). Projects with instructions, knowledge files and a working folder; attach files and photos; skills from every tool under titles, searched with `/`; artifacts in a side panel; pills for brain, Lumina, OpenBlocks and web search. Conversations stay in `~/.workstudio/chats`. |
+| **Second brain** | Your OpenBlocks vault as the chat's context folder, after Ben AI's method: the AI reads the `AGENTS` routing map first, saves insights (not raw data), keeps the structure fixed and puts the business first. Three built-in skills set it up, update it and clean it. |
+| **Automations** | Prompts that run on a schedule (daily, chosen weekdays, every N minutes or by hand) as a new chat, with the model, pills, skills, project and folder you pick. Templates for the daily update and the weekly health check. |
 | **Terminals** | Up to six real terminals in a grid. Profiles for Claude Code, Codex, Gemini CLI, Cursor Agent, brain, lumina and opencue. |
 | **One MCP server** | `workstudio mcp` joins the tools of your apps (and the servers you add) under one server, named `<app>__<tool>`. Terminals and the chat get it automatically; connect Claude Code, Claude Desktop, Codex, Cursor, Gemini or Windsurf with one click (with a backup). |
 | **Notifications** | brain vault changes, Lumina meetings, apps that start or stop, new versions — in the app and as system notifications. |
@@ -50,7 +52,7 @@ command: `workstudio` opens it, `workstudio update` updates it, `workstudio unin
 
 `workstudio mcp` is an MCP server that starts the servers of your apps, merges their tools and routes each call:
 `brain__search_knowledge`, `lumina__…`, `opencue__…`. Agents see one server instead of a long list.
-`workstudio mcp --only brain,lumina,web` limits it; `web` adds WorkStudio's own `web__search` and `web__fetch`.
+`workstudio mcp --only brain,lumina,openblocks,web` limits it; `web` adds WorkStudio's own `web__search` and `web__fetch`.
 
 WorkStudio writes it to `~/.workstudio/mcp/claude.json` and to a workspace folder (`~/.workstudio/workspace`) that
 agent terminals start in:
@@ -67,6 +69,7 @@ HTTP servers you add are passed next to it, as they are. The servers it carries:
 | brain | `uv run --directory ~/.brain python server.py` |
 | Lumina | `lumina mcp` |
 | OpenCue | `opencue mcp-serve --agent <id>` (pick the agent in MCP) |
+| OpenBlocks | `openblocks mcp` |
 
 ### The chat
 
@@ -84,7 +87,16 @@ HTTP servers you add are passed next to it, as they are. The servers it carries:
   commands there. Claude Code gets `Read/Glob/Grep` (+ `Edit/Write/Bash`) with `--add-dir`; Codex `-C` with a
   read-only or workspace-write sandbox; Gemini `--include-directories`; Ollama WorkStudio's read-only `fs__*` tools.
 - **Files**: attach, drop or paste; copied to `~/.workstudio/chats/files/<chat>`.
-- **Skills**: `SKILL.md` folders in `~/.workstudio/skills`, `~/.claude/skills` or the working folder. `/` turns one on.
+- **Skills**: `SKILL.md` folders (and brain's flat `skills/<name>.md`) from every tool, listed under titles:
+  WorkStudio (`~/.workstudio/skills`), OpenBlocks (the three built-in second-brain skills and the vault's `skills/`),
+  Claude Code (`~/.claude/skills`) and its plugins, Codex (`~/.codex/skills`, `~/.agents/skills`), Gemini
+  (`~/.gemini/skills`), OpenCue (its data folder's `skills/`), brain (its vault's `skills/`) and the working folder.
+  `/` opens the list; keep typing to search by name, description or title.
+- **Second brain**: with the OpenBlocks pill on, `prompt.rs` adds a section that makes the model read the vault's
+  `AGENTS` page first, open only what it routes to, save short insights where the map says, leave the folder
+  structure alone and flag anything that conflicts with the business goals. The method comes from Ben AI's
+  "18 tips for an AI second brain".
+- **Tools used** show as one plain line ("Used 2 tools") that expands, without a box or background.
 - **Artifacts**: `<artifact id type title>` blocks open in a side panel (preview, code, versions, save). HTML runs in a
   sandboxed frame served by WorkStudio's `wsart:` protocol.
 - **System prompt**: built in `src-tauri/src/prompt.rs` from ordered sections (identity, answering rules, artifacts,
@@ -119,7 +131,15 @@ Placeholders in MCP commands: `{cli}` (full path of the app's command), `{home}`
 ## Data
 
 Everything WorkStudio keeps is in `~/.workstudio` (`WORKSTUDIO_HOME` overrides it): `settings.json`, `apps.json`,
-`mcp.json`, `notifications.json`, `mcp/` (generated configs), `workspace/` and `logs/`.
+`mcp.json`, `notifications.json`, `automations.json`, `builtin-skills/`, `mcp/` (generated configs), `workspace/` and
+`logs/`.
+
+### Automations
+
+`src-tauri/src/automations.rs` keeps them in `~/.workstudio/automations.json` and a thread checks every 20 seconds which
+are due (daily / weekly at `HH:MM` local time, every N minutes, or manual). A run is a normal chat titled
+"⚡ name" started with `chat::send`, so it gets the same harness, pills and skills. They run while WorkStudio is open;
+a run missed while it was closed happens once at the next start.
 
 ## Development
 
@@ -136,7 +156,7 @@ Rust checks (what CI runs): `cargo fmt --check`, `cargo clippy --all-targets -- 
 
 Stack: Tauri 2 + Rust (portable-pty, ureq, toml_edit) and React 19 + TypeScript + zustand + xterm.js. Same family
 pattern as [brain](https://github.com/Lautaro005/brain), [OpenCue](https://github.com/Lautaro005/opencue) and
-[Lumina](https://github.com/Lautaro005/lumina).
+[Lumina](https://github.com/Lautaro005/lumina) and [OpenBlocks](https://github.com/Lautaro005/openblocks).
 
 ## Releasing
 

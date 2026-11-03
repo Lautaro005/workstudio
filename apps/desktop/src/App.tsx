@@ -14,6 +14,7 @@ import { Activity } from "./views/Activity";
 import { Updates } from "./views/Updates";
 import { Settings } from "./views/Settings";
 import { Chat } from "./views/Chat";
+import { Automations } from "./views/Automations";
 
 function Toasts() {
   const toasts = useStore((s) => s.toasts);
@@ -144,7 +145,7 @@ export default function App() {
         e.preventDefault();
         setPalette((p) => !p);
       }
-      if (mod && !e.altKey && /^[1-8]$/.test(e.key)) {
+      if (mod && !e.altKey && /^[1-9]$/.test(e.key)) {
         e.preventDefault();
         useStore.getState().go(ROUTE_ORDER[Number(e.key) - 1]);
       }
@@ -181,6 +182,7 @@ export default function App() {
   else if (route === "apps") view = <Apps />;
   else if (route.startsWith("app:")) view = <AppView id={route.slice(4)} />;
   else if (route === "chat") view = <Chat />;
+  else if (route === "automations") view = <Automations />;
   else if (route === "mcp") view = <Mcp />;
   else if (route === "activity") view = <Activity />;
   else if (route === "updates") view = <Updates />;

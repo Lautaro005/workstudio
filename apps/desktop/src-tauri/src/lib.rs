@@ -1,4 +1,5 @@
 mod apps;
+mod automations;
 mod catalog;
 mod chat;
 mod hub;
@@ -538,6 +539,39 @@ fn skills_folder() -> String {
     d.to_string_lossy().into_owned()
 }
 
+// ---------- automations ----------
+
+#[tauri::command]
+fn automations_list() -> Vec<automations::View> {
+    automations::list_view()
+}
+
+#[tauri::command]
+fn automation_save(app: AppHandle, a: automations::Automation) -> R<automations::Automation> {
+    let r = automations::save(a).map_err(e)?;
+    let _ = app.emit("automations-changed", ());
+    Ok(r)
+}
+
+#[tauri::command]
+fn automation_delete(app: AppHandle, id: String) -> R<()> {
+    automations::delete(&id).map_err(e)?;
+    let _ = app.emit("automations-changed", ());
+    Ok(())
+}
+
+#[tauri::command]
+fn automation_enable(app: AppHandle, id: String, on: bool) -> R<()> {
+    automations::set_enabled(&id, on).map_err(e)?;
+    let _ = app.emit("automations-changed", ());
+    Ok(())
+}
+
+#[tauri::command]
+fn automation_run(app: AppHandle, id: String) -> R<String> {
+    automations::run(&app, &id).map_err(e)
+}
+
 // ---------- artifacts ----------
 
 #[tauri::command]
@@ -816,6 +850,7 @@ pub fn run() {
         .setup(|app| {
             build_tray(app)?;
             state::start_watcher(app.handle().clone());
+            automations::start(app.handle().clone());
             Ok(())
         })
         .on_window_event(|window, event| {
@@ -875,6 +910,11 @@ pub fn run() {
             skill_save,
             skill_delete,
             skills_folder,
+            automations_list,
+            automation_save,
+            automation_delete,
+            automation_enable,
+            automation_run,
             artifact_put,
             artifact_save,
             artifact_open,

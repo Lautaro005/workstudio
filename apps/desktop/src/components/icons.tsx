@@ -9,7 +9,7 @@ import {
   MagnifyingGlassIcon, HardDrivesIcon, GearSixIcon, SparkleIcon, StopIcon, TerminalWindowIcon, SunIcon, TrashIcon, LinkBreakIcon, WrenchIcon, XIcon,
   SlidersHorizontalIcon, EyeIcon, EyeSlashIcon, PaperclipIcon, FolderSimpleIcon, FolderSimplePlusIcon, LightningIcon, AtIcon, PencilSimpleIcon,
   CaretRightIcon, ImageIcon, FilePdfIcon, FileIcon, FileTextIcon, CodeIcon, BrowserIcon, LockSimpleIcon, FoldersIcon, ChatsCircleIcon, BookOpenIcon,
-  ArrowLeftIcon, SidebarSimpleIcon, FloppyDiskIcon, LightbulbIcon, MagicWandIcon, type IconProps as PIconProps, type IconWeight,
+  ArrowLeftIcon, SidebarSimpleIcon, FloppyDiskIcon, LightbulbIcon, MagicWandIcon, ClockIcon, type IconProps as PIconProps, type IconWeight,
 } from "@phosphor-icons/react";
 
 export type IconProps = {
@@ -72,6 +72,7 @@ export const Moon = mk(MoonIcon);
 export const MoreHorizontal = mk(DotsThreeIcon, "bold");
 export const MousePointer2 = mk(CursorIcon);
 export const NotebookPen = mk(NotebookIcon);
+export const Notebook = mk(NotebookIcon);
 export const Play = mk(PlayIcon, "fill");
 export const Plug = mk(PlugIcon);
 export const Plus = mk(PlusIcon);
@@ -114,3 +115,4 @@ export const PanelRight = mk(SidebarSimpleIcon);
 export const Save = mk(FloppyDiskIcon);
 export const Lightbulb = mk(LightbulbIcon);
 export const Wand = mk(MagicWandIcon);
+export const Clock = mk(ClockIcon);

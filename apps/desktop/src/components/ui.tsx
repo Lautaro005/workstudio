@@ -32,6 +32,7 @@ export const BRANDS: Record<string, { src: string; kind: "mono" | "tile"; invert
   cheaperinference: { src: "brands/cheaperinference.png", kind: "mono" },
   lumina: { src: "brands/lumina.svg", kind: "tile" },
   opencue: { src: "brands/opencue.svg", kind: "tile" },
+  openblocks: { src: "brands/openblocks.svg", kind: "tile" },
 };
 
 export function BrandImg({ name, className = "" }: { name: string; className?: string }) {

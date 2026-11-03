@@ -1,6 +1,6 @@
 import { useEffect, useMemo, useState } from "react";
 import {
-  Bell, ChevronsLeft, ChevronsRight, Grid3x3, House, LayoutGrid, Plug, RefreshCw, Search, Settings as Cog, SquareTerminal, Activity, ArrowUpCircle, Play, Square, CheckCheck, Trash2, MessageSquare,
+  Bell, ChevronsLeft, ChevronsRight, Grid3x3, House, LayoutGrid, Plug, RefreshCw, Search, Settings as Cog, SquareTerminal, Activity, ArrowUpCircle, Play, Square, CheckCheck, Trash2, MessageSquare, Zap,
 } from "./icons";
 import { call } from "../lib/api";
 import { appName, PROFILES, useStore } from "../lib/store";
@@ -12,6 +12,7 @@ export const ROUTES: Record<string, { label: string; icon: typeof House }> = {
   home: { label: "Inicio", icon: House },
   apps: { label: "Apps", icon: LayoutGrid },
   chat: { label: "Chat", icon: MessageSquare },
+  automations: { label: "Automatizaciones", icon: Zap },
   terminals: { label: "Terminales", icon: SquareTerminal },
   mcp: { label: "MCP", icon: Plug },
   activity: { label: "Actividad", icon: Activity },
@@ -19,8 +20,8 @@ export const ROUTES: Record<string, { label: string; icon: typeof House }> = {
   settings: { label: "Ajustes", icon: Cog },
 };
 
-/** ⌘1…⌘8 follow this order. */
-export const ROUTE_ORDER = ["home", "apps", "chat", "terminals", "mcp", "activity", "updates", "settings"];
+/** ⌘1…⌘9 follow this order. */
+export const ROUTE_ORDER = ["home", "apps", "chat", "automations", "terminals", "mcp", "activity", "updates", "settings"];
 
 export function Sidebar({ collapsed, onToggle }: { collapsed: boolean; onToggle: () => void }) {
   const { route, go, apps, statuses, notes, updates, panes, settings, busy, chatLive } = useStore();
@@ -56,6 +57,7 @@ export function Sidebar({ collapsed, onToggle }: { collapsed: boolean; onToggle:
         {item("home")}
         {item("apps")}
         {item("chat", answering, true)}
+        {item("automations")}
         {item("terminals", panes.length, true)}
         {item("mcp")}
         <div className="nav-section">{t("Tus apps")}</div>

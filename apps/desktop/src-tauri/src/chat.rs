@@ -1722,7 +1722,14 @@ pub fn send(app: AppHandle, o: SendOpts) -> anyhow::Result<String> {
                 Vec::new()
             };
             for k in &catalog {
-                if let Some(d) = Path::new(&k.path).parent().and_then(|d| d.parent()) {
+                let sp = Path::new(&k.path);
+                // `<skills>/<name>/SKILL.md` opens its skills folder; a flat `<skills>/<name>.md` its parent.
+                let root = if sp.file_name().map(|n| n == "SKILL.md").unwrap_or(false) {
+                    sp.parent().and_then(|d| d.parent())
+                } else {
+                    sp.parent()
+                };
+                if let Some(d) = root {
                     let d = d.to_string_lossy().into_owned();
                     if !roots.contains(&d) {
                         roots.push(d);

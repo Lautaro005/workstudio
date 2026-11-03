@@ -19,7 +19,7 @@ import { Glyph } from "../components/ui";
 type View = { kind: "chat" } | { kind: "projects" } | { kind: "project"; id: string };
 
 export function Chat() {
-  const { settings, saveSettings, chatLive, chatTick, chatStarted, toast, statuses, route } = useStore();
+  const { settings, saveSettings, chatLive, chatTick, chatStarted, toast, statuses, route, chatIntent } = useStore();
   const t = useT();
   const lang = useLang();
   const [list, setList] = useState<ChatSummary[]>([]);
@@ -153,6 +153,14 @@ export function Chat() {
     setView(projectId ? { kind: "project", id: projectId } : { kind: "chat" });
     setTimeout(() => window.dispatchEvent(new Event("ws-focus-composer")), 0);
   }
+
+  // A chat another view asked to open (an automation's last run).
+  useEffect(() => {
+    if (route === "chat" && chatIntent) {
+      useStore.setState({ chatIntent: null });
+      openChat(chatIntent);
+    }
+  }, [route, chatIntent]); // eslint-disable-line react-hooks/exhaustive-deps
 
   function openChat(id: string) {
     setCurrent(id);

@@ -1,5 +1,38 @@
 # Changelog
 
+## 0.1.4 — 2026-11-03
+
+- **OpenBlocks joins the family.** WorkStudio now detects, starts, stops, embeds and updates
+  [OpenBlocks](https://lautaro005.github.io/openblocks/) (block notes on a Markdown vault) like brain, Lumina and
+  OpenCue: it has its page, its logo, its status in the sidebar, Home and the launcher, and its MCP server
+  (`openblocks mcp`) joins the single `workstudio` server as `openblocks__*`. `install.sh --all` / `WORKSTUDIO_WITH`
+  install it too.
+- **The chat uses OpenBlocks as a second brain** (method from Ben AI's "18 tips to set up your AI second brain"
+  and its guide):
+  - A new **OpenBlocks pill** next to brain, Lumina and Web. With it on, the system prompt adds a section: read the
+    vault's `AGENTS` routing map first and open only what it points to (and the index of a big folder); look before
+    answering and name the pages used; **save insights, not raw data**; keep the folder structure fixed and index
+    pages up to date; and a **"business first"** rule — if a request conflicts with the goals in the vault, say so
+    instead of agreeing.
+  - Three built-in skills in the OpenBlocks group: **`/second-brain-setup`** (brain dump one question at a time →
+    5–10 context files, `AGENTS` under 200 lines and an index per folder), **`/second-brain-operator`** (daily
+    update from meetings and notes, retiring stale pages) and **`/second-brain-optimizer`** (weekly health check
+    with a score out of 100).
+- **Tools used in the chat no longer have a box or background.** They show as one plain line of text ("Used 2
+  tools") that expands into a simple list.
+- **Automations.** A new **Automations** item in the sidebar: prompts that run by themselves — every day at a time,
+  on chosen weekdays, every N minutes or by hand — with the model, pills, skills, project and working folder you pick.
+  Each run is a chat titled "⚡ name"; **Run now**, edit, pause and open the last run from the list. Four templates:
+  daily second-brain update, weekly clean-up with a health score, morning briefing and end-of-day meetings. They run
+  while WorkStudio is open (it stays in the tray) and a run missed while it was closed happens once at the next start.
+  Stored in `~/.workstudio/automations.json`.
+- **Skills from every tool, under titles, searched with `/`.** WorkStudio finds the skills of **WorkStudio**,
+  **OpenBlocks**, **Claude Code** (and its plugins), **Codex**, **Gemini**, **OpenCue** and **brain** (plus the
+  working folder's) and lists them under a title for each. Typing `/` opens the whole list; keep typing to search by
+  name, description or title. The **+ → Skills** menu and the automation editor use the same grouped list. brain's
+  flat `skills/<name>.md` files work too.
+- OpenBlocks' logo is in the app and the site. Site, docs, README, SECURITY.md and llms.txt updated.
+
 ## 0.1.3 — 2026-11-02
 
 - **The update button no longer shows on apps that are up to date.** An app's details page (brain, Lumina, OpenCue)

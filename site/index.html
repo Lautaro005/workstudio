@@ -6,7 +6,7 @@
 <title>AI WorkStudio — tus IAs locales en un solo estudio</title>
 <meta name="title-es" content="AI WorkStudio — tus IAs locales en un solo estudio">
 <meta name="title-en" content="AI WorkStudio — your local AI apps in one studio">
-<meta name="description" content="AI WorkStudio junta brain, OpenCue, Lumina y las apps que vengan en un solo lugar: estado, avisos, actualizaciones, un servidor MCP compartido, chat y hasta seis terminales. macOS, Windows y Linux.">
+<meta name="description" content="AI WorkStudio junta brain, OpenCue, Lumina, OpenBlocks y las apps que vengan en un solo lugar: estado, avisos, actualizaciones, un servidor MCP compartido, un chat con second brain y automatizaciones, y hasta seis terminales. macOS, Windows y Linux.">
 <meta property="og:title" content="AI WorkStudio">
 <meta property="og:description" content="Your local AI apps in one studio: apps, one shared MCP server, chat, notifications, updates and six terminals.">
 <link rel="icon" href="assets/logo.svg" type="image/svg+xml">
@@ -36,7 +36,7 @@
   <div class="wrap">
     <span class="eyebrow"><i></i> <span data-l="es">Local · macOS · Windows · Linux</span><span data-l="en">Local · macOS · Windows · Linux</span></span>
     <h1><span data-l="es">Tus IAs locales,<br><em>en un solo estudio.</em></span><span data-l="en">Your local AI apps,<br><em>in one studio.</em></span></h1>
-    <p class="lede"><span data-l="es">brain recuerda, Lumina escucha, OpenCue trabaja. WorkStudio las junta en un lugar, con sus avisos, sus actualizaciones y un solo servidor MCP para tus agentes.</span><span data-l="en">brain remembers, Lumina listens, OpenCue works. WorkStudio brings them together in one place, with their notifications, their updates and a single MCP server for your agents.</span></p>
+    <p class="lede"><span data-l="es">brain recuerda, Lumina escucha, OpenCue trabaja, OpenBlocks anota. WorkStudio las junta en un lugar, con sus avisos, sus actualizaciones y un solo servidor MCP para tus agentes.</span><span data-l="en">brain remembers, Lumina listens, OpenCue works, OpenBlocks takes notes. WorkStudio brings them together in one place, with their notifications, their updates and a single MCP server for your agents.</span></p>
     <div class="install" data-install>
       <div class="tabs">
         <button data-os="unix" class="on">macOS / Linux</button>
@@ -56,12 +56,14 @@
         <div class="lights"><span></span><span></span><span></span></div>
         <div class="it on"><span class="sq" style="background:var(--clay)"></span><span data-l="es">Inicio</span><span data-l="en">Home</span></div>
         <div class="it"><span class="sq"></span>Chat</div>
+        <div class="it"><span class="sq"></span><span data-l="es">Automatizaciones</span><span data-l="en">Automations</span></div>
         <div class="it"><span class="sq"></span><span data-l="es">Terminales</span><span data-l="en">Terminals</span></div>
         <div class="it"><span class="sq"></span>MCP</div>
         <div class="sec"><span data-l="es">Tus apps</span><span data-l="en">Your apps</span></div>
         <div class="it"><img class="mono" src="assets/brands/brain.png" alt="">brain<span class="dot"></span></div>
         <div class="it"><img src="assets/brands/opencue.svg" alt="">OpenCue<span class="dot" style="background:var(--ink-3)"></span></div>
         <div class="it"><img src="assets/brands/lumina.svg" alt="">Lumina<span class="dot"></span></div>
+        <div class="it"><img src="assets/brands/openblocks.svg" alt="">OpenBlocks<span class="dot"></span></div>
       </div>
       <div class="body">
         <div>
@@ -99,7 +101,7 @@
 <section id="apps">
   <div class="wrap">
     <div class="kicker reveal"><span data-l="es">La familia</span><span data-l="en">The family</span></div>
-    <h2 class="reveal"><span data-l="es">Tres apps que se hablan.</span><span data-l="en">Three apps that talk to each other.</span></h2>
+    <h2 class="reveal"><span data-l="es">Cuatro apps que se hablan.</span><span data-l="en">Four apps that talk to each other.</span></h2>
     <p class="sub reveal"><span data-l="es">Cada una sigue siendo independiente. WorkStudio las encuentra, las arranca y las conecta.</span><span data-l="en">Each one stays independent. WorkStudio finds them, starts them and connects them.</span></p>
     <div class="family">
       <article class="app reveal">
@@ -123,6 +125,13 @@
         <p><span data-l="es">Escucha reuniones y clases, transcribe en tu compu y arma notas completas con resumen.</span><span data-l="en">Listens to meetings and classes, transcribes on your computer and writes full notes with a summary.</span></p>
         <a class="more" href="https://lautaro005.github.io/lumina/"><span data-l="es">Conocer Lumina →</span><span data-l="en">Meet Lumina →</span></a>
       </article>
+      <article class="app reveal">
+        <div class="icon"><img src="assets/brands/openblocks.svg" alt=""></div>
+        <h3>OpenBlocks</h3>
+        <div class="tag"><span data-l="es">Notas en bloques, en tu carpeta</span><span data-l="en">Block notes, in your own folder</span></div>
+        <p><span data-l="es">Escribe como Notion y guarda como Obsidian. En WorkStudio es el second brain de tu chat: la IA lee tu vault y guarda lo que importa.</span><span data-l="en">Writes like Notion, saves like Obsidian. In WorkStudio it is your chat's second brain: the AI reads your vault and saves what matters.</span></p>
+        <a class="more" href="https://lautaro005.github.io/openblocks/"><span data-l="es">Conocer OpenBlocks →</span><span data-l="en">Meet OpenBlocks →</span></a>
+      </article>
     </div>
     <p class="next reveal"><span data-l="es"><b>Y las que vengan.</b> Cualquier app local se suma con unas líneas en <code class="i">~/.workstudio/apps.json</code>. <a href="docs.html#sumar-apps">Cómo</a></span><span data-l="en"><b>And whatever comes next.</b> Any local app joins with a few lines in <code class="i">~/.workstudio/apps.json</code>. <a href="docs.html#sumar-apps">How</a></span></p>
   </div>
@@ -134,9 +143,11 @@
     <h2 class="reveal"><span data-l="es">Un escritorio para tu <em>stack de IA</em>.</span><span data-l="en">A desktop for your <em>AI stack</em>.</span></h2>
     <div class="feat">
       <div class="reveal"><span class="n">01</span><h4><span data-l="es">Todo en una ventana</span><span data-l="en">Everything in one window</span></h4><p><span data-l="es">El estado de cada app, sus avisos y sus versiones. brain y Lumina se pueden usar adentro.</span><span data-l="en">Every app's status, notifications and versions. brain and Lumina can be used inside.</span></p></div>
-      <div class="reveal"><span class="n">02</span><h4>Chat</h4><p><span data-l="es">Hablá con Claude, Codex, Gemini, un modelo de Ollama o un agente de OpenCue, con brain y Lumina a mano.</span><span data-l="en">Talk to Claude, Codex, Gemini, an Ollama model or an OpenCue agent, with brain and Lumina at hand.</span></p></div>
-      <div class="reveal"><span class="n">03</span><h4><span data-l="es">Seis terminales</span><span data-l="en">Six terminals</span></h4><p><span data-l="es">Claude Code, Codex, Gemini o Cursor arrancan con tus herramientas ya cargadas.</span><span data-l="en">Claude Code, Codex, Gemini or Cursor start with your tools already loaded.</span></p></div>
-      <div class="reveal"><span class="n">04</span><h4><span data-l="es">Siempre al día</span><span data-l="en">Always up to date</span></h4><p><span data-l="es">Actualiza cada app y cada CLI con un clic. WorkStudio se actualiza solo.</span><span data-l="en">Updates every app and CLI with one click. WorkStudio updates itself.</span></p></div>
+      <div class="reveal"><span class="n">02</span><h4>Chat</h4><p><span data-l="es">Hablá con Claude, Codex, Gemini, un modelo de Ollama o un agente de OpenCue, con brain, Lumina y tu vault de OpenBlocks a mano. Las skills de Claude Code, Codex, Gemini, OpenCue y brain aparecen con títulos y se buscan con /.</span><span data-l="en">Talk to Claude, Codex, Gemini, an Ollama model or an OpenCue agent, with brain, Lumina and your OpenBlocks vault at hand. The skills of Claude Code, Codex, Gemini, OpenCue and brain show up under titles and are searched with /.</span></p></div>
+      <div class="reveal"><span class="n">03</span><h4><span data-l="es">Second brain</span><span data-l="en">Second brain</span></h4><p><span data-l="es">Tu vault de OpenBlocks como carpeta de contexto: la IA lee primero el mapa AGENTS, guarda insights y no datos crudos. Método de Ben AI, con sus tres skills incluidas.</span><span data-l="en">Your OpenBlocks vault as a context folder: the AI reads the AGENTS map first and saves insights, not raw data. Ben AI's method, with its three skills included.</span></p></div>
+      <div class="reveal"><span class="n">04</span><h4><span data-l="es">Automatizaciones</span><span data-l="en">Automations</span></h4><p><span data-l="es">Prompts que corren solos cada día, cada semana o cada tanto, con el modelo y las skills que elijas. Cada corrida queda como un chat.</span><span data-l="en">Prompts that run by themselves every day, every week or every so often, with the model and skills you pick. Every run is saved as a chat.</span></p></div>
+      <div class="reveal"><span class="n">05</span><h4><span data-l="es">Seis terminales</span><span data-l="en">Six terminals</span></h4><p><span data-l="es">Claude Code, Codex, Gemini o Cursor arrancan con tus herramientas ya cargadas.</span><span data-l="en">Claude Code, Codex, Gemini or Cursor start with your tools already loaded.</span></p></div>
+      <div class="reveal"><span class="n">06</span><h4><span data-l="es">Siempre al día</span><span data-l="en">Always up to date</span></h4><p><span data-l="es">Actualiza cada app y cada CLI con un clic. WorkStudio se actualiza solo.</span><span data-l="en">Updates every app and CLI with one click. WorkStudio updates itself.</span></p></div>
     </div>
   </div>
 </section>
@@ -151,6 +162,7 @@
         <div class="node"><img class="mono" src="assets/brands/brain.png" alt="">brain<small>brain__*</small></div>
         <div class="node"><img src="assets/brands/lumina.svg" alt="">Lumina<small>lumina__*</small></div>
         <div class="node"><img src="assets/brands/opencue.svg" alt="">OpenCue<small>opencue__*</small></div>
+        <div class="node"><img src="assets/brands/openblocks.svg" alt="">OpenBlocks<small>openblocks__*</small></div>
       </div>
       <div class="hub"><img src="assets/logo.svg" alt="AI WorkStudio"><code>workstudio</code></div>
       <div class="col">
@@ -167,7 +179,7 @@
     <div class="kicker"><span data-l="es">Preguntas</span><span data-l="en">Questions</span></div>
     <h2><span data-l="es">Lo que conviene saber.</span><span data-l="en">Good to know.</span></h2>
     <div class="faq">
-      <details><summary><span data-l="es">¿Necesito tener instaladas brain, Lumina y OpenCue?</span><span data-l="en">Do I need brain, Lumina and OpenCue installed?</span></summary><p><span data-l="es">No. WorkStudio funciona solo y te muestra cuáles faltan, con un botón para instalar cada una.</span><span data-l="en">No. WorkStudio works on its own and shows which ones are missing, with a button to install each.</span></p></details>
+      <details><summary><span data-l="es">¿Necesito tener instaladas brain, Lumina, OpenCue y OpenBlocks?</span><span data-l="en">Do I need brain, Lumina, OpenCue and OpenBlocks installed?</span></summary><p><span data-l="es">No. WorkStudio funciona solo y te muestra cuáles faltan, con un botón para instalar cada una.</span><span data-l="en">No. WorkStudio works on its own and shows which ones are missing, with a button to install each.</span></p></details>
       <details><summary><span data-l="es">¿Mis datos salen de la compu?</span><span data-l="en">Does my data leave my computer?</span></summary><p><span data-l="es">No. Solo habla con tus apps en 127.0.0.1, con GitHub y npm para ver versiones nuevas, y con la web solo si usás la búsqueda del chat. Detalles en la <a href="privacy.html">política de privacidad</a>.</span><span data-l="en">No. It only talks to your apps on 127.0.0.1, to GitHub and npm to check for new versions, and to the web only if you use the chat's search. Details in the <a href="privacy.html">privacy policy</a>.</span></p></details>
       <details><summary><span data-l="es">¿Qué toca cuando conecto un cliente MCP?</span><span data-l="en">What does connecting an MCP client change?</span></summary><p><span data-l="es">Agrega el servidor <code class="i">workstudio</code> a la config de ese cliente y guarda una copia <code class="i">.bak-workstudio</code> la primera vez. Desconectar quita solo lo que puso.</span><span data-l="en">It adds the <code class="i">workstudio</code> server to that client's config and keeps a <code class="i">.bak-workstudio</code> copy the first time. Disconnecting removes only what it added.</span></p></details>
       <details><summary><span data-l="es">¿Cómo lo actualizo o lo desinstalo?</span><span data-l="en">How do I update or uninstall it?</span></summary><p><span data-l="es">Se actualiza solo desde Actualizaciones, o con <code class="i">workstudio update</code>. Para sacarlo: <code class="i">workstudio uninstall</code>.</span><span data-l="en">It updates itself from Updates, or with <code class="i">workstudio update</code>. To remove it: <code class="i">workstudio uninstall</code>.</span></p></details>
@@ -197,7 +209,7 @@
     <div class="grid">
       <div><a class="brand" href="./"><img src="assets/logo.svg" alt="">AI WorkStudio</a><p style="margin-top:12px;max-width:260px"><span data-l="es">Tus IAs locales en un solo estudio.</span><span data-l="en">Your local AI apps in one studio.</span></p></div>
       <div><h5><span data-l="es">Producto</span><span data-l="en">Product</span></h5><ul><li><a href="docs.html">Docs</a></li><li><a href="changelog.html">Changelog</a></li><li><a href="https://github.com/Lautaro005/workstudio/releases"><span data-l="es">Descargas</span><span data-l="en">Downloads</span></a></li><li><a href="llms.txt">llms.txt</a></li></ul></div>
-      <div><h5><span data-l="es">La familia</span><span data-l="en">The family</span></h5><ul><li><a href="https://lautaro005.github.io/brain/">brain</a></li><li><a href="https://lautaro005.github.io/opencue/">OpenCue</a></li><li><a href="https://lautaro005.github.io/lumina/">Lumina</a></li></ul></div>
+      <div><h5><span data-l="es">La familia</span><span data-l="en">The family</span></h5><ul><li><a href="https://lautaro005.github.io/brain/">brain</a></li><li><a href="https://lautaro005.github.io/opencue/">OpenCue</a></li><li><a href="https://lautaro005.github.io/lumina/">Lumina</a></li><li><a href="https://lautaro005.github.io/openblocks/">OpenBlocks</a></li></ul></div>
       <div><h5><span data-l="es">Proyecto</span><span data-l="en">Project</span></h5><ul><li><a href="https://github.com/Lautaro005/workstudio">GitHub</a></li><li><a href="privacy.html"><span data-l="es">Privacidad</span><span data-l="en">Privacy policy</span></a></li><li><a href="https://github.com/Lautaro005/workstudio/blob/main/LICENSE"><span data-l="es">Licencia</span><span data-l="en">License</span></a></li></ul></div>
     </div>
     <div class="legal"><span>© 2026 Lautaro Silva · Apache-2.0 + Commons Clause</span><span class="lang" role="group" aria-label="Idioma / Language"><button data-set-lang="es">Español</button><button data-set-lang="en">English</button></span></div>

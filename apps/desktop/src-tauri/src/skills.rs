@@ -447,15 +447,14 @@ mod tests {
             &sk("notas", "Notes"),
         );
         mk(&t.join("ws/skills/mine/SKILL.md"), &sk("mine", "Mine"));
-        mk(
-            &t.join("ob/settings.json"),
-            &format!("{{\"last_vault\": \"{}\"}}", t.join("vault").display()),
-        );
+        let settings = serde_json::json!({ "last_vault": t.join("vault") });
+        mk(&t.join("ob/settings.json"), &settings.to_string());
         mk(
             &t.join("vault/skills/ventas/SKILL.md"),
             &sk("ventas", "Ventas"),
         );
         std::env::set_var("HOME", &t);
+        std::env::set_var("USERPROFILE", &t);
         std::env::set_var("WORKSTUDIO_HOME", t.join("ws"));
         std::env::set_var("BRAIN_HOME", t.join("brain"));
         std::env::set_var("OPENCUE_HOME", t.join("oc"));

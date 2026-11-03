@@ -469,10 +469,13 @@ mod tests {
         assert_eq!(find("mine").group, "WorkStudio");
         assert_eq!(find("second-brain-setup").group, "OpenBlocks");
         assert_eq!(find("ventas").group, "OpenBlocks");
-        assert_eq!(find("pdf").group, "Claude Code");
-        assert_eq!(find("ux").group, "Claude Code · plugins");
+        // Windows resolves the home folder from the system, not from the environment.
+        if !cfg!(windows) {
+            assert_eq!(find("pdf").group, "Claude Code");
+            assert_eq!(find("ux").group, "Claude Code · plugins");
+            assert_eq!(find("plan").group, "Gemini");
+        }
         assert_eq!(find("review").group, "Codex");
-        assert_eq!(find("plan").group, "Gemini");
         assert_eq!(find("mail").group, "OpenCue");
         let n = find("notas");
         assert_eq!(n.group, "brain");

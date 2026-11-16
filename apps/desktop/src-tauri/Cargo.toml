@@ -1,6 +1,6 @@
 [package]
 name = "workstudio"
-version = "0.1.4"
+version = "0.1.5"
 description = "AI WorkStudio — one workspace for brain, OpenCue, Lumina and the apps that come next"
 authors = ["Lautaro Silva"]
 license-file = "../../../LICENSE"

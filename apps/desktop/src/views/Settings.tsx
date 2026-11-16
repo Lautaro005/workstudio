@@ -1,9 +1,10 @@
 import { useEffect, useState } from "react";
-import { FolderOpen, Languages, Monitor, Moon, Plus, Sun, Trash2 } from "../components/icons";
-import { call, type ChatModel, type Skill } from "../lib/api";
+import { ExternalLink, FolderOpen, Languages, Loader2, Monitor, Moon, Play, Plus, Square, Sun, Trash2 } from "../components/icons";
+import { call, type ChatModel, type LlStatus, type Skill } from "../lib/api";
+import { GroupedSkills, SearchInput, useSkillSearch } from "../components/skills";
 import { allModels, CUSTOM_PROVIDERS } from "../lib/chatModels";
 import { useStore } from "../lib/store";
-import { Glyph, Switch } from "../components/ui";
+import { CopyLine, Glyph, Switch } from "../components/ui";
 import { reveal, openUrl } from "../lib/open";
 import { useT } from "../lib/i18n";
 
@@ -23,6 +24,7 @@ const PROVIDER_LOOK: Record<string, [string, string]> = {
   Codex: ["openai", "ink"],
   Gemini: ["gemini", "mustard"],
   Ollama: ["ollama", "ink"],
+  "llama.cpp": ["llamacpp", "ink"],
   OpenCue: ["opencue", "olive"],
 };
 
@@ -31,9 +33,21 @@ function ChatSettings() {
   const { settings, saveSettings } = useStore();
   const t = useT();
   const [skills, setSkills] = useState<Skill[]>([]);
+  const load = () => call<Skill[]>("skills_list", { folder: null, all: true }).then(setSkills).catch(() => {});
   useEffect(() => {
-    call<Skill[]>("skills_list", { folder: null }).then(setSkills).catch(() => {});
+    load();
   }, []);
+  const sk = useSkillSearch(skills);
+  const off = skills.filter((k) => k.disabled).length;
+  const toggle = async (k: Skill) => {
+    // Optimistic: flip it now, the list is read again right after.
+    setSkills((l) => l.map((x) => (x.path === k.path ? { ...x, disabled: !x.disabled } : x)));
+    try {
+      await call("skill_set_enabled", { path: k.path, enabled: !!k.disabled });
+    } finally {
+      load();
+    }
+  };
   if (!settings) return null;
   return (
     <section className="card card-pad col" style={{ gap: 16 }}>
@@ -51,15 +65,29 @@ function ChatSettings() {
       </div>
       <div className="field">
         <label>{t("Skills")}</label>
-        <span className="hint">{t("Carpetas con SKILL.md en ~/.workstudio/skills, ~/.claude/skills o en la carpeta de trabajo. Activalas con / en el chat o dejalas fijas en un proyecto.")}</span>
-        <div className="row wrap" style={{ gap: 6, marginTop: 4 }}>
-          {skills.length === 0 && <span className="small muted">{t("Todavía no hay skills.")}</span>}
-          {skills.map((k) => (
-            <span key={k.path} className="chip" title={k.description}>
-              {k.name}
-            </span>
-          ))}
-        </div>
+        <span className="hint">{t("WorkStudio las busca en cada herramienta y las ordena por origen. Tocá una para apagarla o encenderla: las apagadas no aparecen en el chat, los proyectos ni las automatizaciones.")}</span>
+        {skills.length === 0 ? (
+          <span className="small muted">{t("Todavía no hay skills.")}</span>
+        ) : (
+          <div className="skill-box" style={{ marginTop: 6 }}>
+            <SearchInput value={sk.query} onChange={sk.setQuery} />
+            <div className="skill-checks" style={{ maxHeight: 340 }}>
+              <GroupedSkills
+                items={sk.shown}
+                render={(k) => (
+                  <button className={`skill-pick ${k.disabled ? "off" : ""}`} onClick={() => toggle(k)} title={k.path} role="switch" aria-checked={!k.disabled}>
+                    <span className="sug-txt">
+                      <b>{k.name}</b>
+                      {k.description && <span className="muted">{k.description}</span>}
+                    </span>
+                    <span className={`chip ${k.disabled ? "" : "olive"}`}>{k.disabled ? t("Apagada") : t("Activa")}</span>
+                  </button>
+                )}
+              />
+            </div>
+            <span className="small muted">{off ? t("{a} de {b} activas", { a: skills.length - off, b: skills.length }) : t("{b} skills, todas activas", { b: skills.length })}</span>
+          </div>
+        )}
         <button className="btn sm" style={{ alignSelf: "flex-start", marginTop: 6 }} onClick={async () => reveal(await call<string>("skills_folder"))}>
           <FolderOpen /> {t("Abrir carpeta de skills")}
         </button>
@@ -69,6 +97,126 @@ function ChatSettings() {
 }
 
 /** Settings → Models: which models of each provider show in the chat picker, and models added by hand. */
+/** llama.cpp: the server's status, its models (load, unload, download, delete) and its own web UI. */
+function LlamaCppCard({ hidden, setHidden }: { hidden: Set<string>; setHidden: (ids: string[], hide: boolean) => void }) {
+  const { settings, saveSettings, toast } = useStore();
+  const t = useT();
+  const [st, setSt] = useState<LlStatus | null>(null);
+  const [busy, setBusy] = useState("");
+  const [pull, setPull] = useState("");
+  const load = () => call<LlStatus>("llamacpp_status").then(setSt).catch(() => {});
+  useEffect(() => {
+    load();
+    const iv = setInterval(load, 4000);
+    return () => clearInterval(iv);
+  }, []);
+  const act = async (key: string, cmd: string, args: Record<string, unknown>, done?: string) => {
+    setBusy(key);
+    try {
+      await call(cmd, args);
+      if (done) toast(done, "success");
+    } catch (e) {
+      toast(String(e), "error");
+    } finally {
+      setBusy("");
+      load();
+    }
+  };
+  const win = navigator.userAgent.includes("Windows");
+  const install = win ? "winget install llama.cpp" : "brew install llama.cpp";
+  return (
+    <section className="card">
+      <div className="card-head">
+        <Glyph icon="llamacpp" color="ink" className="xs" />
+        <h3>llama.cpp</h3>
+        <span className={`chip ${st?.up ? "olive" : ""}`}>{st === null ? "…" : st.up ? (st.router ? t("Corriendo · router") : t("Corriendo")) : t("Apagado")}</span>
+        <span className="spacer" />
+        {st?.up && (
+          <button className="btn sm" onClick={() => openUrl(st.url)}>
+            <ExternalLink /> {t("Abrir la interfaz de llama.cpp")}
+          </button>
+        )}
+      </div>
+      <div className="set-row">
+        <div className="txt">
+          <b>{t("Dirección del servidor")}</b>
+          <small>{t("Vacío = la busca sola en 127.0.0.1:9931 y :8080.")}</small>
+        </div>
+        <input className="input mono" style={{ width: 240 }} defaultValue={settings?.llamacpp_url ?? ""} placeholder="http://127.0.0.1:9931" onBlur={(e) => saveSettings({ llamacpp_url: e.target.value.trim() }).then(load)} />
+      </div>
+      <div className="set-row">
+        <div className="txt">
+          <b>{t("Clave de API (opcional)")}</b>
+          <small>{t("Solo si iniciaste llama-server con --api-key.")}</small>
+        </div>
+        <input className="input mono" type="password" style={{ width: 240 }} defaultValue={settings?.llamacpp_key ?? ""} onBlur={(e) => saveSettings({ llamacpp_key: e.target.value.trim() })} />
+      </div>
+      {st && !st.up && (
+        <div className="set-row col" style={{ alignItems: "stretch", gap: 8 }}>
+          <span className="small muted">
+            {st.installed
+              ? t("llama.cpp está instalado pero no está corriendo. Iniciá su servidor sin indicar un modelo (modo router): después podés cargar, descargar y borrar modelos desde acá, o desde su propia interfaz.")
+              : t("llama.cpp no está instalado. Instalalo, iniciá su servidor sin indicar un modelo (modo router) y gestioná los modelos desde acá o desde su propia interfaz.")}
+          </span>
+          {!st.installed && <CopyLine text={install} />}
+          <CopyLine text="llama-server --port 9931" />
+          <span className="small muted">{t("También podés sumarlo desde Apps → llama.cpp para iniciarlo y verlo dentro de WorkStudio.")}</span>
+        </div>
+      )}
+      {st?.up && st.models.length === 0 && <div className="set-row muted small">{t("Todavía no tiene modelos. Descargá uno abajo (por ejemplo ggml-org/gemma-3-4b-it-GGUF:Q4_K_M).")}</div>}
+      {st?.up && (
+        <div className="ll-models">
+          {st.models.map((m) => {
+            const mid = `llamacpp:${m.id}`;
+            const loaded = m.status === "loaded";
+            const working = busy === m.id || m.status === "loading" || m.status === "downloading";
+            return (
+              <div key={m.id} className="ll-row">
+                <div className="txt">
+                  <b title={m.id}>{m.id}</b>
+                  <small className="muted">{m.status}</small>
+                </div>
+                {st.router && (
+                  <>
+                    {loaded ? (
+                      <button className="btn sm" disabled={working} onClick={() => act(m.id, "llamacpp_unload", { model: m.id })}>
+                        <Square /> {t("Liberar memoria")}
+                      </button>
+                    ) : (
+                      <button className="btn sm" disabled={working || m.status === "incomplete"} onClick={() => act(m.id, "llamacpp_load", { model: m.id })}>
+                        {working ? <Loader2 className="spin" /> : <Play />} {t("Cargar")}
+                      </button>
+                    )}
+                    <button
+                      className="icon-btn sm"
+                      title={t("Borrar del disco")}
+                      aria-label={t("Borrar del disco")}
+                      disabled={working || loaded}
+                      onClick={() => window.confirm(t("¿Borrar {name} del disco?", { name: m.id })) && act(m.id, "llamacpp_delete", { model: m.id })}
+                    >
+                      <Trash2 />
+                    </button>
+                  </>
+                )}
+                <Switch on={!hidden.has(mid)} onChange={(v) => setHidden([mid], !v)} label={m.id} />
+              </div>
+            );
+          })}
+        </div>
+      )}
+      {st?.up && st.router && (
+        <div className="ll-add">
+          <input className="input mono" placeholder={t("Descargar: usuario/repo:cuantización")} value={pull} onChange={(e) => setPull(e.target.value)} onKeyDown={(e) => e.key === "Enter" && pull.trim() && act("pull", "llamacpp_pull", { model: pull }, t("Descarga iniciada")).then(() => setPull(""))} />
+          <button className="btn sm" disabled={!pull.trim() || busy === "pull"} onClick={() => act("pull", "llamacpp_pull", { model: pull }, t("Descarga iniciada")).then(() => setPull(""))}>
+            {busy === "pull" ? <Loader2 className="spin" /> : <Plus />} {t("Descargar")}
+          </button>
+        </div>
+      )}
+      {st?.up && !st.router && <div className="set-row muted small">{t("Este servidor se inició con un modelo fijo. Para cargar, descargar y borrar modelos desde acá, iniciá llama-server sin -m (modo router).")}</div>}
+    </section>
+  );
+}
+
 function ModelsSettings() {
   const { settings, saveSettings } = useStore();
   const t = useT();
@@ -104,7 +252,9 @@ function ModelsSettings() {
   return (
     <div className="col" style={{ gap: 20 }}>
       <p className="muted small">{t("Elegí qué modelos de cada proveedor aparecen en el selector del chat. Solo se listan los proveedores instalados; podés sumar un modelo por su ID.")}</p>
+      <LlamaCppCard hidden={hidden} setHidden={setHidden} />
       {groups.map((g) => {
+        if (g === "llama.cpp") return null;
         const list = all.filter((m) => m.group === g);
         const prov = CUSTOM_PROVIDERS.find((p) => p.group === g);
         if (!list.length && !prov) return null;

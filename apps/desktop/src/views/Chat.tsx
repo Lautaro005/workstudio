@@ -55,6 +55,10 @@ export function Chat() {
   const reloadList = () => call<ChatSummary[]>("chat_list").then(setList).catch(() => {});
   const reloadProjects = () => call<Project[]>("project_list").then(setProjects).catch(() => {});
   const reloadSkills = (folder?: string) => call<Skill[]>("skills_list", { folder: folder || null }).then(setSkills).catch(() => {});
+  // Skills can be turned on or off in Settings → Chat: look again when the chat comes back.
+  useEffect(() => {
+    if (route === "chat") reloadSkills(draft.folder);
+  }, [route]); // eslint-disable-line react-hooks/exhaustive-deps
 
   useEffect(() => {
     reloadList();

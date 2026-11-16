@@ -248,6 +248,7 @@
 <tr><td>Codex</td><td>El predeterminado, un <i>latest</i> por familia (Luna, Sol, Terra…) y cada versión: los que lista tu cuenta en <code>~/.codex/models_cache.json</code> primero y después los demás que conoce Codex.</td><td><code>codex exec --json</code> en modo solo lectura, con <code>workstudio</code> pasado con <code>-c</code>.</td></tr>
 <tr><td>Gemini</td><td>El de Gemini CLI.</td><td><code>gemini -p</code> en una carpeta con solo <code>workstudio</code>.</td></tr>
 <tr><td>Ollama</td><td>Cada modelo instalado (sin los de embeddings).</td><td><code>/api/chat</code>; WorkStudio ejecuta las herramientas.</td></tr>
+<tr><td>llama.cpp</td><td>Cada modelo de tu <code>llama-server</code> (en modo router, todos los que puede cargar).</td><td><code>/v1/chat/completions</code> con streaming y herramientas; WorkStudio ejecuta las herramientas.</td></tr>
 <tr><td>Agentes de OpenCue</td><td>Cada agente.</td><td>Responde el agente con sus propias herramientas (las pastillas no aplican).</td></tr>
 </table></div>
 <p>Solo aparecen los modelos cuyo CLI está instalado. En Ajustes → Modelos elegís cuáles se muestran y podés sumar un modelo por su ID (por ejemplo uno que salió después de tu versión de WorkStudio). Las conversaciones se guardan en <code>~/.workstudio/chats</code>.</p>
@@ -255,8 +256,10 @@
 <ul>
 <li><b>Proyectos</b>: instrucciones propias, archivos de conocimiento (su texto va con cada mensaje), carpeta de trabajo, skills fijas, modelo y herramientas predeterminados. Cada proyecto tiene su página con sus chats.</li>
 <li><b>Carpeta de trabajo</b>: con <b>+</b> o soltándola en el chat. Por defecto es de <b>solo lectura</b> (el modelo lista, busca y lee); cambiá el chip a <b>Edita</b> para que pueda crear y editar archivos y correr comandos ahí.</li>
+<li><b>Dictado</b>: el botón del micrófono, al lado de Enviar, dicta el mensaje con el <b>reconocimiento de voz del sistema</b> (en macOS, el dictado de Apple): lo que ya escribiste queda y el texto dictado va después, en vivo. La primera vez el sistema pide permiso para el micrófono y el reconocimiento de voz. Si la ventana no tiene reconocimiento (Linux) o falla, el chat te lo dice y te manda al dictado del sistema (Win + H en Windows; tecla del micrófono o Fn dos veces en macOS).</li>
+<li><b>llama.cpp</b>: si tenés <code>llama-server</code> corriendo, sus modelos aparecen en el selector. Se busca solo en <code>127.0.0.1:9931</code> y <code>:8080</code>, o en la dirección que pongas en Ajustes → Modelos. Iniciá el servidor <b>sin indicar un modelo</b> (modo router) para cargar, descargar y borrar modelos desde WorkStudio o desde su propia interfaz web. También está en Apps para iniciarlo y verlo adentro.</li>
 <li><b>Archivos y fotos</b>: con <b>+</b>, arrastrando o pegando. Los de texto van en el mensaje; las imágenes llegan a los modelos que las aceptan.</li>
-<li><b>Skills</b>: WorkStudio detecta las de todas tus herramientas y las muestra <b>separadas con títulos</b>: <i>WorkStudio</i> (<code>~/.workstudio/skills</code>), <i>OpenBlocks</i> (las de second brain que trae WorkStudio y las de <code>skills/</code> de tu vault), <i>Claude Code</i> (<code>~/.claude/skills</code>) y <i>sus plugins</i>, <i>Codex</i> (<code>~/.codex/skills</code>, <code>~/.agents/skills</code>), <i>Gemini</i>, <i>OpenCue</i>, <i>brain</i> (<code>skills/</code> de su vault) y las de la carpeta de trabajo. Escribí <b>/</b> para ver la lista y seguí escribiendo para buscar por nombre, descripción o título; con las flechas y Enter la activás.</li>
+<li><b>Skills</b>: WorkStudio detecta las de todas tus herramientas y las muestra <b>separadas con títulos</b>: <i>WorkStudio</i> (<code>~/.workstudio/skills</code>), <i>OpenBlocks</i> (las de second brain que trae WorkStudio y las de <code>skills/</code> de tu vault), <i>Claude Code</i> (<code>~/.claude/skills</code>) y <i>sus plugins</i>, <i>Codex</i> (<code>~/.codex/skills</code>, <code>~/.agents/skills</code>), <i>Gemini</i>, <i>OpenCue</i>, <i>brain</i> (<code>skills/</code> de su vault) y las de la carpeta de trabajo. Escribí <b>/</b> para ver la lista y seguí escribiendo para buscar por nombre, descripción o título; con las flechas y Enter la activás. Todas las listas de skills (el menú <b>+ → Skills</b>, las skills fijas de un proyecto, el administrador, las automatizaciones y Ajustes → Chat) tienen un <b>buscador</b>. En Ajustes → Chat podés apagar las que no uses.</li>
 <li><b>OpenBlocks como second brain</b>: con la pastilla OpenBlocks, el modelo lee primero el mapa <code>AGENTS</code> de tu vault, abre solo las carpetas que indica, guarda <i>insights</i> (no datos crudos), mantiene fija la estructura y sigue la regla «el negocio primero». Está basado en la guía de second brain de Ben AI; las skills <code>/second-brain-setup</code>, <code>/second-brain-operator</code> y <code>/second-brain-optimizer</code> lo arman, lo actualizan y lo limpian.</li>
 <li><b>Agentes de OpenCue</b>: escribí <b>@</b> y el nombre para mandarle ese mensaje a un agente.</li>
 <li><b>Artefactos</b>: documentos, código, páginas web y SVG se abren en un panel al costado, con vista previa, código, versiones, copiar y guardar. El HTML corre aislado.</li>
@@ -273,6 +276,7 @@
 <tr><td>Codex</td><td>The default, one <i>latest</i> per family (Luna, Sol, Terra…) and every version: the ones your account lists in <code>~/.codex/models_cache.json</code> first, then the rest Codex knows.</td><td><code>codex exec --json</code> read-only, with <code>workstudio</code> passed with <code>-c</code>.</td></tr>
 <tr><td>Gemini</td><td>Gemini CLI's model.</td><td><code>gemini -p</code> in a folder with only <code>workstudio</code>.</td></tr>
 <tr><td>Ollama</td><td>Every installed model (except embedding ones).</td><td><code>/api/chat</code>; WorkStudio runs the tools.</td></tr>
+<tr><td>llama.cpp</td><td>Every model of your <code>llama-server</code> (in router mode, all it can load).</td><td><code>/v1/chat/completions</code> with streaming and tools; WorkStudio runs the tools.</td></tr>
 <tr><td>OpenCue agents</td><td>Every agent.</td><td>The agent answers with its own tools (pills don't apply).</td></tr>
 </table></div>
 <p>Only models whose CLI is installed show up. In Settings → Models you choose which ones show and can add a model by its ID (for example one released after your WorkStudio version). Conversations are stored in <code>~/.workstudio/chats</code>.</p>
@@ -280,8 +284,10 @@
 <ul>
 <li><b>Projects</b>: their own instructions, knowledge files (their text goes with every message), working folder, pinned skills, default model and tools. Each project has a page with its chats.</li>
 <li><b>Working folder</b>: with <b>+</b> or by dropping it on the chat. <b>Read-only</b> by default (the model lists, searches and reads); switch the chip to <b>Edits</b> to let it create and edit files and run commands there.</li>
+<li><b>Dictation</b>: the microphone button next to Send dictates the message with the <b>system's speech recognition</b> (on macOS, Apple's dictation): what you had typed stays and the dictated text goes after it, live. The first time the system asks for permission to use the microphone and speech recognition. If the window has no recognizer (Linux) or it fails, the chat says so and points to the system dictation (Win + H on Windows; microphone key or Fn twice on macOS).</li>
+<li><b>llama.cpp</b>: if you have <code>llama-server</code> running, its models show up in the picker. It is found on its own at <code>127.0.0.1:9931</code> and <code>:8080</code>, or at the address you set in Settings → Models. Start the server <b>without a model</b> (router mode) to load, download and delete models from WorkStudio or from its own web interface. It is also in Apps to start it and see it inside.</li>
 <li><b>Files and photos</b>: with <b>+</b>, drag and drop or paste. Text files go into the message; images reach the models that accept them.</li>
-<li><b>Skills</b>: WorkStudio finds the ones from all your tools and lists them <b>under titles</b>: <i>WorkStudio</i> (<code>~/.workstudio/skills</code>), <i>OpenBlocks</i> (the second-brain ones WorkStudio ships plus your vault's <code>skills/</code>), <i>Claude Code</i> (<code>~/.claude/skills</code>) and <i>its plugins</i>, <i>Codex</i> (<code>~/.codex/skills</code>, <code>~/.agents/skills</code>), <i>Gemini</i>, <i>OpenCue</i>, <i>brain</i> (its vault's <code>skills/</code>) and the working folder's. Type <b>/</b> to see the list and keep typing to search by name, description or title; arrows and Enter turn one on.</li>
+<li><b>Skills</b>: WorkStudio finds the ones from all your tools and lists them <b>under titles</b>: <i>WorkStudio</i> (<code>~/.workstudio/skills</code>), <i>OpenBlocks</i> (the second-brain ones WorkStudio ships plus your vault's <code>skills/</code>), <i>Claude Code</i> (<code>~/.claude/skills</code>) and <i>its plugins</i>, <i>Codex</i> (<code>~/.codex/skills</code>, <code>~/.agents/skills</code>), <i>Gemini</i>, <i>OpenCue</i>, <i>brain</i> (its vault's <code>skills/</code>) and the working folder's. Type <b>/</b> to see the list and keep typing to search by name, description or title; arrows and Enter turn one on. Every list of skills (the <b>+ → Skills</b> menu, a project's pinned skills, the manager, automations and Settings → Chat) has a <b>search box</b>. In Settings → Chat you can turn off the ones you don't use.</li>
 <li><b>OpenBlocks as a second brain</b>: with the OpenBlocks pill on, the model reads your vault's <code>AGENTS</code> map first, opens only the folders it points to, saves <i>insights</i> (not raw data), keeps the structure fixed and follows a "business first" rule. It is based on Ben AI's second-brain guide; the <code>/second-brain-setup</code>, <code>/second-brain-operator</code> and <code>/second-brain-optimizer</code> skills build, update and clean it.</li>
 <li><b>OpenCue agents</b>: type <b>@</b> and the name to hand that message to an agent.</li>
 <li><b>Artifacts</b>: documents, code, web pages and SVG open in a side panel, with preview, code, versions, copy and save. HTML runs sandboxed.</li>
@@ -398,6 +404,7 @@
 <li><b>WorkStudio</b> se actualiza solo con paquetes firmados; al terminar se reinicia.</li>
 <li><b>Cada app</b> se actualiza con su comando, en una terminal para que veas cada paso. Mientras corre, el botón dice «Actualizando…»; al terminar, WorkStudio vuelve a leer la versión instalada, cambia el número que muestra y saca el botón de actualizar.</li>
 <li><b>Los CLIs de agentes</b> (Claude Code, Codex, Gemini CLI, Cursor Agent) se actualizan igual.</li>
+<li>Debajo de cada actualización disponible ves sus <b>notas de la versión</b> en un recuadro con scroll, para saber qué cambia antes de actualizar.</li>
 </ul>
 <p>Desde la terminal: <code>workstudio update</code>.</p>
 </div>
@@ -408,6 +415,7 @@
 <li><b>WorkStudio</b> updates itself with signed bundles and restarts when done.</li>
 <li><b>Each app</b> updates with its own command, in a terminal so you see every step. While it runs the button says "Updating…"; when it ends, WorkStudio reads the installed version again, updates the number it shows and removes the update button.</li>
 <li><b>Agent CLIs</b> (Claude Code, Codex, Gemini CLI, Cursor Agent) update the same way.</li>
+<li>Under each available update you see its <b>release notes</b> in a scrolling box, so you know what changes before updating.</li>
 </ul>
 <p>From the terminal: <code>workstudio update</code>.</p>
 </div>
@@ -421,7 +429,8 @@
 <tr><td>General</td><td>Tu nombre (para el saludo), idioma (español, inglés o el del sistema), tema (claro, oscuro o el del sistema) y cerrar a la bandeja.</td></tr>
 <tr><td>Avisos</td><td>Avisos del sistema y un botón para probarlos.</td></tr>
 <tr><td>Apps</td><td>Qué apps se abren dentro de WorkStudio.</td></tr>
-<tr><td>Modelos</td><td>Qué modelos de cada proveedor aparecen en el selector del chat, y modelos propios agregados por su ID (Claude Code, Codex y Gemini).</td></tr>
+<tr><td>Chat</td><td>Tus instrucciones personales y las skills: ordenadas por origen, con buscador, y un clic para apagar o encender cada una (las apagadas no aparecen en el resto de la app).</td></tr>
+<tr><td>Modelos</td><td>Qué modelos de cada proveedor aparecen en el selector del chat, modelos propios agregados por su ID (Claude Code, Codex y Gemini) y la tarjeta de <b>llama.cpp</b>: estado, cargar, descargar de memoria, bajar y borrar modelos, clave de API y su interfaz web.</td></tr>
 <tr><td>Terminal</td><td>Tamaño de letra, shell y workspace de los agentes.</td></tr>
 <tr><td>Actualizaciones</td><td>Buscar solo y cada cuánto.</td></tr>
 <tr><td>Acerca de</td><td>Versión, carpeta de datos y código.</td></tr>
@@ -434,7 +443,8 @@
 <tr><td>General</td><td>Your name (for the greeting), language (Spanish, English or the system's), theme (light, dark or the system's) and close to the tray.</td></tr>
 <tr><td>Notifications</td><td>System notifications and a button to test them.</td></tr>
 <tr><td>Apps</td><td>Which apps open inside WorkStudio.</td></tr>
-<tr><td>Models</td><td>Which models of each provider show in the chat picker, plus your own models added by ID (Claude Code, Codex and Gemini).</td></tr>
+<tr><td>Chat</td><td>Your personal instructions and the skills: grouped by origin, with a search box, and one click to turn each one off or on (the ones that are off don't show up in the rest of the app).</td></tr>
+<tr><td>Models</td><td>Which models of each provider show in the chat picker, your own models added by ID (Claude Code, Codex and Gemini) and the <b>llama.cpp</b> card: status, load, unload, download and delete models, API key and its web interface.</td></tr>
 <tr><td>Terminal</td><td>Font size, shell and the agents' workspace.</td></tr>
 <tr><td>Updates</td><td>Check automatically and how often.</td></tr>
 <tr><td>About</td><td>Version, data folder and source code.</td></tr>

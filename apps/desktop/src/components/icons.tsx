@@ -9,7 +9,7 @@ import {
   MagnifyingGlassIcon, HardDrivesIcon, GearSixIcon, SparkleIcon, StopIcon, TerminalWindowIcon, SunIcon, TrashIcon, LinkBreakIcon, WrenchIcon, XIcon,
   SlidersHorizontalIcon, EyeIcon, EyeSlashIcon, PaperclipIcon, FolderSimpleIcon, FolderSimplePlusIcon, LightningIcon, AtIcon, PencilSimpleIcon,
   CaretRightIcon, ImageIcon, FilePdfIcon, FileIcon, FileTextIcon, CodeIcon, BrowserIcon, LockSimpleIcon, FoldersIcon, ChatsCircleIcon, BookOpenIcon,
-  ArrowLeftIcon, SidebarSimpleIcon, FloppyDiskIcon, LightbulbIcon, MagicWandIcon, ClockIcon, type IconProps as PIconProps, type IconWeight,
+  ArrowLeftIcon, SidebarSimpleIcon, FloppyDiskIcon, LightbulbIcon, MagicWandIcon, ClockIcon, MicrophoneIcon, type IconProps as PIconProps, type IconWeight,
 } from "@phosphor-icons/react";
 
 export type IconProps = {
@@ -116,3 +116,4 @@ export const Save = mk(FloppyDiskIcon);
 export const Lightbulb = mk(LightbulbIcon);
 export const Wand = mk(MagicWandIcon);
 export const Clock = mk(ClockIcon);
+export const Mic = mk(MicrophoneIcon);

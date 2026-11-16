@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+  <key>NSMicrophoneUsageDescription</key>
+  <string>AI WorkStudio uses the microphone to dictate your chat messages (voice typing).</string>
+  <key>NSSpeechRecognitionUsageDescription</key>
+  <string>AI WorkStudio uses the system's speech recognition to turn what you say into text in the chat.</string>
+</dict>
+</plist>

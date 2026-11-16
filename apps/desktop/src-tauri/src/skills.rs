@@ -17,6 +17,8 @@ pub struct Skill {
     pub group: String,
     /// Path of the SKILL.md (the skill's id).
     pub path: String,
+    /// Turned off in Settings → Chat: it is hidden everywhere else in the app.
+    pub disabled: bool,
 }
 
 /// `name` and `description` from the frontmatter; the folder name when missing.
@@ -105,6 +107,7 @@ fn push(out: &mut Vec<Skill>, name: String, description: String, source: &str, p
         source: source.into(),
         group: group_of(source).into(),
         path,
+        disabled: false,
     });
 }
 
@@ -313,7 +316,42 @@ pub fn list(folder: Option<&str>) -> Vec<Skill> {
     }
     // Same-named skills of different tools stay (they live under different titles); order by title.
     out.sort_by_key(|s| group_rank(&s.group));
+    let off = disabled_paths();
+    for s in &mut out {
+        s.disabled = off.contains(&s.path);
+    }
     out
+}
+
+/// Only the skills that are turned on: what the chat, projects and automations offer.
+pub fn list_enabled(folder: Option<&str>) -> Vec<Skill> {
+    list(folder).into_iter().filter(|s| !s.disabled).collect()
+}
+
+/// Paths of the skills turned off in Settings → Chat (`skills_disabled` in settings.json).
+pub fn disabled_paths() -> Vec<String> {
+    crate::settings::load()
+        .extra
+        .get("skills_disabled")
+        .and_then(|v| v.as_array())
+        .map(|a| {
+            a.iter()
+                .filter_map(|x| x.as_str().map(String::from))
+                .collect()
+        })
+        .unwrap_or_default()
+}
+
+pub fn set_enabled(path: &str, enabled: bool) -> anyhow::Result<()> {
+    let mut off = disabled_paths();
+    off.retain(|p| p != path);
+    if !enabled {
+        off.push(path.to_string());
+    }
+    let mut st = crate::settings::load();
+    st.extra
+        .insert("skills_disabled".into(), serde_json::json!(off));
+    crate::settings::save(&st)
 }
 
 /// The instructions of a skill (without its frontmatter). Only real SKILL.md files are read.
@@ -379,6 +417,7 @@ pub fn save(name: &str, description: &str, body: &str) -> anyhow::Result<Skill> 
         source: "workstudio".into(),
         group: group_of("workstudio").into(),
         path: path.to_string_lossy().into_owned(),
+        disabled: false,
     })
 }
 
@@ -483,6 +522,13 @@ mod tests {
         assert!(content(&n.path).is_some());
         mk(&t.join("other/readme.md"), "x");
         assert!(content(&t.join("other/readme.md").to_string_lossy()).is_none());
+        // Turning a skill off hides it from the enabled list but not from the full one.
+        let off = find("mail").path.clone();
+        set_enabled(&off, false).unwrap();
+        assert!(list(None).iter().any(|s| s.path == off && s.disabled));
+        assert!(!list_enabled(None).iter().any(|s| s.path == off));
+        set_enabled(&off, true).unwrap();
+        assert!(list_enabled(None).iter().any(|s| s.path == off));
         // Titles come out in a fixed order.
         let ranks: Vec<usize> = all.iter().map(|s| group_rank(&s.group)).collect();
         assert!(ranks.windows(2).all(|w| w[0] <= w[1]));

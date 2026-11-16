@@ -74,7 +74,7 @@ const servers = [
 
 const updates = [
   { id: "brain", kind: "app", name: "brain", current: "v0.03.3.4", latest: "v0.03.3.4", available: false, url: "https://github.com/Lautaro005/brain/releases", notes: "", published: "2026-10-25T18:00:00Z", command: "brain update", installed: true },
-  { id: "opencue", kind: "app", name: "OpenCue", current: "0.5.2", latest: "v0.5.3", available: true, url: "https://github.com/Lautaro005/opencue/releases", notes: "Plan como checklist, grupos de coding en la carpeta del grupo y arreglos de permisos.", published: "2026-10-26T15:00:00Z", command: "curl -fsSL https://lautaro005.github.io/opencue/install.sh | sh", installed: true },
+  { id: "opencue", kind: "app", name: "OpenCue", current: "0.5.2", latest: "v0.5.3", available: true, url: "https://github.com/Lautaro005/opencue/releases", notes: "## OpenCue 0.5.3\n\n- Plan como checklist que se tilda solo.\n- Grupos de coding que trabajan en la carpeta del grupo.\n- Arreglos de permisos de agentes.\n- Navegador integrado: el recuadro ya no se sale de su lugar.\n- Podman como alternativa a Docker.\n- Catálogo de apps con OAuth.\n- Secretos en archivo con permisos 0600.\n- Voz local con Parakeet, Canary y Whisper.\n- Artefactos con versiones guardadas en Files.\n- Mejoras en el dashboard de inicio.\n- Corrección de la cola de mensajes mientras el agente trabaja.\n\nInstalá desde una terminal: opencue update", published: "2026-10-26T15:00:00Z", command: "curl -fsSL https://lautaro005.github.io/opencue/install.sh | sh", installed: true },
   { id: "lumina", kind: "app", name: "Lumina", current: "0.1.6", latest: "v0.1.6", available: false, url: "https://github.com/Lautaro005/lumina/releases", notes: "", published: "2026-10-25T12:00:00Z", command: "lumina update", installed: true },
   { id: "claude", kind: "cli", name: "Claude Code", current: "2.4.1", latest: "2.4.3", available: true, url: "", notes: "", published: "", command: "claude update", installed: true },
   { id: "codex", kind: "cli", name: "Codex CLI", current: "0.61.0", latest: "0.61.0", available: false, url: "", notes: "", published: "", command: "npm install -g @openai/codex@latest", installed: true },
@@ -97,6 +97,16 @@ const skills = [
   { name: "agenda", description: "Armar la agenda de la semana", source: "opencue", group: "OpenCue", path: "~/Library/Application Support/opencue/skills/agenda/SKILL.md" },
   { name: "notas", description: "Cómo guardar notas en el vault", source: "brain", group: "brain", path: "~/.brain/vault/skills/notas.md" },
 ];
+const llama: any = {
+  url: "http://127.0.0.1:9931",
+  up: true,
+  router: true,
+  installed: true,
+  models: [
+    { id: "ggml-org/gemma-3-4b-it-GGUF:Q4_K_M", status: "loaded" },
+    { id: "unsloth/Qwen3-8B-GGUF:Q4_K_M", status: "unloaded" },
+  ],
+};
 const automations: any[] = [
   { id: "a1", name: "Actualización diaria del second brain", prompt: "Run the daily update of my second brain.", model: "claude:sonnet", tools: ["openblocks", "lumina"], skills: ["~/.workstudio/builtin-skills/second-brain-operator/SKILL.md"], project: "", folder: "", mode: "read", enabled: true, schedule: { kind: "daily", time: "07:30", days: [], every_minutes: 60 }, created: Date.now() - 864e5, last_run: Date.now() - 36e5 * 20, last_chat: "", last_error: "", runs: 1, next_run: Date.now() + 36e5 * 4 },
 ];
@@ -159,6 +169,7 @@ export const mock = {
           ...[["opus", "Opus · latest"], ["sonnet", "Sonnet · latest"], ["haiku", "Haiku · latest"], ["claude-opus-5-5", "Claude Opus 5.5"], ["claude-sonnet-5-5", "Claude Sonnet 5.5"], ["claude-haiku-5-5", "Claude Haiku 5.5"], ["claude-fable-5-1", "Claude Fable 5.1"], ["claude-opus-4-8", "Claude Opus 4.8"]].map(([id, name]) => ({ id: `claude:${id}`, name, group: "Claude Code", tools: true })),
           ...[["", "Codex · default"], ["latest:gpt-6-luna", "GPT Luna · latest"], ["latest:gpt-5.6-terra", "GPT Terra · latest"], ["latest:gpt-6.1-sol", "GPT Sol · latest"], ["gpt-6.1-sol", "GPT-6.1-Sol"], ["gpt-6-luna", "GPT-6-Luna"], ["gpt-5.6-terra", "GPT-5.6-Terra"], ["gpt-5.3-codex", "GPT-5.3-Codex"]].map(([id, name]) => ({ id: `codex:${id}`, name, group: "Codex", tools: true })),
           { id: "ollama:qwen3:8b", name: "qwen3:8b", group: "Ollama", tools: true },
+          { id: "llamacpp:ggml-org/gemma-3-4b-it-GGUF:Q4_K_M", name: "ggml-org/gemma-3-4b-it-GGUF:Q4_K_M", group: "llama.cpp", tools: true },
           { id: "opencue:pacman", name: "pacman", group: "OpenCue", tools: false },
         ];
       case "chat_list":
@@ -245,7 +256,26 @@ export const mock = {
       case "project_remove_file":
         return projects.find((x) => x.id === a.id);
       case "skills_list":
-        return skills;
+        return a.all ? skills : skills.filter((x: any) => !x.disabled);
+      case "skill_set_enabled": {
+        const k: any = skills.find((x: any) => x.path === a.path);
+        if (k) k.disabled = !a.enabled;
+        return null;
+      }
+      case "llamacpp_status":
+        return llama;
+      case "llamacpp_load":
+      case "llamacpp_unload": {
+        const m = llama.models.find((x: any) => x.id === a.model);
+        if (m) m.status = cmd === "llamacpp_load" ? "loaded" : "unloaded";
+        return null;
+      }
+      case "llamacpp_pull":
+        llama.models.push({ id: a.model, status: "downloading" });
+        return null;
+      case "llamacpp_delete":
+        llama.models = llama.models.filter((x: any) => x.id !== a.model);
+        return null;
       case "skill_read":
         return "# Pasos\n1. Leé la transcripción.\n2. Sacá decisiones, pendientes y responsables.";
       case "skill_save":

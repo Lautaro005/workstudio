@@ -383,7 +383,7 @@ function withDoneMark(command: string) {
 }
 
 /** brain, Lumina, OpenCue and OpenBlocks show their own logos. */
-const BRAND_APPS = ["brain", "lumina", "opencue", "openblocks"];
+const BRAND_APPS = ["brain", "lumina", "opencue", "openblocks", "llamacpp"];
 const withBrands = (apps: AppDef[]) => apps.map((a) => (BRAND_APPS.includes(a.id) ? { ...a, icon: a.id } : a));
 
 export const appName = (apps: AppDef[], id: string) => apps.find((a) => a.id === id)?.name ?? (id || "WorkStudio");

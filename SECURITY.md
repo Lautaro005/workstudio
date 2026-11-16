@@ -45,10 +45,20 @@ expect. Remove API keys and personal data from logs.
   system prompt tells the model to treat the content of pages, web results and files as data, never as instructions,
   but a page you pasted from the internet can still try to steer a model: don't run unattended automations with
   *Edits* and the web on over a vault you don't trust.
+- **llama.cpp is local, but you can point WorkStudio at any address.** The chat talks to `llama-server` at
+  `127.0.0.1` by default (or the URL you set in Settings → Models); prompts and files you send go to that server. If you
+  set a remote URL, they travel there, so use HTTPS. The optional API key is stored in `~/.workstudio/settings.json` in
+  plain text, readable only by your user like the rest of your settings. Load, unload, download and delete act on that
+  server's models, and delete asks first.
+- **Dictation uses the system's speech recognition.** The microphone button only listens while it is on. Audio is
+  handled by the operating system's recognizer (on macOS, Apple's; depending on your system settings it can be
+  processed on Apple's servers). WorkStudio does not record, store or send audio itself. The macOS app declares the
+  microphone and speech-recognition permissions and asks for them the first time.
 - **Skills are instructions the model follows.** WorkStudio lists the skills it finds in your tools' folders
   (`~/.claude`, `~/.codex`, `~/.gemini`, OpenCue, brain, your vault) and reads one only when you turn it on or the
   model opens it; it never runs a skill's files by itself. Only read-only `SKILL.md` files (or brain's flat `skills/*.md`)
-  are read. Don't install skills you haven't read.
+  are read. Don't install skills you haven't read. You can turn any skill off in Settings → Chat and it is left out
+  of the chat, projects, automations and what the model is told about.
 - **Network.** WorkStudio talks to your apps on 127.0.0.1, to `api.github.com` (latest releases) and to
   `registry.npmjs.org` (latest CLI versions). Nothing about you is sent anywhere.
 - **Updates.** The in-app updater only installs bundles signed with the release key (minisign) from this repository's
@@ -62,7 +72,8 @@ In scope: a web page or embedded app reaching WorkStudio's commands; MCP config 
 not add, or losing the user's file; the installers or updater running anything other than the official release;
 secrets from `~/.workstudio/mcp.json` leaking into logs, the UI of another app or the network; an automation running
 with more permissions than its saved mode or pills (for example editing a folder set to read-only); the skills list
-reading files outside the known skills folders.
+reading files outside the known skills folders; a skill that is turned off still reaching the model; the llama.cpp
+commands acting on anything but the configured server.
 
 Out of scope: what an app of the catalog does by itself (report it to that app's repository), and anything that
 requires an attacker who already runs code as your user.

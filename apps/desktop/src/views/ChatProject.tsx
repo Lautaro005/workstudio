@@ -3,6 +3,7 @@
 import { useEffect, useState } from "react";
 import { open as openDialog } from "@tauri-apps/plugin-dialog";
 import { ArrowLeft, BookOpen, Folder, FolderOpen, Lock, Paperclip, Pencil, Plus, Settings as Gear, Trash2, Zap, Chats } from "../components/icons";
+import { GroupedSkills, SearchInput, useSkillSearch } from "../components/skills";
 import { call, inTauri, type ChatModel, type ChatSummary, type Project, type Skill } from "../lib/api";
 import { useT } from "../lib/i18n";
 import { useStore } from "../lib/store";
@@ -15,6 +16,7 @@ export const newProject = (): Project => ({ id: "", name: "", description: "", i
 
 export function ProjectModal({ open, project, onClose, onSaved, models, skills }: { open: boolean; project: Project | null; onClose: () => void; onSaved: (p: Project) => void; models: ChatModel[]; skills: Skill[] }) {
   const t = useT();
+  const sk = useSkillSearch(skills);
   const toast = useStore((s) => s.toast);
   const [p, setP] = useState<Project>(project ?? newProject());
   useEffect(() => {
@@ -114,15 +116,21 @@ export function ProjectModal({ open, project, onClose, onSaved, models, skills }
           {skills.length === 0 ? (
             <span className="small muted">{t("Todavía no hay skills.")}</span>
           ) : (
-            <div className="skill-checks">
-              {skills.map((s) => (
-                <label key={s.path} className="check" title={s.path}>
-                  <input type="checkbox" checked={p.skills.includes(s.path)} onChange={(e) => set({ skills: e.target.checked ? [...p.skills, s.path] : p.skills.filter((x) => x !== s.path) })} />
-                  <span>
-                    <b>{s.name}</b> <span className="muted small">{s.description}</span>
-                  </span>
-                </label>
-              ))}
+            <div className="skill-box">
+              <SearchInput value={sk.query} onChange={sk.setQuery} />
+              <div className="skill-checks">
+                <GroupedSkills
+                  items={sk.shown}
+                  render={(s) => (
+                    <label className="check" title={s.path}>
+                      <input type="checkbox" checked={p.skills.includes(s.path)} onChange={(e) => set({ skills: e.target.checked ? [...p.skills, s.path] : p.skills.filter((x) => x !== s.path) })} />
+                      <span>
+                        <b>{s.name}</b> <span className="muted small">{s.description}</span>
+                      </span>
+                    </label>
+                  )}
+                />
+              </div>
             </div>
           )}
         </div>
@@ -141,6 +149,7 @@ export function ProjectModal({ open, project, onClose, onSaved, models, skills }
 
 export function SkillsModal({ open, onClose, skills, onChanged }: { open: boolean; onClose: () => void; skills: Skill[]; onChanged: () => void }) {
   const t = useT();
+  const sk = useSkillSearch(skills);
   const toast = useStore((s) => s.toast);
   const [view, setView] = useState<Skill | null>(null);
   const [body, setBody] = useState("");
@@ -167,7 +176,7 @@ export function SkillsModal({ open, onClose, skills, onChanged }: { open: boolea
       toast(String(e), "error");
     }
   };
-  const source = (s: Skill) => (s.source === "claude" ? "Claude" : s.source === "folder" ? t("Carpeta") : "WorkStudio");
+  const source = (s: Skill) => s.group || "WorkStudio";
   return (
     <Modal open={open} onClose={onClose} wide>
       <div className="modal-head">
@@ -204,33 +213,39 @@ export function SkillsModal({ open, onClose, skills, onChanged }: { open: boolea
         ) : (
           <div className="skill-list">
             {skills.length === 0 && <div className="empty small">{t("Todavía no hay skills. Creá una o copiá carpetas con SKILL.md en ~/.workstudio/skills.")}</div>}
-            {skills.map((s) => (
-              <div key={s.path} className="skill-row">
-                <Zap />
-                <button className="skill-row-main" onClick={() => setView(s)}>
-                  <b>{s.name}</b>
-                  <span className="small muted">{s.description || "—"}</span>
-                </button>
-                <span className="chip">{source(s)}</span>
-                {s.source === "workstudio" && (
-                  <button
-                    className="icon-btn sm"
-                    title={t("Borrar")}
-                    aria-label={t("Borrar")}
-                    onClick={async () => {
-                      try {
-                        await call("skill_delete", { path: s.path });
-                        onChanged();
-                      } catch (e) {
-                        toast(String(e), "error");
-                      }
-                    }}
-                  >
-                    <Trash2 />
-                  </button>
+            {skills.length > 0 && <SearchInput value={sk.query} onChange={sk.setQuery} autoFocus />}
+            {skills.length > 0 && (
+              <GroupedSkills
+                items={sk.shown}
+                render={(s) => (
+                  <div key={s.path} className="skill-row">
+                    <Zap />
+                    <button className="skill-row-main" onClick={() => setView(s)}>
+                      <b>{s.name}</b>
+                      <span className="small muted">{s.description || "—"}</span>
+                    </button>
+                    <span className="chip">{source(s)}</span>
+                    {s.source === "workstudio" && (
+                      <button
+                        className="icon-btn sm"
+                        title={t("Borrar")}
+                        aria-label={t("Borrar")}
+                        onClick={async () => {
+                          try {
+                            await call("skill_delete", { path: s.path });
+                            onChanged();
+                          } catch (e) {
+                            toast(String(e), "error");
+                          }
+                        }}
+                      >
+                        <Trash2 />
+                      </button>
+                    )}
+                  </div>
                 )}
-              </div>
-            ))}
+              />
+            )}
           </div>
         )}
       </div>

@@ -78,7 +78,11 @@ export function Updates() {
               </>
             )}
           </div>
-          {u.available && u.notes && <div className="small muted" style={{ marginTop: 4, maxWidth: 620, whiteSpace: "pre-line", maxHeight: 60, overflow: "hidden" }}>{u.notes}</div>}
+          {u.available && u.notes && (
+            <div className="upd-notes" tabIndex={0} role="region" aria-label={t("Notas de la versión")}>
+              {u.notes}
+            </div>
+          )}
         </div>
         {u.url ? (
           <button className="icon-btn sm" title={t("Notas de la versión")} onClick={() => openUrl(u.url)}>

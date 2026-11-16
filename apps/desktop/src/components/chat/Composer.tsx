@@ -4,11 +4,13 @@
 // the right next to Send.
 import { useEffect, useRef, useState } from "react";
 import { open as openDialog } from "@tauri-apps/plugin-dialog";
-import { ArrowUp, AtSign, Bot, Brain, Check, ChevronDown, ChevronRight, Folder, FolderPlus, Globe, Lock, NotebookPen, Notebook, Paperclip, Pencil, Plus, Square, Zap, Settings as Gear } from "../icons";
+import { ArrowUp, AtSign, Bot, Brain, Check, ChevronDown, ChevronRight, Folder, FolderPlus, Globe, Lock, NotebookPen, Notebook, Paperclip, Pencil, Plus, Square, Zap, Settings as Gear, Mic } from "../icons";
 import { call, inTauri, type Attachment, type ChatModel, type OpenCueAgent, type Skill } from "../../lib/api";
-import { useT } from "../../lib/i18n";
+import { useLang, useT } from "../../lib/i18n";
+import { speechErrorHint, speechLang, useSpeech } from "../../lib/speech";
 import { useStore } from "../../lib/store";
 import { Glyph, usePopover } from "../ui";
+import { filterSkills, GroupedSkills, SearchInput } from "../skills";
 import { FileChip, GROUP_LOOK } from "./Message";
 
 export type Draft = { text: string; files: Attachment[]; skills: string[]; folder: string; mode: string; agent: string };
@@ -21,27 +23,6 @@ export const PILLS: Pill[] = [
   { id: "openblocks", label: "OpenBlocks", icon: Notebook, tone: "ink", app: "openblocks" },
   { id: "web", label: "Web", icon: Globe, tone: "olive" },
 ];
-
-/** Skills keep the order they came in (already sorted by tool); this lists them under their titles. */
-const groupOf = (s: Skill) => s.group || "Skills";
-function GroupedSkills({ items, render }: { items: Skill[]; render: (s: Skill, i: number) => React.ReactNode }) {
-  let last = "";
-  return (
-    <>
-      {items.map((s, i) => {
-        const g = groupOf(s);
-        const head = g !== last;
-        last = g;
-        return (
-          <div key={s.path} className="skill-row">
-            {head && <div className="menu-label group-title">{g}</div>}
-            {render(s, i)}
-          </div>
-        );
-      })}
-    </>
-  );
-}
 
 const baseName = (p: string) => p.replace(/[\\/]+$/, "").split(/[\\/]/).pop() || p;
 
@@ -130,9 +111,30 @@ export function Composer({
 }) {
   const t = useT();
   const toast = useStore((s) => s.toast);
+  const lang = useLang();
   const input = useRef<HTMLTextAreaElement>(null);
+  // Dictation: what was typed before stays, the recognizer's text goes after it.
+  const dictBase = useRef("");
+  const speech = useSpeech(
+    speechLang(lang),
+    (said) => setDraft((d) => ({ ...d, text: dictBase.current + (dictBase.current && said ? " " : "") + said })),
+    (code) => {
+      const win = navigator.userAgent.includes("Windows");
+      const mac = navigator.userAgent.includes("Mac");
+      const alt = code === "unsupported" || code === "network" || code === "service-not-allowed" ? (win ? t(" En Windows probá el dictado del sistema con Win + H.") : mac ? t(" En macOS probá el dictado del sistema (tecla del micrófono o Fn dos veces).") : "") : "";
+      const msg = code === "unsupported" ? t("Esta ventana no trae reconocimiento de voz del sistema.") : t(speechErrorHint(code)) || t("No pude usar el dictado ({code}).", { code });
+      toast(msg + alt, "error");
+    },
+  );
+  const toggleMic = () => {
+    if (speech.listening) return speech.stop();
+    dictBase.current = draft.text.trim();
+    speech.start();
+    input.current?.focus();
+  };
   const plus = usePopover();
   const [sub, setSub] = useState<"" | "skills" | "agents">("");
+  const [skillQ, setSkillQ] = useState("");
   const [sug, setSug] = useState<Suggest | null>(null);
   const [sel, setSel] = useState(0);
 
@@ -151,7 +153,10 @@ export function Composer({
     return () => window.removeEventListener("ws-focus-composer", h);
   }, []);
   useEffect(() => {
-    if (!plus.open) setSub("");
+    if (!plus.open) {
+      setSub("");
+      setSkillQ("");
+    }
   }, [plus.open]);
 
   const addFiles = async () => {
@@ -215,7 +220,7 @@ export function Composer({
   };
   const options =
     sug?.kind === "skill"
-      ? skills.filter((s) => !sug.query || `${s.name} ${s.description} ${groupOf(s)}`.toLowerCase().includes(sug.query)).slice(0, 60)
+      ? filterSkills(skills, sug.query).slice(0, 60)
       : sug?.kind === "agent"
         ? agents.filter((a) => a.name.toLowerCase().includes(sug.query)).slice(0, 8)
         : [];
@@ -338,7 +343,7 @@ export function Composer({
             if (e.key === "Backspace" && !draft.text && draft.agent) setDraft((d) => ({ ...d, agent: "" }));
             if (e.key === "Enter" && !e.shiftKey && !e.nativeEvent.isComposing) {
               e.preventDefault();
-              if (canSend && !running) onSend();
+              if (canSend && !running) (speech.cancel(), onSend());
             }
           }}
         />
@@ -377,9 +382,10 @@ export function Composer({
                       ‹ {t("Skills")}
                     </button>
                     {skills.length === 0 && <div className="menu-label">{t("Todavía no hay skills.")}</div>}
+                    {skills.length > 0 && <SearchInput value={skillQ} onChange={setSkillQ} autoFocus />}
                     <div className="menu-scroll">
                       <GroupedSkills
-                        items={skills}
+                        items={filterSkills(skills, skillQ)}
                         render={(s) => (
                           <button className="menu-item two" onClick={() => toggleSkill(s.path)} title={s.path}>
                             <span className="check-box">{draft.skills.includes(s.path) && <Check size={12} />}</span>
@@ -428,12 +434,17 @@ export function Composer({
           </div>
           <span className="spacer" />
           {!draft.agent && <ModelPicker models={models} value={model} onChange={onModel} loading={loadingModels} />}
+          {!running && (
+            <button type="button" className={`round-btn mic ${speech.listening ? "on" : ""}`} onClick={toggleMic} aria-pressed={speech.listening} title={speech.listening ? t("Dejar de dictar") : speech.supported ? t("Dictar con el micrófono (reconocimiento de voz del sistema)") : t("Dictar con el micrófono (no disponible en esta ventana)")} aria-label={t("Dictar")}>
+              <Mic />
+            </button>
+          )}
           {running ? (
             <button className="send stop" onClick={onStop} title={t("Detener")} aria-label={t("Detener")}>
               <Square />
             </button>
           ) : (
-            <button className="send" onClick={onSend} disabled={!canSend} title={t("Enviar")} aria-label={t("Enviar")}>
+            <button className="send" onClick={() => (speech.cancel(), onSend())} disabled={!canSend} title={t("Enviar")} aria-label={t("Enviar")}>
               <ArrowUp />
             </button>
           )}

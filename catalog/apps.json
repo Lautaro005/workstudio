@@ -241,6 +241,42 @@
       ],
       "tagline_en": "Block notes on your own folder",
       "description_en": "A notes app that writes like Notion and saves like Obsidian: a block editor on a Markdown vault, databases, file previews, a graph, history and a chat with agents that read and edit your pages. It is your chat's second brain in WorkStudio."
+    },
+    {
+      "id": "llamacpp",
+      "name": "llama.cpp",
+      "tagline": "Modelos locales con su propia interfaz",
+      "description": "llama-server de llama.cpp: sirve modelos GGUF por la API de OpenAI, con interfaz web propia y, en modo router, carga, descarga y borra modelos desde la interfaz o por HTTP. WorkStudio lo suma al chat y lo gestiona en Ajustes → Modelos.",
+      "color": "ink",
+      "icon": "llamacpp",
+      "site": "https://github.com/ggml-org/llama.cpp",
+      "kind": "web",
+      "url": "http://127.0.0.1:9931/",
+      "health": {
+        "url": "http://127.0.0.1:9931/health"
+      },
+      "cli": "llama-server",
+      "process": "llama-server",
+      "start": {
+        "unix": "llama-server --port 9931",
+        "windows": "llama-server --port 9931"
+      },
+      "install": {
+        "unix": "brew install llama.cpp",
+        "windows": "winget install llama.cpp"
+      },
+      "update": {
+        "unix": "brew upgrade llama.cpp",
+        "windows": "winget upgrade llama.cpp"
+      },
+      "features": [
+        "Interfaz web",
+        "API OpenAI",
+        "Modo router",
+        "GGUF"
+      ],
+      "tagline_en": "Local models with their own interface",
+      "description_en": "llama.cpp's llama-server: serves GGUF models through the OpenAI API, with its own web UI and, in router mode, loads, unloads and deletes models from the UI or over HTTP. WorkStudio adds it to the chat and manages it in Settings → Models."
     }
   ],
   "clis": [

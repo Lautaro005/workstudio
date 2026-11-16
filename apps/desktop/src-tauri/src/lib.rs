@@ -3,6 +3,7 @@ mod automations;
 mod catalog;
 mod chat;
 mod hub;
+mod llamacpp;
 mod mcp;
 mod paths;
 mod projects;
@@ -511,8 +512,17 @@ fn project_remove_file(id: String, name: String) -> R<projects::Project> {
 }
 
 #[tauri::command]
-fn skills_list(folder: Option<String>) -> Vec<skills::Skill> {
-    skills::list(folder.as_deref())
+fn skills_list(folder: Option<String>, all: Option<bool>) -> Vec<skills::Skill> {
+    if all.unwrap_or(false) {
+        skills::list(folder.as_deref())
+    } else {
+        skills::list_enabled(folder.as_deref())
+    }
+}
+
+#[tauri::command]
+fn skill_set_enabled(path: String, enabled: bool) -> R<()> {
+    skills::set_enabled(&path, enabled).map_err(e)
 }
 
 #[tauri::command]
@@ -537,6 +547,47 @@ fn skills_folder() -> String {
     let d = skills::ws_skills_dir();
     let _ = std::fs::create_dir_all(&d);
     d.to_string_lossy().into_owned()
+}
+
+// ---------- llama.cpp ----------
+
+#[tauri::command]
+async fn llamacpp_status() -> llamacpp::Status {
+    tauri::async_runtime::spawn_blocking(llamacpp::status)
+        .await
+        .unwrap_or_default()
+}
+
+#[tauri::command]
+async fn llamacpp_load(model: String) -> R<()> {
+    tauri::async_runtime::spawn_blocking(move || llamacpp::load(&model))
+        .await
+        .map_err(|x| x.to_string())?
+        .map_err(e)
+}
+
+#[tauri::command]
+async fn llamacpp_unload(model: String) -> R<()> {
+    tauri::async_runtime::spawn_blocking(move || llamacpp::unload(&model))
+        .await
+        .map_err(|x| x.to_string())?
+        .map_err(e)
+}
+
+#[tauri::command]
+async fn llamacpp_pull(model: String) -> R<()> {
+    tauri::async_runtime::spawn_blocking(move || llamacpp::pull(&model))
+        .await
+        .map_err(|x| x.to_string())?
+        .map_err(e)
+}
+
+#[tauri::command]
+async fn llamacpp_delete(model: String) -> R<()> {
+    tauri::async_runtime::spawn_blocking(move || llamacpp::delete(&model))
+        .await
+        .map_err(|x| x.to_string())?
+        .map_err(e)
 }
 
 // ---------- automations ----------
@@ -906,10 +957,16 @@ pub fn run() {
             project_add_files,
             project_remove_file,
             skills_list,
+            skill_set_enabled,
             skill_read,
             skill_save,
             skill_delete,
             skills_folder,
+            llamacpp_status,
+            llamacpp_load,
+            llamacpp_unload,
+            llamacpp_pull,
+            llamacpp_delete,
             automations_list,
             automation_save,
             automation_delete,

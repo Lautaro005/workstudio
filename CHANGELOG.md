@@ -1,5 +1,31 @@
 # Changelog
 
+## 0.1.5 — 2026-11-16
+
+- **llama.cpp.** The chat can now use models served by [llama.cpp](https://github.com/ggml-org/llama.cpp)'s
+  `llama-server` (OpenAI-compatible API, streaming and tool calls — the hub's tools and the folder tools work).
+  - Models show in the picker under **llama.cpp** (`llamacpp:<model>`); the server is found on its own at
+    `127.0.0.1:9931` (current builds) or `:8080` (older ones), or at the address you set.
+  - **Settings → Models → llama.cpp** manages it like Ollama's app does: status, **load / unload** models,
+    **download** one (`user/repo:quant` from Hugging Face), **delete** it from disk, show or hide each one in the
+    picker, an optional API key, and a button that opens llama.cpp's own web interface. Loading, downloading and
+    deleting use the server's **router mode** (start `llama-server` without a model); a server started with `-m`
+    still works for chatting.
+  - llama.cpp is also in **Apps** (start it, see its interface inside WorkStudio).
+- **Speech to text in the chat.** A microphone button next to Send dictates into the message using the
+  **system's speech recognition** (the webview's Web Speech API: on macOS it is Apple's dictation, so no model is
+  shipped). What you had typed stays and the dictated text goes after it, live. If the window has no recognizer
+  (Linux) or it fails, WorkStudio says why and points to the system's own dictation (Win + H on Windows, the
+  microphone key or Fn twice on macOS). The app asks for the microphone and speech-recognition permissions once.
+- **Search bars in every list of skills**: the **+ → Skills** menu of the chat, the project's "always-on skills", the
+  skills manager, the automation editor and Settings → Chat. They filter by name, description or title, and the
+  lists keep their titles (WorkStudio, OpenBlocks, Claude Code, Codex…).
+- **Updates: the release notes box is taller and scrolls**, so you can read what an update changes.
+- **Settings → Chat → Skills** now lists the skills **grouped by where they came from**, and clicking one turns it
+  **off or on**. Turned-off skills disappear from the chat (`/`, **+ → Skills**), projects, automations and the
+  catalog the model sees; the choice is kept in `settings.json` (`skills_disabled`).
+- Fix: in the skills manager the rows had been squeezed into a column by a style meant for the chat's list.
+
 ## 0.1.4 — 2026-11-03
 
 - **OpenBlocks joins the family.** WorkStudio now detects, starts, stops, embeds and updates

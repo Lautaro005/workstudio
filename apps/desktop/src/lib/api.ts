@@ -134,6 +134,8 @@ export type Settings = {
   chat_tools?: string[];
   /** Model ids hidden from the chat picker. */
   chat_hidden_models?: string[];
+  llamacpp_url?: string;
+  llamacpp_key?: string;
   /** Models added by hand, e.g. { id: "claude:claude-opus-6", name: "Claude Opus 6" }. */
   chat_custom_models?: { id: string; name: string }[];
   [k: string]: unknown;
@@ -201,7 +203,9 @@ export type Project = {
   created: number;
   updated: number;
 };
-export type Skill = { name: string; description: string; source: string; group: string; path: string };
+export type Skill = { name: string; description: string; source: string; group: string; path: string; disabled?: boolean };
+export type LlModel = { id: string; status: string };
+export type LlStatus = { url: string; up: boolean; router: boolean; models: LlModel[]; installed: boolean };
 export type Schedule = { kind: "daily" | "weekly" | "interval" | "manual" | string; time: string; days: number[]; every_minutes: number };
 export type Automation = {
   id: string;

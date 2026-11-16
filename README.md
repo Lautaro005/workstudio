@@ -39,7 +39,7 @@ command: `workstudio` opens it, `workstudio update` updates it, `workstudio unin
 |---|---|
 | **Workspace** | Home with every app's status and version; sidebar with live status; Google-style app launcher; ⌘K palette. Spanish and English. |
 | **Apps inside** | Each app opens on its details; brain's dashboard and Lumina can also be used inside WorkStudio (with the preferences of their own window), or open there directly if you check it. OpenCue opens in its own window. |
-| **Chat** | Like Claude's: talk to Claude Code, Codex, Gemini, any Ollama model or an OpenCue agent (@name). Projects with instructions, knowledge files and a working folder; attach files and photos; skills from every tool under titles, searched with `/`; artifacts in a side panel; pills for brain, Lumina, OpenBlocks and web search. Conversations stay in `~/.workstudio/chats`. |
+| **Chat** | Like Claude's: talk to Claude Code, Codex, Gemini, any Ollama or llama.cpp model or an OpenCue agent (@name). Projects with instructions, knowledge files and a working folder; attach files and photos; skills from every tool under titles, searched with `/`; artifacts in a side panel; pills for brain, Lumina, OpenBlocks and web search. Conversations stay in `~/.workstudio/chats`. |
 | **Second brain** | Your OpenBlocks vault as the chat's context folder, after Ben AI's method: the AI reads the `AGENTS` routing map first, saves insights (not raw data), keeps the structure fixed and puts the business first. Three built-in skills set it up, update it and clean it. |
 | **Automations** | Prompts that run on a schedule (daily, chosen weekdays, every N minutes or by hand) as a new chat, with the model, pills, skills, project and folder you pick. Templates for the daily update and the weekly health check. |
 | **Terminals** | Up to six real terminals in a grid. Profiles for Claude Code, Codex, Gemini CLI, Cursor Agent, brain, lumina and opencue. |
@@ -79,19 +79,29 @@ HTTP servers you add are passed next to it, as they are. The servers it carries:
 | Codex (default, a *latest* per family and every version: your account's models from `~/.codex/models_cache.json` first, then the GPT versions Codex knows) | `codex exec --json`, read-only sandbox, `workstudio` passed with `-c` |
 | Gemini CLI | `gemini -p` in a folder whose `.gemini/settings.json` has only `workstudio` |
 | Ollama | `/api/chat` from WorkStudio, which runs the tool calls itself |
+| llama.cpp | `llama-server`'s `/v1/chat/completions` (streaming, tool calls); models from `GET /models` (router mode) or `/v1/models`; WorkStudio runs the tool calls itself |
 | OpenCue agent | OpenCue's `send_to_agent`: the agent answers with its own tools (the pills don't apply). Pick it in the menu or type `@name` |
 
 - **Projects** (`~/.workstudio/projects`): instructions, knowledge files (their text goes with every message), a
   working folder, always-on skills, default model and tools.
 - **Working folder**: read-only by default; switch it to *Edits* to let the model create and edit files and run
   commands there. Claude Code gets `Read/Glob/Grep` (+ `Edit/Write/Bash`) with `--add-dir`; Codex `-C` with a
-  read-only or workspace-write sandbox; Gemini `--include-directories`; Ollama WorkStudio's read-only `fs__*` tools.
+  read-only or workspace-write sandbox; Gemini `--include-directories`; Ollama and llama.cpp WorkStudio's read-only `fs__*` tools.
 - **Files**: attach, drop or paste; copied to `~/.workstudio/chats/files/<chat>`.
 - **Skills**: `SKILL.md` folders (and brain's flat `skills/<name>.md`) from every tool, listed under titles:
   WorkStudio (`~/.workstudio/skills`), OpenBlocks (the three built-in second-brain skills and the vault's `skills/`),
   Claude Code (`~/.claude/skills`) and its plugins, Codex (`~/.codex/skills`, `~/.agents/skills`), Gemini
   (`~/.gemini/skills`), OpenCue (its data folder's `skills/`), brain (its vault's `skills/`) and the working folder.
   `/` opens the list; keep typing to search by name, description or title.
+- **Dictation**: the microphone button uses the webview's Web Speech API, i.e. the system's recognizer (Apple's on
+  macOS; `Info.plist` declares the microphone and speech-recognition usage). Where the webview has none (Linux) or it
+  fails, the chat explains and points to the system dictation. Nothing is recorded or stored by WorkStudio.
+- **llama.cpp**: `src-tauri/src/llamacpp.rs` finds `llama-server` (setting `llamacpp_url`, then
+  `127.0.0.1:9931` and `:8080`) and, in router mode, uses `GET /models`, `POST /models/load`, `/models/unload`,
+  `POST /models` (download) and `DELETE /models?model=` to manage models from Settings → Models. Optional
+  `llamacpp_key` is sent as a Bearer token. The chat runs `llamacpp:<model>` through `run_openai` in `chat.rs`.
+- **Skills on/off**: Settings → Chat lists them by origin; the ones turned off (`skills_disabled` in `settings.json`)
+  are left out of `skills_list`, projects, automations and the model's catalog.
 - **Second brain**: with the OpenBlocks pill on, `prompt.rs` adds a section that makes the model read the vault's
   `AGENTS` page first, open only what it routes to, save short insights where the map says, leave the folder
   structure alone and flag anything that conflicts with the business goals. The method comes from Ben AI's

@@ -8,6 +8,7 @@ import { useStore } from "../lib/store";
 import { visibleModels } from "../lib/chatModels";
 import { Modal, Switch, timeAgo } from "../components/ui";
 import { PILLS } from "../components/chat/Composer";
+import { GroupedSkills, SearchInput, useSkillSearch } from "../components/skills";
 import { Check, Clock, MessageSquare, Pencil, Play, Plus, Trash2, Zap, Loader2 } from "../components/icons";
 
 const DAYS = ["Dom", "Lun", "Mar", "Mié", "Jue", "Vie", "Sáb"];
@@ -247,7 +248,7 @@ function Editor({ a: initial, models, skills, projects, onSave, onClose }: { a: 
   const set = (patch: Partial<Automation>) => setA((x) => ({ ...x, ...patch }));
   const sch = (patch: Partial<Automation["schedule"]>) => setA((x) => ({ ...x, schedule: { ...x.schedule, ...patch } }));
   const toggle = <T,>(arr: T[], v: T) => (arr.includes(v) ? arr.filter((x) => x !== v) : [...arr, v]);
-  const groups = [...new Set(skills.map((s) => s.group))];
+  const sk = useSkillSearch(skills);
   const ok = a.name.trim() && a.prompt.trim() && a.model;
   return (
     <>
@@ -317,24 +318,23 @@ function Editor({ a: initial, models, skills, projects, onSave, onClose }: { a: 
         </div>
         <div className="field">
           <label>{t("Skills")}</label>
+          {skills.length > 0 && <SearchInput value={sk.query} onChange={sk.setQuery} />}
           <div className="auto-skills">
             {skills.length === 0 && <span className="muted small">{t("Todavía no hay skills.")}</span>}
-            {groups.map((g) => (
-              <div key={g}>
-                <div className="menu-label group-title">{g}</div>
-                {skills
-                  .filter((s) => s.group === g)
-                  .map((s) => (
-                    <button key={s.path} className="menu-item two" onClick={() => set({ skills: toggle(a.skills, s.path) })} title={s.path}>
-                      <span className="check-box">{a.skills.includes(s.path) && <Check size={12} />}</span>
-                      <span className="sug-txt">
-                        <b>{s.name}</b>
-                        {s.description && <span className="muted">{s.description}</span>}
-                      </span>
-                    </button>
-                  ))}
-              </div>
-            ))}
+            {skills.length > 0 && (
+              <GroupedSkills
+                items={sk.shown}
+                render={(s) => (
+                  <button className="menu-item two" onClick={() => set({ skills: toggle(a.skills, s.path) })} title={s.path}>
+                    <span className="check-box">{a.skills.includes(s.path) && <Check size={12} />}</span>
+                    <span className="sug-txt">
+                      <b>{s.name}</b>
+                      {s.description && <span className="muted">{s.description}</span>}
+                    </span>
+                  </button>
+                )}
+              />
+            )}
           </div>
         </div>
         <div className="field">

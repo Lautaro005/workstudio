@@ -208,6 +208,19 @@ fn ollama_models() -> Vec<Model> {
         .collect()
 }
 
+/// Models of a running llama.cpp server (router mode lists every model it can load).
+fn llamacpp_models() -> Vec<Model> {
+    crate::llamacpp::models()
+        .into_iter()
+        .map(|m| Model {
+            id: format!("llamacpp:{}", m.id),
+            name: m.id,
+            group: "llama.cpp".into(),
+            tools: true,
+        })
+        .collect()
+}
+
 /// Claude Code takes the aliases (always the newest of each family) and the full model ids.
 const CLAUDE_MODELS: &[(&str, &str)] = &[
     ("opus", "Opus · latest"),
@@ -375,6 +388,7 @@ pub fn models() -> Vec<Model> {
         });
     }
     out.extend(ollama_models());
+    out.extend(llamacpp_models());
     for a in crate::mcp::opencue_agents() {
         out.push(Model {
             id: format!("opencue:{}", a.name),
@@ -1502,6 +1516,219 @@ fn run_ollama(run: &mut Run, job: &Job) -> anyhow::Result<()> {
     Ok(())
 }
 
+/// Joins the pieces of streamed OpenAI tool calls (`delta.tool_calls[]`, keyed by `index`) into
+/// `(id, name, arguments)` triples.
+fn merge_tool_calls(delta: &Value, calls: &mut Vec<(String, String, String)>) {
+    let Some(tcs) = delta["tool_calls"].as_array() else {
+        return;
+    };
+    for tc in tcs {
+        let i = tc["index"].as_u64().unwrap_or(0) as usize;
+        while calls.len() <= i {
+            calls.push((String::new(), String::new(), String::new()));
+        }
+        if let Some(id) = tc["id"].as_str() {
+            calls[i].0 = id.to_string();
+        }
+        if let Some(n) = tc["function"]["name"].as_str() {
+            calls[i].1.push_str(n);
+        }
+        if let Some(a) = tc["function"]["arguments"].as_str() {
+            calls[i].2.push_str(a);
+        }
+    }
+}
+
+/// llama.cpp's `llama-server` (and any OpenAI-compatible server): `/v1/chat/completions` with streaming
+/// and tool calls. The hub's tools and the read-only file tools go in as OpenAI `tools`.
+fn run_openai(run: &mut Run, job: &Job) -> anyhow::Result<()> {
+    use base64::Engine;
+    let base = crate::llamacpp::find().ok_or_else(|| {
+        anyhow::anyhow!(crate::settings::tr(
+            "llama.cpp no está corriendo. Iniciá llama-server (sin indicar un modelo) y probá de nuevo.",
+            "llama.cpp isn't running. Start llama-server (without a model) and try again."
+        ))
+    })?;
+    let key = crate::settings::load()
+        .extra
+        .get("llamacpp_key")
+        .and_then(|v| v.as_str())
+        .unwrap_or("")
+        .trim()
+        .to_string();
+    let hub = if job.tools.is_empty() {
+        None
+    } else {
+        Some(cached_hub(&job.tools))
+    };
+    let mut messages = vec![json!({"role": "system", "content": job.system})];
+    for m in &job.prior.messages {
+        if m.error || (m.text.trim().is_empty() && m.files.is_empty()) {
+            continue;
+        }
+        let content = if m.role == "user" {
+            user_content(m)
+        } else {
+            m.text.clone()
+        };
+        messages.push(json!({"role": if m.role == "user" { "user" } else { "assistant" }, "content": content}));
+    }
+    let images: Vec<String> = job
+        .latest
+        .files
+        .iter()
+        .filter(|f| f.kind == "image")
+        .filter_map(|f| {
+            let ext = Path::new(&f.path)
+                .extension()
+                .and_then(|e| e.to_str())
+                .unwrap_or("png")
+                .to_lowercase();
+            let mime = if ext == "jpg" {
+                "jpeg".to_string()
+            } else {
+                ext
+            };
+            let bytes = std::fs::read(&f.path).ok()?;
+            Some(format!(
+                "data:image/{mime};base64,{}",
+                base64::engine::general_purpose::STANDARD.encode(bytes)
+            ))
+        })
+        .collect();
+    let text = user_content(&job.latest);
+    if images.is_empty() {
+        messages.push(json!({"role": "user", "content": text}));
+    } else {
+        let mut parts = vec![json!({"type": "text", "text": text})];
+        parts.extend(
+            images
+                .iter()
+                .map(|u| json!({"type": "image_url", "image_url": {"url": u}})),
+        );
+        messages.push(json!({"role": "user", "content": parts}));
+    }
+    let mut tool_defs: Vec<Value> = hub
+        .as_ref()
+        .map(|h| {
+            h.tools
+                .iter()
+                .map(|t| {
+                    json!({"type": "function", "function": {
+                        "name": t["name"],
+                        "description": t["description"],
+                        "parameters": t.get("inputSchema").cloned().unwrap_or(json!({"type": "object", "properties": {}})),
+                    }})
+                })
+                .collect()
+        })
+        .unwrap_or_default();
+    if !job.roots.is_empty() {
+        tool_defs.extend(fs_tool_defs());
+    }
+    let agent = ureq::AgentBuilder::new()
+        .timeout_connect(Duration::from_secs(5))
+        .timeout_read(Duration::from_secs(900))
+        .build();
+    for _round in 0..12 {
+        let mut body = json!({"model": job.model, "messages": messages, "stream": true});
+        if !tool_defs.is_empty() {
+            body["tools"] = json!(tool_defs);
+        }
+        let mut req = agent.post(&format!("{base}/v1/chat/completions"));
+        if !key.is_empty() {
+            req = req.set("Authorization", &format!("Bearer {key}"));
+        }
+        let res = req.send_json(body).map_err(|e| match e {
+            ureq::Error::Status(code, r) => {
+                let body = r.into_string().unwrap_or_default();
+                let msg = serde_json::from_str::<Value>(&body)
+                    .ok()
+                    .and_then(|v| v["error"]["message"].as_str().map(String::from))
+                    .unwrap_or(body);
+                anyhow::anyhow!("llama.cpp ({code}): {msg}")
+            }
+            other => anyhow::anyhow!("llama.cpp: {other}"),
+        })?;
+        let mut content = String::new();
+        // Tool calls arrive in pieces, keyed by their index.
+        let mut calls: Vec<(String, String, String)> = Vec::new();
+        for line in BufReader::new(res.into_reader()).lines() {
+            if run.cancelled() {
+                return Ok(());
+            }
+            let Ok(line) = line else { break };
+            let Some(data) = line.strip_prefix("data:") else {
+                continue;
+            };
+            let data = data.trim();
+            if data == "[DONE]" {
+                break;
+            }
+            let Ok(v) = serde_json::from_str::<Value>(data) else {
+                continue;
+            };
+            if let Some(e) = v["error"]["message"].as_str() {
+                anyhow::bail!("llama.cpp: {e}");
+            }
+            let d = &v["choices"][0]["delta"];
+            if let Some(t) = d["reasoning_content"].as_str().filter(|t| !t.is_empty()) {
+                run.think(t);
+            }
+            if let Some(t) = d["content"].as_str().filter(|t| !t.is_empty()) {
+                content.push_str(t);
+                run.delta(t);
+            }
+            merge_tool_calls(d, &mut calls);
+        }
+        calls.retain(|c| !c.1.is_empty());
+        if calls.is_empty() {
+            return Ok(());
+        }
+        for (n, c) in calls.iter_mut().enumerate() {
+            if c.0.is_empty() {
+                c.0 = format!("call_{n}");
+            }
+        }
+        let tcs: Vec<Value> = calls
+            .iter()
+            .map(|(id, name, args)| {
+                json!({"id": id, "type": "function", "function": {"name": name, "arguments": if args.is_empty() { "{}" } else { args.as_str() }}})
+            })
+            .collect();
+        messages.push(json!({"role": "assistant", "content": content, "tool_calls": tcs}));
+        for (id, name, raw) in &calls {
+            let args: Value = serde_json::from_str(raw).unwrap_or(json!({}));
+            let i = run.tool(name, "");
+            run.tool_detail(i, &input_detail(&args));
+            let (text, ok) = if name.starts_with("fs__") {
+                fs_call(&job.roots, &job.folder, name, &args)
+            } else if let Some(h) = hub.as_ref() {
+                let r = h.call(name, args);
+                let text: String = r["content"]
+                    .as_array()
+                    .map(|a| {
+                        a.iter()
+                            .filter_map(|x| x["text"].as_str())
+                            .collect::<Vec<_>>()
+                            .join("\n")
+                    })
+                    .unwrap_or_else(|| r.to_string());
+                (text, !r["isError"].as_bool().unwrap_or(false))
+            } else {
+                ("Unknown tool".into(), false)
+            };
+            run.tool_done(i, ok);
+            let clipped: String = text.chars().take(24_000).collect();
+            messages.push(json!({"role": "tool", "tool_call_id": id, "content": clipped}));
+        }
+        if !run.text.is_empty() && !run.text.ends_with("\n\n") {
+            run.delta("\n\n");
+        }
+    }
+    Ok(())
+}
+
 fn run_opencue(run: &mut Run, agent: &str, prompt: &str) -> anyhow::Result<()> {
     let agents = crate::mcp::opencue_agents();
     let target = agents
@@ -1588,7 +1815,7 @@ pub struct SendOpts {
 
 /// Can this model run tools (the hub, file reading)?
 fn runner_tools(kind: &str) -> bool {
-    matches!(kind, "claude" | "codex" | "gemini" | "ollama")
+    matches!(kind, "claude" | "codex" | "gemini" | "ollama" | "llamacpp")
 }
 
 /// Adds the user's message, answers it in the background and returns the chat id at once.
@@ -1660,8 +1887,10 @@ pub fn send(app: AppHandle, o: SendOpts) -> anyhow::Result<String> {
             skill_paths.push(s.clone());
         }
     }
+    let off = crate::skills::disabled_paths();
     let active: Vec<(String, String)> = skill_paths
         .iter()
+        .filter(|p| !off.contains(p))
         .filter_map(|p| crate::skills::content(p))
         .collect();
     let latest = Msg {
@@ -1717,7 +1946,7 @@ pub fn send(app: AppHandle, o: SendOpts) -> anyhow::Result<String> {
                 roots.push(d.clone());
             }
             let catalog = if can {
-                crate::skills::list(Some(&c.folder))
+                crate::skills::list_enabled(Some(&c.folder))
             } else {
                 Vec::new()
             };
@@ -1787,6 +2016,7 @@ pub fn send(app: AppHandle, o: SendOpts) -> anyhow::Result<String> {
                 "codex" => run_codex(&mut run, &job),
                 "gemini" => run_gemini(&mut run, &job),
                 "ollama" => run_ollama(&mut run, &job),
+                "llamacpp" => run_openai(&mut run, &job),
                 "opencue" => run_opencue(&mut run, &job.model, &job.prompt),
                 _ => Err(anyhow::anyhow!("Elegí un modelo")),
             }
@@ -1937,6 +2167,30 @@ mod model_tests {
         assert_eq!(out, "sub/");
         assert_eq!(kind_of(&root.join("sub").join("a.txt")), "text");
         let _ = std::fs::remove_dir_all(&root);
+    }
+
+    #[test]
+    fn streamed_tool_calls_are_joined_by_index() {
+        let mut calls = Vec::new();
+        let chunks = [
+            json!({"tool_calls": [{"index": 0, "id": "c1", "function": {"name": "brain__search", "arguments": "{\"q\":"}}]}),
+            json!({"tool_calls": [{"index": 0, "function": {"arguments": "\"hola\"}"}}]}),
+            json!({"tool_calls": [{"index": 1, "id": "c2", "function": {"name": "fs__list", "arguments": "{}"}}]}),
+            json!({"content": "x"}),
+        ];
+        for c in &chunks {
+            merge_tool_calls(c, &mut calls);
+        }
+        assert_eq!(calls.len(), 2);
+        assert_eq!(
+            calls[0],
+            (
+                "c1".into(),
+                "brain__search".into(),
+                "{\"q\":\"hola\"}".into()
+            )
+        );
+        assert_eq!(calls[1].1, "fs__list");
     }
 
     #[test]

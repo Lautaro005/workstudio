@@ -14,12 +14,13 @@ export const GROUP_LOOK: Record<string, [string, string]> = {
   Codex: ["openai", "ink"],
   Gemini: ["gemini", "mustard"],
   Ollama: ["ollama", "ink"],
+  "llama.cpp": ["llamacpp", "ink"],
   OpenCue: ["opencue", "olive"],
 };
 
 export const lookOfModel = (id: string): [string, string] => {
   const k = id.split(":")[0];
-  const g = { claude: "Claude Code", codex: "Codex", gemini: "Gemini", ollama: "Ollama", opencue: "OpenCue" }[k] ?? "";
+  const g = { claude: "Claude Code", codex: "Codex", gemini: "Gemini", ollama: "Ollama", llamacpp: "llama.cpp", opencue: "OpenCue" }[k] ?? "";
   return GROUP_LOOK[g] ?? ["box", "ink"];
 };
 
